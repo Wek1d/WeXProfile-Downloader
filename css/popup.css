@@ -1,0 +1,268 @@
+:root {
+  --primary-color: #405DE6;
+  --secondary-color: #5851DB;
+  --text-color: #262626;
+  --bg-color: #ffffff;
+  --card-bg: #f8f8f8;
+  --border-color: #dbdbdb;
+  --error-color: #ed4956;
+  --success-color: #4CAF50;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] {
+  --primary-color: #0095f6;
+  --secondary-color: #385185;
+  --text-color: #f5f5f5;
+  --bg-color: #121212;
+  --card-bg: #1e1e1e;
+  --border-color: #363636;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body {
+  font-family: 'Poppins', sans-serif; /* Poppins varsayılan olarak kalıyor */
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  width: 320px;
+  min-height: 400px;
+  padding: 16px;
+  overflow-x: hidden;
+}
+
+/* Montserrat'ı kullanmak istediğin yerler için örnekler */
+.header h1,
+#username,
+#fullName {
+  font-family: 'Montserrat', sans-serif; /* Başlıklar ve isimler için Montserrat */
+}
+
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.theme-toggle {
+  background: var(--card-bg);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.theme-toggle i {
+  position: absolute;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.theme-toggle .fa-moon {
+  color: #f1c40f;
+}
+
+.theme-toggle .fa-sun {
+  color: #f39c12;
+  opacity: 0;
+  transform: rotate(90deg);
+}
+
+[data-theme="dark"] .theme-toggle .fa-moon {
+  opacity: 0;
+  transform: rotate(-90deg);
+}
+
+[data-theme="dark"] .theme-toggle .fa-sun {
+  opacity: 1;
+  transform: rotate(0deg);
+}
+
+.profile-container {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+  animation: fadeIn 0.5s ease-out;
+}
+
+.profile-pic-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--primary-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-pic {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.profile-pic.loaded {
+  opacity: 1;
+}
+
+.loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--primary-color);
+  animation: spin 1s linear infinite;
+}
+
+.profile-info {
+  text-align: center;
+}
+
+#username {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--primary-color);
+}
+
+#fullName {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.bio {
+  font-size: 14px;
+  margin-bottom: 16px;
+  color: var(--text-color);
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  margin: 16px 0;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat span:first-child {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.stat span:last-child {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn-secondary {
+  background: var(--card-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.footer {
+  margin-top: auto;
+  text-align: center;
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+.verified-badge {
+  color: #3897f0;
+  margin-left: 4px;
+}
+
+.private-badge {
+  display: inline-block;
+  background: #ed4956;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+  font-weight: 500;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
