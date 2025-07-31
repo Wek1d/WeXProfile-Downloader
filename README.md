@@ -16,6 +16,7 @@ WeXProfile Downloader
 A powerful Chrome Extension to view and download Instagram profile photos in HD.
 WeXProfile Downloader is a user-friendly browser extension that allows you to effortlessly view and download high-resolution Instagram profile pictures. With a single click, you can access detailed profile information, including follower count, bio, and a direct link to the HD profile photo. This version has been fully updated to comply with Manifest V3, ensuring enhanced security and performance.
 
+
 ✨ Features
 HD Profile Picture Download: Download the highest-quality version of any Instagram profile picture with a single click.
 
@@ -31,7 +32,8 @@ User-Friendly Interface: The extension features a clean and intuitive design for
 
 📸 Screenshots
 <p align="center">
-</p>
+</p><img width="1575" height="890" alt="Screenshot_16" src="https://github.com/user-attachments/assets/9e07baff-57f8-4623-a079-9ffaace7316b" />
+
 
 🚀 Installation
 Method 1: Download from Releases (Recommended)
