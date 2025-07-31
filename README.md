@@ -1,68 +1,69 @@
-# WeXProfile Downloader Pro Max
+WeXProfile Downloader
+<p align="center">
+<img src="icon.png" alt="WeXProfile Downloader Logo" width="150" />
+<br/>
+<a href="https://github.com/Wek1d/WeXProfile-Downloader/releases/latest">
+<img src="https://img.shields.io/github/v/release/Wek1d/WeXProfile-Downloader?style=for-the-badge&logo=github&color=blue" alt="Latest Release"/>
+</a>
+<a href="https://github.com/Wek1d/WeXProfile-Downloader/stargazers">
+<img src="https://img.shields.io/github/stars/Wek1d/WeXProfile-Downloader?style=for-the-badge&logo=github&color=yellow" alt="Stars"/>
+</a>
+<a href="https://github.com/Wek1d/WeXProfile-Downloader/blob/main/LICENSE">
+<img src="https://img.shields.io/github/license/Wek1d/WeXProfile-Downloader?style=for-the-badge&color=green" alt="License"/>
+</a>
+</p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub yıldızları](https://img.shields.io/github/stars/Wek1d/WeXProfile-Downloader-Pro-Max?style=social)](https://github.com/Wek1d/WeXProfile-Downloader-Pro-Max/stargazers)
-[![GitHub çatallanmaları](https://img.shields.io/github/forks/Wek1d/WeXProfile-Downloader-Pro-Max?style=social)](https://github.com/Wek1d/WeXProfile-Downloader-Pro-Max/network/members)
+A powerful Chrome Extension to view and download Instagram profile photos in HD.
+WeXProfile Downloader is a user-friendly browser extension that allows you to effortlessly view and download high-resolution Instagram profile pictures. With a single click, you can access detailed profile information, including follower count, bio, and a direct link to the HD profile photo. This version has been fully updated to comply with Manifest V3, ensuring enhanced security and performance.
 
-Instagram profillerinden yüksek çözünürlüklü (HD) profil fotoğrafı indirmenizi ve detaylı profil bilgilerini (takipçi sayısı, biyografi vb.) görüntülemenizi sağlayan güçlü ve kullanıcı dostu bir Chrome uzantısıdır.
+✨ Features
+HD Profile Picture Download: Download the highest-quality version of any Instagram profile picture with a single click.
 
-## ✨ Özellikler
+Detailed Profile Info: Instantly view key profile details such as username, full name, biography, post count, followers, and following count.
 
-* **HD Profil Fotoğrafı İndirme:** Tek tıkla herhangi bir Instagram profilinin en yüksek çözünürlüklü fotoğrafını indirin.
-* **Profil Bilgileri:** Kullanıcı adı, tam ad, biyografi, gönderi sayısı, takipçi ve takip edilen kişi sayıları gibi temel profil bilgilerini anında görün.
-* **Yeni Sekmede Açma:** Profil fotoğrafını doğrudan yeni bir sekmede görüntüleme imkanı.
-* **Özel/Doğrulanmış Hesaplar:** Hesapların gizli (private) veya doğrulanmış (verified) olup olmadığını belirtir.
-* **Tema Desteği:** Tercihinize göre açık veya karanlık tema arasında geçiş yapın.
-* **Kullanıcı Dostu Arayüz:** Sade ve anlaşılır bir tasarımla kolay kullanım.
+New Tab Preview: Open the profile picture directly in a new tab for a closer look.
 
-## 🚀 Kurulum
+Account Status Indicators: The extension clearly shows whether a profile is private or verified.
 
-WeXProfile Downloader Pro Max'i Chrome tarayıcınıza manuel olarak aşağıdaki adımları izleyerek kurabilirsiniz:
+Theme Support: Toggle between a light and dark theme to match your preference.
 
-1.  **Depoyu İndirin:**
-    * Bu GitHub sayfasında sağ üstte bulunan yeşil "Code" butonuna tıklayın.
-    * Açılan menüden "**Download ZIP**" seçeneğini tıklayarak tüm proje dosyalarını bilgisayarınıza indirin.
-    * İndirdiğiniz `.zip` dosyasını bilgisayarınızda kolay erişebileceğiniz bir yere (örneğin Masaüstü'nde yeni bir klasöre) **çıkarın (unzip edin)**.
+User-Friendly Interface: The extension features a clean and intuitive design for ease of use.
 
-2.  **Chrome Uzantılar Sayfasını Açın:**
-    * Chrome tarayıcınızı açın.
-    * Adres çubuğuna `chrome://extensions` yazın ve Enter tuşuna basın.
+📸 Screenshots
+<p align="center">
+</p>
 
-3.  **Geliştirici Modunu Etkinleştirin:**
-    * Uzantılar sayfasının sağ üst köşesinde bulunan "**Geliştirici modu**" (Developer mode) düğmesini açık (On) konuma getirin.
+🚀 Installation
+Method 1: Download from Releases (Recommended)
+Go to the Releases page of this repository.
 
-4.  **Paketlenmemiş Uzantıyı Yükleyin:**
-    * "Geliştirici modu"nu açtıktan sonra sol üstte "**Paketlenmemiş öğe yükle**" (Load unpacked) veya benzer bir düğme belirecektir. Bu düğmeye tıklayın.
-    * Açılan pencerede, **adım 1'de indirdiğiniz ve zipten çıkardığınız klasörü** (örneğin `WeXProfile-Downloader-Pro-Max-main` gibi bir isimde olacaktır) seçin ve "**Klasör Seç**" düğmesine tıklayın.
+Download the Source code (zip) file for the latest version.
 
-5.  **Uzantıyı Etkinleştirin:**
-    * Uzantı başarıyla yüklendiğinde, Uzantılar sayfanızda "WeXProfile Downloader Pro Max" uzantısını göreceksiniz. Genellikle otomatik olarak etkinleşir. Eğer etkin değilse, yanındaki anahtarı açın.
-    * Uzantı ikonunu (genellikle tarayıcının sağ üst köşesinde) görebilirsiniz. İkonu kolay erişim için sabitleyebilirsiniz (pin).
+Extract the downloaded .zip file to a folder on your computer.
 
-**⚠️ Önemli Not:** Chrome, Mağaza dışından yüklenen uzantılar için "Geliştirici modu etkin" uyarısı gösterebilir. Bu normal bir durumdur ve uzantının kötü amaçlı olduğu anlamına gelmez. Bu uyarıyı kaldırmanın tek yolu uzantıyı Chrome Web Mağazası üzerinden yayınlamaktır.
+Navigate to chrome://extensions in your Chrome browser.
 
-## 💡 Kullanım
+Enable "Developer mode" in the top-right corner.
 
-WeXProfile Downloader Pro Max'i kullanmak çok kolaydır:
+Click "Load unpacked" and select the folder you extracted.
 
-1.  **Bir Instagram Profil Sayfasına Gidin:** İndirmek veya bilgilerini görmek istediğiniz herhangi bir Instagram profilinin sayfasına gidin (örneğin, `instagram.com/kullaniciadi`).
-2.  **Uzantıyı Başlatın:**
-    * **Önerilen Yöntem:** Tarayıcınızın sağ üst köşesindeki **WeXProfile ikonuna** tıklayın. Uzantı anında profil bilgilerini çekecek ve size gösterecektir.
-    * **Alternatif Yöntem:** Profil sayfasındayken herhangi bir yere sağ tıklayın ve menüden "**WeXProfile ile Profil Bilgilerini Göster**" seçeneğini seçin. Veriler arka planda çekilecek ve size bir bildirim gelecektir. Ardından WeXProfile ikonuna tıklayarak popup penceresini açabilirsiniz.
-3.  **Bilgileri Görüntüleyin ve İşlem Yapın:**
-    * Açılan popup penceresinde kullanıcının profil fotoğrafını, kullanıcı adını, tam adını, biyografisini ve istatistiklerini göreceksiniz.
-    * **"Yeni Sekmede Aç"** butonu ile HD profil fotoğrafını yeni bir tarayıcı sekmesinde açabilirsiniz.
-    * **"İndir"** butonu ile HD profil fotoğrafını bilgisayarınıza kaydedebilirsiniz.
-    * Sağ üstteki **tema değiştirme ikonuna** (ay veya güneş simgesi) tıklayarak açık ve karanlık tema arasında geçiş yapabilirsiniz.
+Method 2: Clone the Repository
+Clone the repository: git clone https://github.com/Wek1d/WeXProfile-Downloader.git
 
-## 📸 Ekran Görüntüleri
+Navigate to chrome://extensions in your Chrome browser.
 
-<img width="1296" height="881" alt="image" src="https://github.com/user-attachments/assets/07fc31f2-a5c1-4fc4-87c5-8104d887a85f" />
+Enable "Developer mode" in the top-right corner.
 
-## 📄 Lisans
+Click "Load unpacked" and select the WeXProfile-Downloader folder you cloned.
 
-Bu proje **MIT Lisansı** ile lisanslanmıştır. Daha fazla detay için lütfen deponun ana dizinindeki `LICENSE` dosyasına bakınız.
+💡 Usage
+Go to any Instagram profile page.
 
-## 🤝 Katkıda Bulunma (Opsiyonel)
+Click the WeXProfile icon in your browser's toolbar.
 
-Eğer projeye katkıda bulunmak isterseniz, lütfen bir "issue" açın veya "pull request" gönderin.
+View the profile information and photo in the pop-up window.
+
+Use the "Open in New Tab" or "Download" buttons to take action on the profile picture.
+
+📄 License
+This project is licensed under the MIT License. See the LICENSE file in the main directory for more details.
