@@ -38,7 +38,8 @@ User-Friendly Interface: The extension features a clean and intuitive design wit
 📸 Screenshots
 
 <p align="center">
-</p><img width="1575" height="890" alt="Screenshot_16" src="https://github.com/user-attachments/assets/9e07baff-57f8-4623-a079-9ffaace7316b" />
+<img width="1699" height="1079" alt="image" src="https://github.com/user-attachments/assets/0a6c264e-9af2-4aab-8bbd-0ed059c29b9b" />
+
 
 🚀 Installation
 Method 1: Download from Releases (Recommended)
