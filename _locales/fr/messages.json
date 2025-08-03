@@ -1,0 +1,107 @@
+{
+  "appName": {
+    "message": "WeXProfile Downloader"
+  },
+  "appDesc": {
+    "message": "Téléchargez, prévisualisez facilement les photos de profil Instagram et suivez les changements de followers."
+  },
+  "contextMenuTitle": {
+    "message": "Afficher les informations de profil avec WeXProfile"
+  },
+  "infoTitle": {
+    "message": "Info"
+  },
+  "profileReadyNotification": {
+    "message": "Les informations de profil sont prêtes ! Cliquez sur l'icône WeXProfile pour voir les détails."
+  },
+  "errorTitle": {
+    "message": "Erreur"
+  },
+  "notInstagramPageError": {
+    "message": "Veuillez utiliser ceci sur une page de profil Instagram."
+  },
+  "profileFetchError": {
+    "message": "Une erreur s'est produite lors de la récupération des données de profil"
+  },
+  "notProfilePageError": {
+    "message": "Aucune page de profil Instagram valide trouvée. Veuillez visiter le profil d'un utilisateur."
+  },
+  "openHdPhotoError": {
+    "message": "Échec de l'ouverture de la photo de profil HD"
+  },
+  "downloadPhotoError": {
+    "message": "Échec du téléchargement de la photo de profil"
+  },
+  "downloadJsonTitle": {
+    "message": "Télécharger les données de profil au format JSON"
+  },
+  "noCachedDataError": {
+    "message": "Aucune donnée de profil trouvée dans le cache. Veuillez actualiser la page et réessayer."
+  },
+  "popupFetchError": {
+    "message": "Échec de la récupération des données de profil. Veuillez actualiser la page et réessayer."
+  },
+  "unknownActionError": {
+    "message": "Action inconnue"
+  },
+  "postsLabel": {
+    "message": "Publications"
+  },
+  "followersLabel": {
+    "message": "Abonnés"
+  },
+  "followingLabel": {
+    "message": "Abonnements"
+  },
+  "openInNewTabBtn": {
+    "message": "Ouvrir dans un nouvel onglet"
+  },
+  "downloadBtn": {
+    "message": "Télécharger"
+  },
+  "defaultBio": {
+    "message": "Aucune biographie"
+  },
+  "privateLabel": {
+    "message": "Privé"
+  },
+  "copyUsernameTitle": {
+    "message": "Copier le nom d'utilisateur"
+  },
+  "copiedText": {
+    "message": "Copié !"
+  },
+  "changeThemeTitle": {
+    "message": "Changer de thème"
+  },
+  "clearHistoryTitle": {
+    "message": "Effacer l'historique des abonnés"
+  },
+  "clearHistoryConfirm": {
+    "message": "Êtes-vous sûr de vouloir supprimer l'historique des changements d'abonnés enregistré pour tous les profils ?"
+  },
+  "historyCleared": {
+    "message": "L'historique des changements d'abonnés a été supprimé avec succès."
+  },
+  "settingsTitle": {
+    "message": "Paramètres"
+  },
+  "fontFamilyLabel": {
+    "message": "Famille de polices"
+  },
+  "themeTemplateLabel": {
+    "message": "Thème de couleur"
+  },
+  "imageLoadError": {
+    "message": "Une erreur s'est produite lors du chargement de la photo de profil."
+  },
+  "githubTitle": {
+    "message": "Page GitHub"
+  },
+  "updateAvailable": {
+    "message": "Une nouvelle mise à jour est disponible !"
+  },
+  "updateBtnText": {
+    "message": "Mettre à jour"
+  }
+}

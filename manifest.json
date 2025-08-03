@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
   "name": "WeXProfile Downloader",
-  "version": "2.38",
-  "description": "Easily download and preview Instagram profile photos.",
+  "version": "2.52",
+  "default_locale": "tr",
+  "description": "__MSG_appDesc__",
   "icons": {
     "128": "icon.png"
   },
@@ -25,7 +26,8 @@
   "host_permissions": [
     "https://*.instagram.com/*",
     "*://*.cdninstagram.com/*",
-    "*://*.fna.fbcdn.net/*"
+    "*://*.fna.fbcdn.net/*",
+    "https://api.github.com/*"
   ],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'; img-src 'self' data: https://*.instagram.com https://*.cdninstagram.com https://*.fna.fbcdn.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;"

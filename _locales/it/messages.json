@@ -1,0 +1,107 @@
+{
+  "appName": {
+    "message": "WeXProfile Downloader"
+  },
+  "appDesc": {
+    "message": "Scarica, visualizza in anteprima facilmente le foto del profilo di Instagram e tieni traccia dei cambiamenti dei follower."
+  },
+  "contextMenuTitle": {
+    "message": "Mostra informazioni del profilo con WeXProfile"
+  },
+  "infoTitle": {
+    "message": "Informazioni"
+  },
+  "profileReadyNotification": {
+    "message": "Le informazioni del profilo sono pronte! Clicca sull'icona di WeXProfile per vedere i dettagli."
+  },
+  "errorTitle": {
+    "message": "Errore"
+  },
+  "notInstagramPageError": {
+    "message": "Per favore, usa questo su una pagina di profilo Instagram."
+  },
+  "profileFetchError": {
+    "message": "Si è verificato un errore durante il recupero dei dati del profilo"
+  },
+  "notProfilePageError": {
+    "message": "Nessuna pagina di profilo Instagram valida trovata. Per favore, visita il profilo di un utente."
+  },
+  "openHdPhotoError": {
+    "message": "Impossibile aprire la foto del profilo HD"
+  },
+  "downloadPhotoError": {
+    "message": "Impossibile scaricare la foto del profilo"
+  },
+  "downloadJsonTitle": {
+    "message": "Scarica i dati del profilo come JSON"
+  },
+  "noCachedDataError": {
+    "message": "Nessun dato del profilo trovato nella cache. Per favore, aggiorna la pagina e riprova."
+  },
+  "popupFetchError": {
+    "message": "Impossibile ottenere i dati del profilo. Per favore, aggiorna la pagina e riprova."
+  },
+  "unknownActionError": {
+    "message": "Azione sconosciuta"
+  },
+  "postsLabel": {
+    "message": "Post"
+  },
+  "followersLabel": {
+    "message": "Follower"
+  },
+  "followingLabel": {
+    "message": "Seguiti"
+  },
+  "openInNewTabBtn": {
+    "message": "Apri in una nuova scheda"
+  },
+  "downloadBtn": {
+    "message": "Scarica"
+  },
+  "defaultBio": {
+    "message": "Nessuna biografia"
+  },
+  "privateLabel": {
+    "message": "Privato"
+  },
+  "copyUsernameTitle": {
+    "message": "Copia nome utente"
+  },
+  "copiedText": {
+    "message": "Copiato!"
+  },
+  "changeThemeTitle": {
+    "message": "Cambia tema"
+  },
+  "clearHistoryTitle": {
+    "message": "Cancella cronologia follower"
+  },
+  "clearHistoryConfirm": {
+    "message": "Sei sicuro di voler eliminare la cronologia dei cambiamenti dei follower salvata per tutti i profili?"
+  },
+  "historyCleared": {
+    "message": "La cronologia dei cambiamenti dei follower è stata cancellata con successo."
+  },
+  "settingsTitle": {
+    "message": "Impostazioni"
+  },
+  "fontFamilyLabel": {
+    "message": "Famiglia di caratteri"
+  },
+  "themeTemplateLabel": {
+    "message": "Tema colore"
+  },
+  "imageLoadError": {
+    "message": "Si è verificato un errore durante il caricamento dell'immagine del profilo."
+  },
+  "githubTitle": {
+    "message": "Pagina GitHub"
+  },
+  "updateAvailable": {
+    "message": "È disponibile un nuovo aggiornamento!"
+  },
+  "updateBtnText": {
+    "message": "Aggiorna"
+  }
+}

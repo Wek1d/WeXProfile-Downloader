@@ -1,0 +1,107 @@
+{
+  "appName": {
+    "message": "WeXProfile Downloader"
+  },
+  "appDesc": {
+    "message": "Easily download, preview Instagram profile photos, and track follower changes."
+  },
+  "contextMenuTitle": {
+    "message": "Show Profile Info with WeXProfile"
+  },
+  "infoTitle": {
+    "message": "Info"
+  },
+  "profileReadyNotification": {
+    "message": "Profile info is ready! Click the WeXProfile icon to see the details."
+  },
+  "errorTitle": {
+    "message": "Error"
+  },
+  "notInstagramPageError": {
+    "message": "Please use this on an Instagram profile page."
+  },
+  "profileFetchError": {
+    "message": "An error occurred while fetching profile data"
+  },
+  "notProfilePageError": {
+    "message": "No valid Instagram profile page found. Please visit a user's profile."
+  },
+  "openHdPhotoError": {
+    "message": "Failed to open HD profile photo"
+  },
+  "downloadPhotoError": {
+    "message": "Failed to download profile photo"
+  },
+  "downloadJsonTitle": {
+    "message": "Download profile data as JSON"
+  },
+  "noCachedDataError": {
+    "message": "No profile data found in cache. Please refresh the page and try again."
+  },
+  "popupFetchError": {
+    "message": "Failed to get profile data. Please refresh the page and try again."
+  },
+  "unknownActionError": {
+    "message": "Unknown action"
+  },
+  "postsLabel": {
+    "message": "Posts"
+  },
+  "followersLabel": {
+    "message": "Followers"
+  },
+  "followingLabel": {
+    "message": "Following"
+  },
+  "openInNewTabBtn": {
+    "message": "Open in New Tab"
+  },
+  "downloadBtn": {
+    "message": "Download"
+  },
+  "defaultBio": {
+    "message": "No biography"
+  },
+  "privateLabel": {
+    "message": "Private"
+  },
+  "copyUsernameTitle": {
+    "message": "Copy username"
+  },
+  "copiedText": {
+    "message": "Copied!"
+  },
+  "changeThemeTitle": {
+    "message": "Change Theme"
+  },
+  "clearHistoryTitle": {
+    "message": "Clear Follower History"
+  },
+  "clearHistoryConfirm": {
+    "message": "Are you sure you want to delete the follower change history saved for all profiles?"
+  },
+  "historyCleared": {
+    "message": "Follower change history successfully cleared."
+  },
+  "settingsTitle": {
+    "message": "Settings"
+  },
+  "fontFamilyLabel": {
+    "message": "Font Family"
+  },
+  "themeTemplateLabel": {
+    "message": "Color Theme"
+  },
+  "imageLoadError": {
+    "message": "An error occurred while loading the profile picture."
+  },
+  "githubTitle": {
+    "message": "GitHub Page"
+  },
+  "updateAvailable": {
+    "message": "A new update is available!"
+  },
+  "updateBtnText": {
+    "message": "Update"
+  }
+}

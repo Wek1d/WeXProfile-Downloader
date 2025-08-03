@@ -1,0 +1,107 @@
+{
+  "appName": {
+    "message": "WeXProfile Downloader"
+  },
+  "appDesc": {
+    "message": "Instagram profil fotoğraflarını kolayca indir, önizle ve takipçi değişimlerini takip et."
+  },
+  "contextMenuTitle": {
+    "message": "WeXProfile ile Profil Bilgilerini Göster"
+  },
+  "infoTitle": {
+    "message": "Bilgi"
+  },
+  "profileReadyNotification": {
+    "message": "Profil bilgileri hazır! Detayları görmek için WeXProfile ikonuna tıklayın."
+  },
+  "errorTitle": {
+    "message": "Hata"
+  },
+  "notInstagramPageError": {
+    "message": "Lütfen bir Instagram profil sayfasında kullanın."
+  },
+  "profileFetchError": {
+    "message": "Profil bilgileri alınırken bir hata oluştu"
+  },
+  "notProfilePageError": {
+    "message": "Geçerli bir Instagram profil sayfası bulunamadı. Lütfen bir kullanıcı profilini ziyaret edin."
+  },
+  "openHdPhotoError": {
+    "message": "HD profil fotoğrafı açılamadı"
+  },
+  "downloadPhotoError": {
+    "message": "Profil fotoğrafı indirilemedi"
+  },
+  "downloadJsonTitle": {
+    "message": "Profil verilerini JSON olarak indir"
+  },
+  "noCachedDataError": {
+    "message": "Önbellekte profil verisi bulunamadı. Lütfen sayfayı yenileyip tekrar deneyin."
+  },
+  "popupFetchError": {
+    "message": "Profil verileri alınamadı. Sayfayı yenileyip tekrar deneyin."
+  },
+  "unknownActionError": {
+    "message": "Bilinmeyen eylem"
+  },
+  "postsLabel": {
+    "message": "Gönderi"
+  },
+  "followersLabel": {
+    "message": "Takipçi"
+  },
+  "followingLabel": {
+    "message": "Takip"
+  },
+  "openInNewTabBtn": {
+    "message": "Yeni Sekmede Aç"
+  },
+  "downloadBtn": {
+    "message": "İndir"
+  },
+  "defaultBio": {
+    "message": "Biyografi yok"
+  },
+  "privateLabel": {
+    "message": "Gizli"
+  },
+  "copyUsernameTitle": {
+    "message": "Kullanıcı adını kopyala"
+  },
+  "copiedText": {
+    "message": "Kopyalandı!"
+  },
+  "changeThemeTitle": {
+    "message": "Temayı Değiştir"
+  },
+  "clearHistoryTitle": {
+    "message": "Takipçi Geçmişini Temizle"
+  },
+  "clearHistoryConfirm": {
+    "message": "Tüm profiller için kaydedilmiş takipçi değişim geçmişini silmek istediğinize emin misiniz?"
+  },
+  "historyCleared": {
+    "message": "Takipçi değişim geçmişi başarıyla temizlendi."
+  },
+  "settingsTitle": {
+    "message": "Ayarlar"
+  },
+  "fontFamilyLabel": {
+    "message": "Font Ailesi"
+  },
+  "themeTemplateLabel": {
+    "message": "Renk Teması"
+  },
+  "imageLoadError": {
+    "message": "Profil fotoğrafı yüklenirken bir hata oluştu."
+  },
+  "githubTitle": {
+    "message": "GitHub Sayfası"
+  },
+  "updateAvailable": {
+    "message": "Yeni bir güncelleme mevcut!"
+  },
+  "updateBtnText": {
+    "message": "Güncelle"
+  }
+}

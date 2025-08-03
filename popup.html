@@ -5,50 +5,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WeXProfile Downloader</title>
   <link rel="stylesheet" href="css/popup.css">
-  
-  <!-- Mevcut Poppins fontu -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
-  <!-- Montserrat Font Eklendi -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
   <div class="app-container">
-    <div class="header">
-      <h1>WeXProfile</h1>
-      <button id="themeToggle" class="theme-toggle">
-        <i class="fas fa-moon"></i>
-        <i class="fas fa-sun"></i>
-      </button>
+    <div id="updateNotification" class="update-notification" style="display:none;">
+      <p><span data-i18n="updateAvailable">Yeni bir güncelleme mevcut!</span> v<span id="latestVersion"></span></p>
+      <button id="updateBtn" data-i18n="updateBtnText">Güncelle</button>
     </div>
     
+    <div class="header">
+      <h1 data-i18n="appName">WeXProfile</h1>
+      <div class="header-actions">
+        <button id="settingsBtn" class="settings-btn" title="Ayarlar">
+          <i class="fas fa-cog"></i>
+        </button>
+        <button id="themeToggle" class="theme-toggle" title="Temayı Değiştir">
+          <i class="fas fa-moon"></i>
+          <i class="fas fa-sun"></i>
+        </button>
+      </div>
+    </div>
+
     <div class="profile-container">
       <div class="profile-pic-container">
         <img id="profilePic" src="" alt="Profil Fotoğrafı" class="profile-pic">
-        <div class="loader"></div>
+        <div class="loader"><div></div><div></div><div></div></div>
       </div>
       
       <div class="profile-info">
-        <h2 id="username">@kullaniciadi</h2>
+        <h2 id="username" title="Kullanıcı adını kopyala">@kullaniciadi</h2>
         <h3 id="fullName">Tam Ad</h3>
-        <p id="bio" class="bio">Biyografi burada görünecek...</p>
+        <p id="bio" class="bio" data-i18n="defaultBio">Biyografi burada görünecek...</p>
         
         <div class="stats">
           <div class="stat">
-            <span id="postsCount">0</span>
-            <span>Gönderi</span>
+            <div class="stat-count-wrapper">
+              <span id="postsCount">0</span>
+            </div>
+            <span data-i18n="postsLabel">Gönderi</span>
           </div>
           <div class="stat">
-            <span id="followersCount">0</span>
-            <span>Takipçi</span>
+            <div class="stat-count-wrapper">
+              <span id="followersCount">0</span>
+              <span id="followersChange"></span>
+            </div>
+            <span data-i18n="followersLabel">Takipçi</span>
           </div>
           <div class="stat">
-            <span id="followingCount">0</span>
-            <span>Takip</span>
+            <div class="stat-count-wrapper">
+              <span id="followingCount">0</span>
+              <span id="followingChange"></span>
+            </div>
+            <span data-i18n="followingLabel">Takip</span>
           </div>
         </div>
       </div>
@@ -56,15 +71,56 @@
     
     <div class="actions">
       <button id="openHdBtn" class="btn btn-primary">
-        <i class="fas fa-external-link-alt"></i> Yeni Sekmede Aç
+        <i class="fas fa-external-link-alt"></i> <span data-i18n="openInNewTabBtn">Yeni Sekmede Aç</span>
       </button>
       <button id="downloadBtn" class="btn btn-secondary">
-        <i class="fas fa-download"></i> İndir
+        <i class="fas fa-download"></i> <span data-i18n="downloadBtn">İndir</span>
       </button>
     </div>
     
     <div class="footer">
-      <p class="version">v2.38</p>
+      <button id="githubBtn" class="btn btn-icon" title="GitHub Sayfasına Git">
+        <i class="fab fa-github"></i>
+      </button>
+      <button id="downloadJsonBtn" class="btn btn-icon" title="Profil verilerini JSON olarak indir">
+        <i class="fas fa-file-code"></i>
+      </button>
+      <p class="version">v2.52</p>
+      <button id="clearHistoryBtn" class="btn btn-icon" title="Takipçi Geçmişini Temizle">
+        <i class="fas fa-trash-alt"></i>
+      </button>
+    </div>
+  </div>
+
+  <div id="settingsPopup" class="settings-popup">
+    <div class="settings-content">
+      <div class="settings-header">
+        <h3 data-i18n="settingsTitle">Ayarlar</h3>
+        <button id="closeSettingsBtn" class="close-btn">&times;</button>
+      </div>
+      <div class="settings-body">
+        <div class="setting-group">
+          <label data-i18n="fontFamilyLabel">Font Ailesi</label>
+          <select id="fontSelect">
+            <option value="'Poppins', sans-serif">Poppins</option>
+            <option value="'Montserrat', sans-serif">Montserrat</option>
+            <option value="'Roboto', sans-serif">Roboto</option>
+            <option value="'Lato', sans-serif">Lato</option>
+            <option value="'Ubuntu', sans-serif">Ubuntu</option>
+            <option value="'Open Sans', sans-serif">Open Sans</option>
+          </select>
+        </div>
+        <div class="setting-group">
+          <label data-i18n="themeTemplateLabel">Renk Teması</label>
+          <div class="theme-options">
+            <button class="theme-option" data-theme="default" title="Varsayılan Tema"></button>
+            <button class="theme-option" data-theme="blue" title="Mavi Tema"></button>
+            <button class="theme-option" data-theme="green" title="Yeşil Tema"></button>
+            <button class="theme-option" data-theme="purple" title="Mor Tema"></button>
+            <button class="theme-option" data-theme="pink" title="Pembe Tema"></button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   

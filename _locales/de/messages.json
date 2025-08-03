@@ -1,0 +1,107 @@
+{
+  "appName": {
+    "message": "WeXProfile Downloader"
+  },
+  "appDesc": {
+    "message": "Einfach Instagram-Profilbilder herunterladen, Vorschauen anzeigen und Follower-Änderungen verfolgen."
+  },
+  "contextMenuTitle": {
+    "message": "Profilinformationen mit WeXProfile anzeigen"
+  },
+  "infoTitle": {
+    "message": "Info"
+  },
+  "profileReadyNotification": {
+    "message": "Profilinformationen sind bereit! Klicken Sie auf das WeXProfile-Symbol, um die Details anzuzeigen."
+  },
+  "errorTitle": {
+    "message": "Fehler"
+  },
+  "notInstagramPageError": {
+    "message": "Bitte verwenden Sie dies auf einer Instagram-Profilseite."
+  },
+  "profileFetchError": {
+    "message": "Beim Abrufen der Profilinformationen ist ein Fehler aufgetreten"
+  },
+  "notProfilePageError": {
+    "message": "Keine gültige Instagram-Profilseite gefunden. Bitte besuchen Sie das Profil eines Benutzers."
+  },
+  "openHdPhotoError": {
+    "message": "HD-Profilbild konnte nicht geöffnet werden"
+  },
+  "downloadPhotoError": {
+    "message": "Profilbild konnte nicht heruntergeladen werden"
+  },
+  "downloadJsonTitle": {
+    "message": "Profildaten als JSON herunterladen"
+  },
+  "noCachedDataError": {
+    "message": "Keine Profilinformationen im Cache gefunden. Bitte aktualisieren Sie die Seite und versuchen Sie es erneut."
+  },
+  "popupFetchError": {
+    "message": "Profilinformationen konnten nicht abgerufen werden. Bitte aktualisieren Sie die Seite und versuchen Sie es erneut."
+  },
+  "unknownActionError": {
+    "message": "Unbekannte Aktion"
+  },
+  "postsLabel": {
+    "message": "Beiträge"
+  },
+  "followersLabel": {
+    "message": "Follower"
+  },
+  "followingLabel": {
+    "message": "Gefolgt"
+  },
+  "openInNewTabBtn": {
+    "message": "In neuem Tab öffnen"
+  },
+  "downloadBtn": {
+    "message": "Herunterladen"
+  },
+  "defaultBio": {
+    "message": "Keine Biografie"
+  },
+  "privateLabel": {
+    "message": "Privat"
+  },
+  "copyUsernameTitle": {
+    "message": "Benutzernamen kopieren"
+  },
+  "copiedText": {
+    "message": "Kopiert!"
+  },
+  "changeThemeTitle": {
+    "message": "Thema ändern"
+  },
+  "clearHistoryTitle": {
+    "message": "Follower-Verlauf löschen"
+  },
+  "clearHistoryConfirm": {
+    "message": "Möchten Sie wirklich den gespeicherten Follower-Änderungsverlauf für alle Profile löschen?"
+  },
+  "historyCleared": {
+    "message": "Der Follower-Änderungsverlauf wurde erfolgreich gelöscht."
+  },
+  "settingsTitle": {
+    "message": "Einstellungen"
+  },
+  "fontFamilyLabel": {
+    "message": "Schriftfamilie"
+  },
+  "themeTemplateLabel": {
+    "message": "Farbthema"
+  },
+  "imageLoadError": {
+    "message": "Beim Laden des Profilbildes ist ein Fehler aufgetreten."
+  },
+  "githubTitle": {
+    "message": "GitHub-Seite"
+  },
+  "updateAvailable": {
+    "message": "Ein neues Update ist verfügbar!"
+  },
+  "updateBtnText": {
+    "message": "Aktualisieren"
+  }
+}

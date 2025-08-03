@@ -1,16 +1,19 @@
 // Service Worker'lar olay bazlı çalışır ve sürekli aktif kalmaz.
 // Bu yüzden verileri ve durumu global değişkenler yerine chrome.storage'da tutmak daha güvenilirdir.
 
-// O anki aktif veri çekme işleminin Promise'ini tutar.
-// Bu, service worker aktifken ardışık tıklamaları yönetmek için hala kullanışlıdır.
 let currentProfileFetchPromise = null;
 let currentProfileFetchUrl = null;
 
-// KURAL ID'Sİ: User-Agent değiştiren kuralımız için sabit bir ID.
 const USER_AGENT_RULE_ID = 1;
+const PROFILE_HISTORY_KEY = 'profileHistory';
+const HISTORY_LIMIT = 100;
+const USER_AGENTS = [
+  'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Instagram 300.0.0.0.0',
+  'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36 Instagram 300.0.0.0.0',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Instagram 271.0.0.0.0'
+];
+const GITHUB_REPO_URL = 'https://api.github.com/repos/Wek1d/WeXProfile-Downloader/releases/latest';
 
-// --- MANIFEST V3 İÇİN YENİ FONKSİYON ---
-// declarativeNetRequest API'ını kullanarak User-Agent'ı dinamik olarak değiştiren kuralı günceller.
 async function updateUserAgentRule(userAgentString) {
   const rule = {
     id: USER_AGENT_RULE_ID,
@@ -19,15 +22,12 @@ async function updateUserAgentRule(userAgentString) {
       type: 'modifyHeaders',
       requestHeaders: [{ header: 'user-agent', operation: 'set', value: userAgentString }]
     },
-    // Bu kural sadece Instagram API'ına yapılan isteklere uygulanacak.
     condition: {
       urlFilter: 'i.instagram.com/api/v1/users/',
-      resourceTypes: ['xmlhttprequest'] // fetch istekleri için
+      resourceTypes: ['xmlhttprequest']
     }
   };
-
   try {
-    // Mevcut kuralı kaldırıp yenisini ekliyoruz. Bu anlık bir değişiklik sağlar.
     await chrome.declarativeNetRequest.updateSessionRules({
       removeRuleIds: [USER_AGENT_RULE_ID],
       addRules: [rule]
@@ -37,97 +37,122 @@ async function updateUserAgentRule(userAgentString) {
   }
 }
 
+async function checkUpdates() {
+  try {
+    const response = await fetch(GITHUB_REPO_URL);
+    if (!response.ok) {
+      console.error('GitHub API\'den sürüm bilgisi alınamadı:', response.statusText);
+      return;
+    }
+    const data = await response.json();
+    const latestVersion = data.tag_name;
+    const currentVersion = chrome.runtime.getManifest().version;
 
-// Uzantı yüklendiğinde sağ tık menüsünü oluştur
+    if (compareVersions(latestVersion, currentVersion) > 0) {
+      chrome.storage.local.set({ hasUpdate: true, latestVersion: latestVersion });
+    } else {
+      chrome.storage.local.set({ hasUpdate: false });
+    }
+  } catch (error) {
+    console.error('Güncelleme kontrolü sırasında hata:', error);
+    chrome.storage.local.set({ hasUpdate: false });
+  }
+}
+
+function compareVersions(v1, v2) {
+  const parts1 = v1.replace(/^v/, '').split('.').map(Number);
+  const parts2 = v2.replace(/^v/, '').split('.').map(Number);
+  for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
+    const p1 = parts1[i] || 0;
+    const p2 = parts2[i] || 0;
+    if (p1 > p2) return 1;
+    if (p1 < p2) return -1;
+  }
+  return 0;
+}
+
+
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "wexProfileDownload",
-    title: "WeXProfile ile Profil Bilgilerini Göster",
+    title: chrome.i18n.getMessage("contextMenuTitle"),
     contexts: ["page"],
     documentUrlPatterns: ["*://*.instagram.com/*"]
   });
-  chrome.storage.sync.set({ darkMode: true });
+  chrome.storage.sync.set({
+    darkMode: true,
+    fontFamily: 'Poppins, sans-serif',
+    themeTemplate: 'default'
+  });
+  chrome.storage.local.set({ [PROFILE_HISTORY_KEY]: {} });
+  checkUpdates();
 });
 
-// Sağ tık menüsüne tıklanınca
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "wexProfileDownload" && tab.url.includes("instagram.com")) {
     handleProfileAnalysis(tab.url, tab.id, true);
   }
 });
 
-// MANIFEST V3 Değişikliği: chrome.browserAction -> chrome.action
-// Eklenti ikonuna tıklanınca
 chrome.action.onClicked.addListener((tab) => {
   chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
     if (tabs[0] && tabs[0].url.includes("instagram.com")) {
       handleProfileAnalysis(tabs[0].url, tabs[0].id, false);
     } else {
-      sendNotification("Hata", "Lütfen bir Instagram profil sayfasında kullanın.");
+      sendNotification(chrome.i18n.getMessage("errorTitle"), chrome.i18n.getMessage("notInstagramPageError"));
     }
   });
 });
 
-// Profil analizini başlat
 async function handleProfileAnalysis(url, tabId, isContextMenuClick) {
   if (currentProfileFetchPromise && currentProfileFetchUrl === url) {
-    console.log("Aynı URL için zaten veri çekiliyor, mevcut işlemi bekliyor.");
     return currentProfileFetchPromise;
   }
-
   currentProfileFetchUrl = url;
   currentProfileFetchPromise = fetchProfileData(url)
     .then(async (data) => {
-      // MANIFEST V3 İYİLEŞTİRMESİ: Veriyi global değişken yerine chrome.storage'a kaydet.
       await chrome.storage.local.set({ cachedProfile: data, cacheUrl: url });
-
-      // MANIFEST V3 Değişikliği: chrome.browserAction -> chrome.action
       chrome.action.setPopup({ tabId: tabId, popup: "popup.html" }, () => {
         if (chrome.runtime.lastError) {
           console.error("Popup setleme hatası:", chrome.runtime.lastError.message);
         } else if (isContextMenuClick) {
-          sendNotification("Bilgi", "Profil bilgileri hazır! Detayları görmek için lütfen WeXProfile eklenti ikonuna tıklayın.");
+          sendNotification(chrome.i18n.getMessage("infoTitle"), chrome.i18n.getMessage("profileReadyNotification"));
         }
       });
       return data;
     })
     .catch(async (error) => {
       console.error("WeXProfile Error:", error);
-      sendNotification("Hata", `Profil bilgileri alınırken bir hata oluştu: ${error.message}`);
-      // Hata durumunda önbelleği temizle
+      sendNotification(chrome.i18n.getMessage("errorTitle"), `${chrome.i18n.getMessage("profileFetchError")}: ${error.message}`);
       await chrome.storage.local.remove(['cachedProfile', 'cacheUrl']);
       currentProfileFetchUrl = null;
       throw error;
     })
     .finally(() => {
-      // İşlem bitince bu URL için çalışan promise'i temizle, böylece tekrar tetiklenebilir.
       if (currentProfileFetchUrl === url) {
-          currentProfileFetchPromise = null;
-          currentProfileFetchUrl = null;
+        currentProfileFetchPromise = null;
+        currentProfileFetchUrl = null;
       }
     });
-  
   return currentProfileFetchPromise;
 }
 
-// Instagram URL'sinden kullanıcı adını al
 function getInstagramUsername(link) {
   return new Promise((resolve, reject) => {
-    const regex = /(?<=instagram\.com\/)[A-Za-z0-9_.]+/;
-    const match = link.match(regex);
-    if (match && match[0] && !match[0].includes('/')) {
+    const profileRegex = /(?<=instagram\.com\/)[A-Za-z0-9_.]+(?=\/|$)/;
+    const match = link.match(profileRegex);
+    if (match && match[0] && !['p', 'reels', 'stories', 'tv'].includes(match[0])) {
       resolve(match[0]);
     } else {
-      reject(new Error("URL'den Instagram kullanıcı adı alınamadı."));
+      reject(new Error(chrome.i18n.getMessage("notProfilePageError")));
     }
   });
 }
 
-// Resim URL'sini alıp Base64 Data URL'ine dönüştüren yardımcı fonksiyon
 async function fetchImageAsDataURL(imageUrl) {
   try {
     const response = await fetch(imageUrl);
-    if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`);
+    if (!response.ok) throw new Error(`Resim çekilemedi: ${response.statusText}`);
     const blob = await response.blob();
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -136,98 +161,140 @@ async function fetchImageAsDataURL(imageUrl) {
       reader.readAsDataURL(blob);
     });
   } catch (error) {
-    console.error("Error converting image to Data URL:", error);
+    console.error("Resim Data URL'e dönüştürülürken hata:", error);
     return null;
   }
 }
 
-// Instagram kullanıcı bilgilerini API'den al
-async function getInstagramUserInfo(username) {
-  const url = `https://i.instagram.com/api/v1/users/web_profile_info/?username=${username}`;
-  const userAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Instagram 300.0.0.0.0';
+async function updateProfileHistoryAndGetDataWithChanges(newUserData) {
+  const storageData = await chrome.storage.local.get(PROFILE_HISTORY_KEY);
+  let history = storageData[PROFILE_HISTORY_KEY] || {};
 
-  // MANIFEST V3 Değişikliği: fetch'ten önce User-Agent kuralını ayarla
-  await updateUserAgentRule(userAgent);
+  const userId = newUserData.id;
+  const oldUserData = history[userId];
 
-  const res = await fetch(url);
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Instagram API yanıtı başarısız oldu: ${res.status} - ${text}`);
-  }
-  const out = await res.json();
-
-  if (out.data && out.data.user) {
-    const user = out.data.user;
-    const profilePicDataURL = await fetchImageAsDataURL(user.profile_pic_url);
-    
-    // Kanka burası önemli: Artık kullanıcı ID'sini de kaydediyoruz.
-    // Böylece HD fotoğraf için tekrar API isteği yapmaya gerek kalmayacak.
-    return {
-      id: user.id,
-      username: user.username,
-      fullName: user.full_name,
-      biography: user.biography,
-      followers: user.edge_followed_by?.count || 0,
-      following: user.edge_follow?.count || 0,
-      posts: user.edge_owner_to_timeline_media?.count || 0,
-      isPrivate: user.is_private,
-      isVerified: user.is_verified,
-      profilePicUrlForPreview: profilePicDataURL
-    };
+  if (oldUserData) {
+    newUserData.followerChange = newUserData.followers - oldUserData.followers;
+    newUserData.followingChange = newUserData.following - oldUserData.following;
   } else {
-    throw new Error("API yanıtında kullanıcı bilgileri bulunamadı.");
+    newUserData.followerChange = 0;
+    newUserData.followingChange = 0;
+  }
+
+  history[userId] = {
+    followers: newUserData.followers,
+    following: newUserData.following,
+    timestamp: Date.now()
+  };
+
+  const historyKeys = Object.keys(history);
+  if (historyKeys.length > HISTORY_LIMIT) {
+    const oldestKey = historyKeys.sort((a, b) => history[a].timestamp - history[b].timestamp)[0];
+    delete history[oldestKey];
+  }
+
+  await chrome.storage.local.set({ [PROFILE_HISTORY_KEY]: history });
+
+  return newUserData;
+}
+
+async function getInstagramUserInfo(username, userAgentIndex = 0) {
+  const url = `https://i.instagram.com/api/v1/users/web_profile_info/?username=${username}`;
+  await updateUserAgentRule(USER_AGENTS[userAgentIndex]);
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      if (userAgentIndex < USER_AGENTS.length - 1) {
+        console.warn(`API isteği ${userAgentIndex + 1}. User-Agent ile başarısız oldu. Tekrar deneniyor...`);
+        return getInstagramUserInfo(username, userAgentIndex + 1);
+      }
+      const text = await res.text();
+      throw new Error(`Instagram API yanıtı başarısız: ${res.status} - ${text}`);
+    }
+    const out = await res.json();
+
+    if (out.data && out.data.user) {
+      const user = out.data.user;
+      const profilePicDataURL = await fetchImageAsDataURL(user.profile_pic_url);
+
+      let userData = {
+        id: user.id,
+        username: user.username,
+        fullName: user.full_name,
+        biography: user.biography,
+        followers: user.edge_followed_by?.count || 0,
+        following: user.edge_follow?.count || 0,
+        posts: user.edge_owner_to_timeline_media?.count || 0,
+        isPrivate: user.is_private,
+        isVerified: user.is_verified,
+        profilePicUrlForPreview: profilePicDataURL
+      };
+      return await updateProfileHistoryAndGetDataWithChanges(userData);
+    } else {
+      throw new Error("API yanıtında kullanıcı bilgileri bulunamadı.");
+    }
+  } catch (error) {
+    if (userAgentIndex < USER_AGENTS.length - 1) {
+      console.warn(`API isteği ${userAgentIndex + 1}. User-Agent ile başarısız oldu. Tekrar deneniyor...`);
+      return getInstagramUserInfo(username, userAgentIndex + 1);
+    }
+    throw error;
   }
 }
 
-// Profil verilerini getir
 async function fetchProfileData(url) {
   const username = await getInstagramUsername(url);
   return getInstagramUserInfo(username);
 }
 
-// Instagram HD profil fotoğrafı URL'sini doğrudan API'den alan fonksiyon
-async function getHdProfilePhotoUrl(instagramUserId) {
+async function getHdProfilePhotoUrl(instagramUserId, userAgentIndex = 0) {
   const url = `https://i.instagram.com/api/v1/users/${instagramUserId}/info/`;
-  const userAgent = 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36 Instagram 300.0.0.0.0';
+  await updateUserAgentRule(USER_AGENTS[userAgentIndex]);
 
-  // MANIFEST V3 Değişikliği: fetch'ten önce User-Agent kuralını ayarla
-  await updateUserAgentRule(userAgent);
-  
-  const res = await fetch(url);
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Instagram API yanıtı başarısız oldu: ${res.status} - ${text}`);
-  }
-  const out = await res.json();
-  
-  if (out.user && out.user.hd_profile_pic_url_info && out.user.hd_profile_pic_url_info.url) {
-    return out.user.hd_profile_pic_url_info.url;
-  } else {
-    throw new Error("API yanıtında HD profil fotoğrafı URL'si bulunamadı.");
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      if (userAgentIndex < USER_AGENTS.length - 1) {
+        console.warn(`HD fotoğraf isteği ${userAgentIndex + 1}. User-Agent ile başarısız oldu. Tekrar deneniyor...`);
+        return getHdProfilePhotoUrl(instagramUserId, userAgentIndex + 1);
+      }
+      throw new Error(`Instagram API yanıtı başarısız: ${res.status}`);
+    }
+    const out = await res.json();
+
+    if (out.user?.hd_profile_pic_url_info?.url) {
+      return out.user.hd_profile_pic_url_info.url;
+    } else {
+      throw new Error("API yanıtında HD profil fotoğrafı URL'si bulunamadı.");
+    }
+  } catch (error) {
+    if (userAgentIndex < USER_AGENTS.length - 1) {
+      console.warn(`HD fotoğraf isteği ${userAgentIndex + 1}. User-Agent ile başarısız oldu. Tekrar deneniyor...`);
+      return getHdProfilePhotoUrl(instagramUserId, userAgentIndex + 1);
+    }
+    throw error;
   }
 }
 
-// OPTİMİZASYON: Bu fonksiyonlar artık async ve chrome.storage'dan veri okuyor.
-// HD profil fotoğrafını yeni sekmede aç
 async function openHdProfilePhoto() {
   const { cachedProfile } = await chrome.storage.local.get('cachedProfile');
-  if (cachedProfile && cachedProfile.id) {
+  if (cachedProfile?.id) {
     try {
       const hdUrl = await getHdProfilePhotoUrl(cachedProfile.id);
       chrome.tabs.create({ url: hdUrl });
     } catch (error) {
-      console.error("WeXProfile Error opening HD photo:", error);
-      sendNotification("Hata", `HD profil fotoğrafı açılırken bir hata oluştu: ${error.message}`);
+      console.error("HD fotoğraf açılırken hata:", error);
+      sendNotification(chrome.i18n.getMessage("errorTitle"), `${chrome.i18n.getMessage("openHdPhotoError")}: ${error.message}`);
     }
   } else {
-    sendNotification("Hata", "Önbellekte profil verisi bulunamadı veya kullanıcı ID'si eksik.");
+    sendNotification(chrome.i18n.getMessage("errorTitle"), chrome.i18n.getMessage("noCachedDataError"));
   }
 }
 
-// Profil fotoğrafını indir
 async function downloadProfilePhoto() {
   const { cachedProfile } = await chrome.storage.local.get('cachedProfile');
-  if (cachedProfile && cachedProfile.id && cachedProfile.username) {
+  if (cachedProfile?.id && cachedProfile?.username) {
     try {
       const hdUrl = await getHdProfilePhotoUrl(cachedProfile.id);
       chrome.downloads.download({
@@ -237,19 +304,35 @@ async function downloadProfilePhoto() {
         saveAs: true
       });
     } catch (error) {
-      console.error("WeXProfile Error downloading HD photo:", error);
-      sendNotification("Hata", `Profil fotoğrafı indirilirken bir hata oluştu: ${error.message}`);
+      console.error("HD fotoğraf indirilirken hata:", error);
+      sendNotification(chrome.i18n.getMessage("errorTitle"), `${chrome.i18n.getMessage("downloadPhotoError")}: ${error.message}`);
     }
   } else {
-    sendNotification("Hata", "Önbellekte profil verisi bulunamadı veya kullanıcı adı eksik.");
+    sendNotification(chrome.i18n.getMessage("errorTitle"), chrome.i18n.getMessage("noCachedDataError"));
   }
 }
 
-// KALDIRILDI: chrome.webRequest.onBeforeSendHeaders...
-// Bu blok Manifest V3'te çalışmadığı için tamamen kaldırıldı ve yerine
-// updateUserAgentRule ve declarativeNetRequest API'ı kullanıldı.
+// Hata veren downloadJSON fonksiyonu Data URI kullanarak yeniden yazıldı.
+async function downloadJSON(filename, data) {
+  try {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const reader = new FileReader();
+    reader.onload = function() {
+      const dataUrl = reader.result;
+      chrome.downloads.download({
+        url: dataUrl,
+        filename: filename,
+        conflictAction: 'uniquify',
+        saveAs: true
+      });
+    };
+    reader.readAsDataURL(blob);
+  } catch (error) {
+    console.error("JSON indirilirken hata:", error);
+    sendNotification(chrome.i18n.getMessage("errorTitle"), `${chrome.i18n.getMessage("downloadJsonError")}: ${error.message}`);
+  }
+}
 
-// Bildirim gönder
 function sendNotification(title, message) {
   chrome.notifications.create({
     type: "basic",
@@ -260,66 +343,88 @@ function sendNotification(title, message) {
   });
 }
 
-// Popup'tan gelen mesajları dinle
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   switch (request.action) {
     case 'getProfileData':
       chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
-        const activeTabUrl = tabs[0] ? tabs[0].url : null;
-        if (!activeTabUrl || !activeTabUrl.includes("instagram.com")) {
-          sendResponse({ success: false, error: "Lütfen bir Instagram profil sayfasında kullanın." });
+        const activeTabUrl = tabs[0]?.url;
+        if (!activeTabUrl?.includes("instagram.com")) {
+          sendResponse({ success: false, error: chrome.i18n.getMessage("notInstagramPageError") });
           return;
         }
-
         try {
           let dataToReturn;
-          // Senaryo 1: Devam eden bir fetch işlemi varsa bekle.
           if (currentProfileFetchPromise && currentProfileFetchUrl === activeTabUrl) {
-            console.log("getProfileData: Devam eden fetch bekleniyor.");
             dataToReturn = await currentProfileFetchPromise;
           } else {
-            // Senaryo 2: chrome.storage'daki önbelleği kontrol et.
             const { cachedProfile, cacheUrl } = await chrome.storage.local.get(['cachedProfile', 'cacheUrl']);
             if (cachedProfile && cacheUrl === activeTabUrl) {
-              console.log("getProfileData: Önbellekteki veri kullanılıyor.");
               dataToReturn = cachedProfile;
             } else {
-              // Senaryo 3: Hiçbiri yoksa yeni veri çek.
-              console.log("getProfileData: Yeni veri çekiliyor.");
               dataToReturn = await handleProfileAnalysis(activeTabUrl, tabs[0].id, false);
             }
           }
           sendResponse({ success: true, data: dataToReturn });
         } catch (error) {
-          console.error("getProfileData mesajında hata:", error);
           sendResponse({ success: false, error: error.message });
         }
       });
-      return true; // Asenkron yanıt için true döndür.
+      return true;
 
     case 'openHdPhoto':
-      openHdProfilePhoto(); // Bu artık async ama cevabı beklemesine gerek yok.
+      openHdProfilePhoto();
       sendResponse({ success: true });
       break;
 
     case 'downloadPhoto':
-      downloadProfilePhoto(); // Bu da async ama cevabı beklemesine gerek yok.
+      downloadProfilePhoto();
       sendResponse({ success: true });
       break;
 
-    case 'toggleDarkMode':
-      chrome.storage.sync.set({ darkMode: request.value }, () => {
+    case 'downloadJSON':
+      chrome.storage.local.get('cachedProfile', async (result) => {
+        if (result.cachedProfile) {
+          await downloadJSON(`instagram_${result.cachedProfile.username}_profile.json`, result.cachedProfile);
+          sendResponse({ success: true });
+        } else {
+          sendResponse({ success: false, error: chrome.i18n.getMessage("noCachedDataError") });
+        }
+      });
+      return true;
+
+    case 'clearHistory':
+      chrome.storage.local.set({ [PROFILE_HISTORY_KEY]: {} }, () => {
+        console.log("Takipçi geçmişi temizlendi.");
+        sendNotification(chrome.i18n.getMessage("infoTitle"), chrome.i18n.getMessage("historyCleared"));
         sendResponse({ success: true });
       });
       return true;
 
-    case 'getDarkMode':
-      chrome.storage.sync.get(['darkMode'], (result) => {
-        sendResponse({ success: true, value: result.darkMode });
+    case 'getSettingsAndUpdates':
+      chrome.storage.sync.get(['darkMode', 'fontFamily', 'themeTemplate'], (settings) => {
+        chrome.storage.local.get(['hasUpdate', 'latestVersion'], (updateInfo) => {
+          sendResponse({ success: true, settings, updateInfo });
+        });
       });
       return true;
 
+    case 'setSettings':
+      chrome.storage.sync.set(request.settings, () => {
+        sendResponse({ success: true });
+      });
+      return true;
+      
+    case 'openGithub':
+      chrome.tabs.create({ url: 'https://github.com/Wek1d/WeXProfile-Downloader?tab=readme-ov-file' });
+      sendResponse({ success: true });
+      return true;
+
+    case 'checkUpdatesNow':
+      checkUpdates();
+      sendResponse({ success: true });
+      return true;
+
     default:
-      sendResponse({ success: false, error: "Bilinmeyen eylem" });
+      sendResponse({ success: false, error: chrome.i18n.getMessage("unknownActionError") });
   }
 });
