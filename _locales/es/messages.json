@@ -3,10 +3,10 @@
     "message": "WeXProfile Downloader"
   },
   "appDesc": {
-    "message": "Descarga, previsualiza fotos de perfil de Instagram fácilmente y rastrea los cambios de seguidores."
+    "message": "Descarga fácilmente fotos de perfil de Instagram, previsualízalas y rastrea los cambios de seguidores."
   },
   "contextMenuTitle": {
-    "message": "Mostrar información de perfil con WeXProfile"
+    "message": "Mostrar información del perfil con WeXProfile"
   },
   "infoTitle": {
     "message": "Información"
@@ -18,25 +18,25 @@
     "message": "Error"
   },
   "notInstagramPageError": {
-    "message": "Por favor, usa esto en una página de perfil de Instagram."
+    "message": "Por favor, úsalo en una página de perfil de Instagram."
   },
   "profileFetchError": {
-    "message": "Ocurrió un error al obtener los datos del perfil"
+    "message": "Ocurrió un error al obtener la información del perfil."
   },
   "notProfilePageError": {
-    "message": "No se encontró una página de perfil de Instagram válida. Por favor, visita el perfil de un usuario."
+    "message": "No se encontró una página de perfil de Instagram válida. Por favor, visita un perfil de usuario."
   },
   "openHdPhotoError": {
-    "message": "No se pudo abrir la foto de perfil HD"
+    "message": "No se pudo abrir la foto de perfil HD."
   },
   "downloadPhotoError": {
-    "message": "No se pudo descargar la foto de perfil"
+    "message": "No se pudo descargar la foto de perfil."
   },
   "downloadJsonTitle": {
-    "message": "Descargar datos de perfil como JSON"
+    "message": "Descargar datos del perfil como JSON"
   },
   "noCachedDataError": {
-    "message": "No se encontraron datos de perfil en la caché. Por favor, actualiza la página e inténtalo de nuevo."
+    "message": "No se encontraron datos del perfil en la caché. Por favor, actualiza la página e inténtalo de nuevo."
   },
   "popupFetchError": {
     "message": "No se pudieron obtener los datos del perfil. Por favor, actualiza la página e inténtalo de nuevo."
@@ -54,13 +54,13 @@
     "message": "Siguiendo"
   },
   "openInNewTabBtn": {
-    "message": "Abrir en nueva pestaña"
+    "message": "Abrir en una nueva pestaña"
   },
   "downloadBtn": {
     "message": "Descargar"
   },
   "defaultBio": {
-    "message": "Sin biografía"
+    "message": "Biografía no disponible"
   },
   "privateLabel": {
     "message": "Privado"
@@ -78,16 +78,16 @@
     "message": "Borrar historial de seguidores"
   },
   "clearHistoryConfirm": {
-    "message": "¿Estás seguro de que quieres eliminar el historial de cambios de seguidores guardado para todos los perfiles?"
+    "message": "¿Estás seguro de que deseas eliminar el historial de cambios de seguidores guardado para todos los perfiles?"
   },
   "historyCleared": {
-    "message": "El historial de cambios de seguidores se ha borrado con éxito."
+    "message": "Historial de cambios de seguidores borrado exitosamente."
   },
   "settingsTitle": {
     "message": "Configuración"
   },
   "fontFamilyLabel": {
-    "message": "Familia de fuentes"
+    "message": "Fuente"
   },
   "themeTemplateLabel": {
     "message": "Tema de color"
@@ -103,5 +103,14 @@
   },
   "updateBtnText": {
     "message": "Actualizar"
+  },
+  "buttonStyleLabel": {
+    "message": "Estilo de botón clásico"
+  },
+  "followerChangeLabel": {
+    "message": "Mostrar cambios de seguidores"
+  },
+  "languageLabel": {
+    "message": "Idioma"
   }
 }

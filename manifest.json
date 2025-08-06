@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "WeXProfile Downloader",
-  "version": "2.52",
+  "version": "3.0.0",
   "default_locale": "tr",
   "description": "__MSG_appDesc__",
   "icons": {

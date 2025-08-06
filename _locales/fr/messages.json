@@ -3,13 +3,13 @@
     "message": "WeXProfile Downloader"
   },
   "appDesc": {
-    "message": "Téléchargez, prévisualisez facilement les photos de profil Instagram et suivez les changements de followers."
+    "message": "Téléchargez facilement les photos de profil Instagram, prévisualisez-les et suivez les changements d'abonnés."
   },
   "contextMenuTitle": {
-    "message": "Afficher les informations de profil avec WeXProfile"
+    "message": "Afficher les informations du profil avec WeXProfile"
   },
   "infoTitle": {
-    "message": "Info"
+    "message": "Information"
   },
   "profileReadyNotification": {
     "message": "Les informations de profil sont prêtes ! Cliquez sur l'icône WeXProfile pour voir les détails."
@@ -18,28 +18,28 @@
     "message": "Erreur"
   },
   "notInstagramPageError": {
-    "message": "Veuillez utiliser ceci sur une page de profil Instagram."
+    "message": "Veuillez utiliser sur une page de profil Instagram."
   },
   "profileFetchError": {
-    "message": "Une erreur s'est produite lors de la récupération des données de profil"
+    "message": "Une erreur est survenue lors de la récupération des informations du profil."
   },
   "notProfilePageError": {
-    "message": "Aucune page de profil Instagram valide trouvée. Veuillez visiter le profil d'un utilisateur."
+    "message": "Page de profil Instagram valide introuvable. Veuillez visiter un profil d'utilisateur."
   },
   "openHdPhotoError": {
-    "message": "Échec de l'ouverture de la photo de profil HD"
+    "message": "Impossible d'ouvrir la photo de profil HD."
   },
   "downloadPhotoError": {
-    "message": "Échec du téléchargement de la photo de profil"
+    "message": "Impossible de télécharger la photo de profil."
   },
   "downloadJsonTitle": {
-    "message": "Télécharger les données de profil au format JSON"
+    "message": "Télécharger les données du profil au format JSON"
   },
   "noCachedDataError": {
-    "message": "Aucune donnée de profil trouvée dans le cache. Veuillez actualiser la page et réessayer."
+    "message": "Aucune donnée de profil trouvée dans le cache. Veuillez rafraîchir la page et réessayer."
   },
   "popupFetchError": {
-    "message": "Échec de la récupération des données de profil. Veuillez actualiser la page et réessayer."
+    "message": "Impossible de récupérer les données du profil. Veuillez rafraîchir la page et réessayer."
   },
   "unknownActionError": {
     "message": "Action inconnue"
@@ -60,7 +60,7 @@
     "message": "Télécharger"
   },
   "defaultBio": {
-    "message": "Aucune biographie"
+    "message": "Aucune biographie disponible"
   },
   "privateLabel": {
     "message": "Privé"
@@ -78,22 +78,22 @@
     "message": "Effacer l'historique des abonnés"
   },
   "clearHistoryConfirm": {
-    "message": "Êtes-vous sûr de vouloir supprimer l'historique des changements d'abonnés enregistré pour tous les profils ?"
+    "message": "Êtes-vous sûr de vouloir supprimer l'historique des changements d'abonnés sauvegardé pour tous les profils ?"
   },
   "historyCleared": {
-    "message": "L'historique des changements d'abonnés a été supprimé avec succès."
+    "message": "Historique des changements d'abonnés effacé avec succès."
   },
   "settingsTitle": {
     "message": "Paramètres"
   },
   "fontFamilyLabel": {
-    "message": "Famille de polices"
+    "message": "Police"
   },
   "themeTemplateLabel": {
     "message": "Thème de couleur"
   },
   "imageLoadError": {
-    "message": "Une erreur s'est produite lors du chargement de la photo de profil."
+    "message": "Une erreur est survenue lors du chargement de la photo de profil."
   },
   "githubTitle": {
     "message": "Page GitHub"
@@ -103,5 +103,14 @@
   },
   "updateBtnText": {
     "message": "Mettre à jour"
+  },
+  "buttonStyleLabel": {
+    "message": "Style de bouton classique"
+  },
+  "followerChangeLabel": {
+    "message": "Afficher les changements d'abonnés"
+  },
+  "languageLabel": {
+    "message": "Langue"
   }
 }

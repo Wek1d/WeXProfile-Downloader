@@ -1,4 +1,7 @@
+// popup.js
+
 document.addEventListener('DOMContentLoaded', function() {
+  // Element referansları
   const profilePic = document.getElementById('profilePic');
   const usernameEl = document.getElementById('username');
   const fullNameEl = document.getElementById('fullName');
@@ -16,162 +19,123 @@ document.addEventListener('DOMContentLoaded', function() {
   const clearHistoryBtn = document.getElementById('clearHistoryBtn');
   const loader = document.querySelector('.loader');
   const profileContainer = document.querySelector('.profile-container');
+  const appContainer = document.querySelector('.app-container');
+  const githubBtn = document.getElementById('githubBtn');
+
+  // Ayarlar popup referansları
   const settingsPopup = document.getElementById('settingsPopup');
   const closeSettingsBtn = document.getElementById('closeSettingsBtn');
   const fontSelect = document.getElementById('fontSelect');
   const themeOptions = document.querySelectorAll('.theme-option');
-  const githubBtn = document.getElementById('githubBtn');
+  const languageSelect = document.getElementById('languageSelect');
+  const buttonStyleToggle = document.getElementById('buttonStyleToggle');
+  const followerChangeToggle = document.getElementById('followerChangeToggle');
+
+  // Güncelleme referansları
   const updateNotification = document.getElementById('updateNotification');
   const latestVersionEl = document.getElementById('latestVersion');
   const updateBtn = document.getElementById('updateBtn');
 
+  // Varsayılan ayarlar
   let currentSettings = {
     darkMode: true,
-    fontFamily: 'Poppins, sans-serif',
-    themeTemplate: 'default'
+    fontFamily: "'Poppins', sans-serif",
+    themeTemplate: 'default',
+    buttonStyle: 'modern',
+    showFollowerChange: true,
+    language: 'tr'
   };
-
+  
+  // -- Fonksiyonlar --
+  
   function applySettings(settings) {
     currentSettings = settings;
+    
+    // Tema (Açık/Koyu)
     document.body.setAttribute('data-theme', settings.darkMode ? 'dark' : 'light');
-    document.body.style.fontFamily = settings.fontFamily;
-    applyThemeTemplate(settings.themeTemplate);
+    
+    // Yazı Tipi
+    document.body.style.setProperty('--global-font', settings.fontFamily);
+    
+    // Renk Teması Şablonu
+    applyThemeTemplate(settings.themeTemplate, settings.darkMode);
+
+    // Buton Stili
+    appContainer.setAttribute('data-button-style', settings.buttonStyle === 'classic' ? 'classic' : 'modern');
+    
+    // UI elemanlarını ayarla
+    fontSelect.value = settings.fontFamily;
+    languageSelect.value = settings.language;
+    buttonStyleToggle.checked = settings.buttonStyle === 'classic';
+    followerChangeToggle.checked = settings.showFollowerChange;
+    document.querySelector('.theme-option.active')?.classList.remove('active');
+    document.querySelector(`.theme-option[data-theme="${settings.themeTemplate}"]`)?.classList.add('active');
   }
   
-  function applyThemeTemplate(template) {
+  function applyThemeTemplate(template, isDarkMode) {
     const root = document.documentElement;
-    switch (template) {
-      case 'default':
-        root.style.setProperty('--primary-gradient-light', 'linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)');
-        root.style.setProperty('--secondary-gradient-light', 'linear-gradient(45deg, #405DE6, #5851DB)');
-        root.style.setProperty('--primary-gradient-dark', 'linear-gradient(45deg, #0095f6, #5851db)');
-        root.style.setProperty('--secondary-gradient-dark', 'linear-gradient(45deg, #385185, #1e1e1e)');
-        break;
-      case 'blue':
-        root.style.setProperty('--primary-gradient-light', 'linear-gradient(45deg, #0095f6, #0076a8)');
-        root.style.setProperty('--secondary-gradient-light', 'linear-gradient(45deg, #0076a8, #005f7f)');
-        root.style.setProperty('--primary-gradient-dark', 'linear-gradient(45deg, #42a5f5, #2196f3)');
-        root.style.setProperty('--secondary-gradient-dark', 'linear-gradient(45deg, #2196f3, #0d47a1)');
-        break;
-      case 'green':
-        root.style.setProperty('--primary-gradient-light', 'linear-gradient(45deg, #4CAF50, #2E7D32)');
-        root.style.setProperty('--secondary-gradient-light', 'linear-gradient(45deg, #2E7D32, #1B5E20)');
-        root.style.setProperty('--primary-gradient-dark', 'linear-gradient(45deg, #81c784, #4caf50)');
-        root.style.setProperty('--secondary-gradient-dark', 'linear-gradient(45deg, #4caf50, #1b5e20)');
-        break;
-      case 'purple':
-        root.style.setProperty('--primary-gradient-light', 'linear-gradient(45deg, #673AB7, #4527A0)');
-        root.style.setProperty('--secondary-gradient-light', 'linear-gradient(45deg, #4527A0, #311B92)');
-        root.style.setProperty('--primary-gradient-dark', 'linear-gradient(45deg, #9575cd, #673ab7)');
-        root.style.setProperty('--secondary-gradient-dark', 'linear-gradient(45deg, #673ab7, #311b92)');
-        break;
-      case 'pink':
-        root.style.setProperty('--primary-gradient-light', 'linear-gradient(45deg, #ff69b4, #ff1493)');
-        root.style.setProperty('--secondary-gradient-light', 'linear-gradient(45deg, #ff1493, #c71585)');
-        root.style.setProperty('--primary-gradient-dark', 'linear-gradient(45deg, #ff80ab, #ff4081)');
-        root.style.setProperty('--secondary-gradient-dark', 'linear-gradient(45deg, #ff4081, #d81b60)');
-        break;
-    }
+    // Farklı temaların açık ve koyu mod renklerini tanımla
+    const themes = {
+      default: { light: ['linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)', 'linear-gradient(45deg, #405DE6, #5851DB)'], dark: ['linear-gradient(45deg, #0095f6, #5851db)', 'linear-gradient(45deg, #385185, #1e1e1e)'] },
+      blue: { light: ['linear-gradient(45deg, #0095f6, #0076a8)', 'linear-gradient(45deg, #0076a8, #005f7f)'], dark: ['linear-gradient(45deg, #42a5f5, #2196f3)', 'linear-gradient(45deg, #2196f3, #0d47a1)'] },
+      green: { light: ['linear-gradient(45deg, #4CAF50, #2E7D32)', 'linear-gradient(45deg, #2E7D32, #1B5E20)'], dark: ['linear-gradient(45deg, #81c784, #4caf50)', 'linear-gradient(45deg, #4caf50, #1b5e20)'] },
+      purple: { light: ['linear-gradient(45deg, #673AB7, #4527A0)', 'linear-gradient(45deg, #4527A0, #311B92)'], dark: ['linear-gradient(45deg, #9575cd, #673ab7)', 'linear-gradient(45deg, #673ab7, #311b92)'] },
+      pink: { light: ['linear-gradient(45deg, #ff69b4, #ff1493)', 'linear-gradient(45deg, #ff1493, #c71585)'], dark: ['linear-gradient(45deg, #ff80ab, #ff4081)', 'linear-gradient(45deg, #ff4081, #d81b60)'] }
+    };
 
-    if (currentSettings.darkMode) {
-      root.style.setProperty('--primary-gradient', `var(--primary-gradient-dark)`);
-      root.style.setProperty('--secondary-gradient', `var(--secondary-gradient-dark)`);
-    } else {
-      root.style.setProperty('--primary-gradient', `var(--primary-gradient-light)`);
-      root.style.setProperty('--secondary-gradient', `var(--secondary-gradient-light)`);
-    }
+    const selectedTheme = themes[template] || themes.default;
+    const [primary, secondary] = isDarkMode ? selectedTheme.dark : selectedTheme.light;
+
+    root.style.setProperty('--primary-gradient', primary);
+    root.style.setProperty('--secondary-gradient', secondary);
   }
 
-  function localizeHtml() {
-    document.querySelectorAll('[data-i18n]').forEach(element => {
-      const message = chrome.i18n.getMessage(element.dataset.i18n);
-      if (message) {
-        element.textContent = message;
-      }
-    });
-    usernameEl.title = chrome.i18n.getMessage("copyUsernameTitle");
-    themeToggle.title = chrome.i18n.getMessage("changeThemeTitle");
-    settingsBtn.title = chrome.i18n.getMessage("settingsTitle");
-    clearHistoryBtn.title = chrome.i18n.getMessage("clearHistoryTitle");
-    downloadJsonBtn.title = chrome.i18n.getMessage("downloadJsonTitle");
-    githubBtn.title = chrome.i18n.getMessage("githubTitle");
+  async function localizeHtml(lang = 'tr') {
+    try {
+        const url = chrome.runtime.getURL(`_locales/${lang}/messages.json`);
+        const response = await fetch(url);
+        if (!response.ok) {
+            console.warn(`Dil dosyası yüklenemedi: ${lang}. Varsayılan (tr) kullanılıyor.`);
+            if (lang !== 'tr') return localizeHtml('tr'); // Hata durumunda Türkçe'ye dön
+            return;
+        }
+        const messages = await response.json();
+        
+        document.querySelectorAll('[data-i18n]').forEach(element => {
+            const key = element.dataset.i18n;
+            if (messages[key]) {
+                element.textContent = messages[key].message;
+            }
+        });
+        // Title'ları da güncelle
+        usernameEl.title = messages.copyUsernameTitle.message;
+        themeToggle.title = messages.changeThemeTitle.message;
+        settingsBtn.title = messages.settingsTitle.message;
+        clearHistoryBtn.title = messages.clearHistoryTitle.message;
+        downloadJsonBtn.title = messages.downloadJsonTitle.message;
+        githubBtn.title = messages.githubTitle.message;
+    } catch(e) {
+        console.error("Dil dosyası işlenirken hata oluştu:", e);
+    }
   }
-
-  chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, (response) => {
-    if (response && response.success) {
-      applySettings(response.settings);
-      fontSelect.value = response.settings.fontFamily;
-      document.querySelector(`.theme-option[data-theme="${response.settings.themeTemplate}"]`)?.classList.add('active');
-
-      if (response.updateInfo.hasUpdate) {
-        latestVersionEl.textContent = response.updateInfo.latestVersion;
-        updateNotification.style.display = 'flex';
-      }
-    }
-  });
-
-  // Popup açıldığında güncelleme kontrolünü tekrar tetikle
-  chrome.runtime.sendMessage({ action: 'checkUpdatesNow' });
-
-  localizeHtml();
-
-  themeToggle.addEventListener('click', function() {
-    currentSettings.darkMode = !currentSettings.darkMode;
+  
+  function saveSettings() {
     chrome.runtime.sendMessage({ action: 'setSettings', settings: currentSettings });
-    applySettings(currentSettings);
-  });
-
-  settingsBtn.addEventListener('click', () => {
-    settingsPopup.style.display = 'flex';
-  });
-
-  closeSettingsBtn.addEventListener('click', () => {
-    settingsPopup.style.display = 'none';
-  });
-
-  fontSelect.addEventListener('change', (e) => {
-    currentSettings.fontFamily = e.target.value;
-    chrome.runtime.sendMessage({ action: 'setSettings', settings: currentSettings });
-    applySettings(currentSettings);
-  });
-
-  themeOptions.forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelector('.theme-option.active')?.classList.remove('active');
-      btn.classList.add('active');
-      currentSettings.themeTemplate = btn.dataset.theme;
-      chrome.runtime.sendMessage({ action: 'setSettings', settings: currentSettings });
-      applySettings(currentSettings);
-    });
-  });
-
-  githubBtn.addEventListener('click', () => {
-      chrome.runtime.sendMessage({ action: 'openGithub' });
-  });
-
-  updateBtn.addEventListener('click', () => {
-      chrome.runtime.sendMessage({ action: 'openGithub' });
-  });
-
-  chrome.runtime.sendMessage({ action: 'getProfileData' }, function(response) {
-    if (response && response.success) {
-      displayProfileData(response.data);
-    } else {
-      showError(response.error || chrome.i18n.getMessage("popupFetchError"));
-    }
-  });
+  }
 
   function displayProfileData(data) {
     loader.style.display = 'block';
     profilePic.classList.remove('loaded');
 
-    usernameEl.textContent = `@${data.username}`;
+    // Önceki badge'leri temizle
+    usernameEl.innerHTML = `@${data.username}`; 
     fullNameEl.textContent = data.fullName;
 
     usernameEl.addEventListener('click', () => {
-        navigator.clipboard.writeText(data.username).then(() => {
+        navigator.clipboard.writeText(data.username).then(async () => {
             const originalText = usernameEl.title;
-            usernameEl.title = chrome.i18n.getMessage("copiedText");
+            const copiedText = (await getMessage('copiedText')) || "Kopyalandı!";
+            usernameEl.title = copiedText;
             setTimeout(() => { usernameEl.title = originalText; }, 1500);
         });
     });
@@ -184,56 +148,66 @@ document.addEventListener('DOMContentLoaded', function() {
     if (data.isPrivate) {
       const privateBadge = document.createElement('span');
       privateBadge.className = 'private-badge';
-      privateBadge.textContent = chrome.i18n.getMessage("privateLabel");
+      privateBadge.textContent = "Gizli"; // Bu sabit kalabilir, localize edilebilir.
       usernameEl.appendChild(privateBadge);
     }
 
-    bioEl.textContent = data.biography || chrome.i18n.getMessage("noBioText");
+    bioEl.textContent = data.biography || "Biyografi yok.";
     postsCountEl.textContent = formatNumber(data.posts);
     followersCountEl.textContent = formatNumber(data.followers);
     followingCountEl.textContent = formatNumber(data.following);
 
-    displayChange(followersChangeEl, data.followerChange);
-    displayChange(followingChangeEl, data.followingChange);
+    if (currentSettings.showFollowerChange) {
+      displayChange(followersChangeEl, data.followerChange);
+      displayChange(followingChangeEl, data.followingChange);
+    } else {
+      followersChangeEl.style.display = 'none';
+      followingChangeEl.style.display = 'none';
+    }
 
-    const imageDataURL = data.profilePicUrlForPreview;
-    if (imageDataURL) {
-      profilePic.src = imageDataURL;
+
+    if (data.profilePicUrlForPreview) {
+      profilePic.src = data.profilePicUrlForPreview;
       profilePic.onload = () => {
         profilePic.classList.add('loaded');
         loader.style.display = 'none';
       };
       profilePic.onerror = () => {
         loader.style.display = 'none';
-        showError(chrome.i18n.getMessage("imageLoadError"));
+        showError("Profil fotoğrafı yüklenemedi.");
       }
     } else {
       loader.style.display = 'none';
-      showError(chrome.i18n.getMessage("imageLoadError"));
+      showError("Profil fotoğrafı verisi alınamadı.");
     }
-
-    openHdBtn.addEventListener('click', () => chrome.runtime.sendMessage({ action: 'openHdPhoto' }));
-    downloadBtn.addEventListener('click', () => chrome.runtime.sendMessage({ action: 'downloadPhoto' }));
-    downloadJsonBtn.addEventListener('click', () => chrome.runtime.sendMessage({ action: 'downloadJSON' }));
+    
+    // Butonları tekrar etkinleştir
+    openHdBtn.disabled = false;
+    downloadBtn.disabled = false;
+    downloadJsonBtn.disabled = false;
   }
   
   function displayChange(element, change) {
     element.textContent = '';
     element.className = 'change-indicator';
+    element.style.display = 'inline-block'; // Görünür yap
     if (change !== 0) {
       const sign = change > 0 ? '+' : '';
       element.textContent = `${sign}${formatNumber(change)}`;
       element.classList.add(change > 0 ? 'positive' : 'negative');
+    } else {
+        element.style.display = 'none'; // Değişim yoksa gizle
     }
   }
 
   function showError(message) {
     loader.style.display = 'none';
     profileContainer.innerHTML = `
-      <div class="error-message" style="text-align: center; padding: 20px; color: var(--error-color);">
-        <i class="fas fa-exclamation-circle" style="font-size: 24px; margin-bottom: 10px;"></i>
+      <div class="error-message" style="text-align: center; padding: 20px; color: var(--error-color); font-size: 14px;">
+        <i class="fas fa-exclamation-triangle" style="font-size: 28px; margin-bottom: 12px; display: block;"></i>
         <p>${message}</p>
       </div>`;
+    // Butonları devre dışı bırak
     openHdBtn.disabled = true;
     downloadBtn.disabled = true;
     downloadJsonBtn.disabled = true;
@@ -241,13 +215,102 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function formatNumber(num) {
     if (typeof num !== 'number') return num;
-    if (num >= 1000000) return (num / 1000000).toFixed(1).replace('.0', '') + 'M';
-    if (num >= 10000) return (num / 1000).toFixed(1).replace('.0', '') + 'K';
-    return num.toString();
+    if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+    return num.toLocaleString('tr-TR');
+  }
+
+  async function getMessage(key) {
+      const url = chrome.runtime.getURL(`_locales/${currentSettings.language}/messages.json`);
+      const response = await fetch(url);
+      const messages = await response.json();
+      return messages[key]?.message;
   }
   
-  clearHistoryBtn.addEventListener('click', () => {
-    if (confirm(chrome.i18n.getMessage("clearHistoryConfirm"))) {
+  // -- Olay Dinleyicileri --
+
+  // Ayarları ve güncellemeleri yükle
+  chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, (response) => {
+    if (response && response.success) {
+      applySettings(response.settings);
+      localizeHtml(response.settings.language);
+
+      if (response.updateInfo.hasUpdate) {
+        latestVersionEl.textContent = response.updateInfo.latestVersion;
+        updateNotification.style.display = 'flex';
+      }
+    }
+  });
+
+  // Popup açıldığında profil verisini çek
+  chrome.runtime.sendMessage({ action: 'getProfileData' }, function(response) {
+    if (chrome.runtime.lastError) {
+        showError("Beklenmedik bir hata oluştu: " + chrome.runtime.lastError.message);
+        return;
+    }
+    if (response && response.success) {
+      displayProfileData(response.data);
+    } else {
+      showError(response.error || "Profil verileri alınamadı. Sayfayı yenileyip tekrar deneyin.");
+    }
+  });
+
+  themeToggle.addEventListener('click', function() {
+    currentSettings.darkMode = !currentSettings.darkMode;
+    saveSettings();
+    applySettings(currentSettings);
+  });
+  
+  settingsBtn.addEventListener('click', () => settingsPopup.style.display = 'flex');
+  closeSettingsBtn.addEventListener('click', () => settingsPopup.style.display = 'none');
+  
+  fontSelect.addEventListener('change', (e) => {
+    currentSettings.fontFamily = e.target.value;
+    saveSettings();
+    applySettings(currentSettings);
+  });
+
+  languageSelect.addEventListener('change', (e) => {
+    currentSettings.language = e.target.value;
+    saveSettings();
+    localizeHtml(currentSettings.language);
+  });
+  
+  buttonStyleToggle.addEventListener('change', (e) => {
+    currentSettings.buttonStyle = e.target.checked ? 'classic' : 'modern';
+    saveSettings();
+    applySettings(currentSettings);
+  });
+
+  followerChangeToggle.addEventListener('change', (e) => {
+    currentSettings.showFollowerChange = e.target.checked;
+    saveSettings();
+    // Veriyi yeniden render etmeye gerek yok, sadece göstergeyi gizle/göster
+    const displayValue = e.target.checked ? 'inline-block' : 'none';
+    followersChangeEl.style.display = displayValue;
+    followingChangeEl.style.display = displayValue;
+    // Eğer o an değişim 0 ise zaten gizlidir, bu yüzden tekrar render etmeye gerek yok.
+    // Eğer render gerekirse `getProfileData` tekrar çağrılabilir.
+  });
+  
+  themeOptions.forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentSettings.themeTemplate = btn.dataset.theme;
+      saveSettings();
+      applySettings(currentSettings);
+    });
+  });
+
+  githubBtn.addEventListener('click', () => chrome.runtime.sendMessage({ action: 'openGithub' }));
+  updateBtn.addEventListener('click', () => chrome.runtime.sendMessage({ action: 'openGithub' }));
+  
+  openHdBtn.addEventListener('click', () => chrome.runtime.sendMessage({ action: 'openHdPhoto' }));
+  downloadBtn.addEventListener('click', () => chrome.runtime.sendMessage({ action: 'downloadPhoto' }));
+  downloadJsonBtn.addEventListener('click', () => chrome.runtime.sendMessage({ action: 'downloadJSON' }));
+
+  clearHistoryBtn.addEventListener('click', async () => {
+    const confirmationMessage = (await getMessage('clearHistoryConfirm')) || "Emin misiniz?";
+    if (confirm(confirmationMessage)) {
       chrome.runtime.sendMessage({ action: 'clearHistory' }, (response) => {
         if (response && response.success) {
           window.location.reload();
@@ -255,4 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
   });
+
+  // Popup açıldığında güncelleme kontrolünü tekrar tetikle
+  chrome.runtime.sendMessage({ action: 'checkUpdatesNow' });
 });

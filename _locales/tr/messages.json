@@ -87,7 +87,7 @@
     "message": "Ayarlar"
   },
   "fontFamilyLabel": {
-    "message": "Font Ailesi"
+    "message": "Yazı Tipi"
   },
   "themeTemplateLabel": {
     "message": "Renk Teması"
@@ -103,5 +103,14 @@
   },
   "updateBtnText": {
     "message": "Güncelle"
+  },
+  "buttonStyleLabel": {
+    "message": "Klasik Buton Stili"
+  },
+  "followerChangeLabel": {
+    "message": "Takipçi Değişimini Göster"
+  },
+  "languageLabel": {
+    "message": "Dil"
   }
 }

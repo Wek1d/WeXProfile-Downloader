@@ -1,5 +1,4 @@
-// Service Worker'lar olay bazlı çalışır ve sürekli aktif kalmaz.
-// Bu yüzden verileri ve durumu global değişkenler yerine chrome.storage'da tutmak daha güvenilirdir.
+// background.js
 
 let currentProfileFetchPromise = null;
 let currentProfileFetchUrl = null;
@@ -7,10 +6,16 @@ let currentProfileFetchUrl = null;
 const USER_AGENT_RULE_ID = 1;
 const PROFILE_HISTORY_KEY = 'profileHistory';
 const HISTORY_LIMIT = 100;
+const CACHE_TTL = 5 * 60 * 1000; // 5 Dakika (milisaniye cinsinden)
+
+// Yeni ve güncellenmiş User-Agent listesi
 const USER_AGENTS = [
-  'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Instagram 300.0.0.0.0',
-  'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36 Instagram 300.0.0.0.0',
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Instagram 271.0.0.0.0'
+  "Mozilla/5.0 (Linux; Android 15; Pixel 8 Build/AP4A.250105.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/132.0.6834.163 Mobile Safari/537.36 Instagram 388.0.0.34.75 Android (35/15; 450dpi; 1080x2340; samsung; SM-A556E; a55x; s5e8845; es_ES; 760368464; IABMV/1)",
+  "Mozilla/5.0 (Linux; Android 14; SM-A245M Build/UP1A.231005.007; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/137.0.7151.115 Mobile Safari/537.36 Instagram 388.0.0.30.75 Android (34/14; 450dpi; 1080x2128; samsung; SM-A245M; a24; mt6789; pt_BR; 759386708) Android. phone.",
+  "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Instagram 300.0.0.0.0",
+  "Instagram 388.0.0.30.75 Android (33/13; 450dpi; 1080x2301; samsung; SM-A135M; a13; exynos850; pt_BR; 759386703)",
+  "Mozilla/5.0 (Linux; Android 14; CLK-LX2 Build/HONORCLK-L42; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/138.0.7204.143 Mobile Safari/537.36 Instagram 388.0.0.34.75 Android (34/14; 480dpi; 1080x2304; HONOR; CLK-LX2; HNCLK-Q; qcom; pt_BR; 760368464; IABMV/1) Android. mobile.",
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 ];
 const GITHUB_REPO_URL = 'https://api.github.com/repos/Wek1d/WeXProfile-Downloader/releases/latest';
 
@@ -23,7 +28,7 @@ async function updateUserAgentRule(userAgentString) {
       requestHeaders: [{ header: 'user-agent', operation: 'set', value: userAgentString }]
     },
     condition: {
-      urlFilter: 'i.instagram.com/api/v1/users/',
+      urlFilter: 'i.instagram.com/api/v1/',
       resourceTypes: ['xmlhttprequest']
     }
   };
@@ -33,56 +38,52 @@ async function updateUserAgentRule(userAgentString) {
       addRules: [rule]
     });
   } catch (error) {
-    console.error("User-Agent kuralı güncellenirken hata:", error);
+    console.error("WeXProfile Hata: User-Agent kuralı güncellenemedi.", error);
   }
 }
 
 async function checkUpdates() {
-  try {
-    const response = await fetch(GITHUB_REPO_URL);
-    if (!response.ok) {
-      console.error('GitHub API\'den sürüm bilgisi alınamadı:', response.statusText);
-      return;
+    try {
+        const response = await fetch(GITHUB_REPO_URL);
+        if (!response.ok) { return; }
+        const data = await response.json();
+        const latestVersion = data.tag_name.replace('v', '');
+        const currentVersion = chrome.runtime.getManifest().version;
+        if (compareVersions(latestVersion, currentVersion) > 0) {
+            chrome.storage.local.set({ hasUpdate: true, latestVersion: data.tag_name });
+        } else {
+            chrome.storage.local.set({ hasUpdate: false });
+        }
+    } catch (error) {
+        chrome.storage.local.set({ hasUpdate: false });
     }
-    const data = await response.json();
-    const latestVersion = data.tag_name;
-    const currentVersion = chrome.runtime.getManifest().version;
-
-    if (compareVersions(latestVersion, currentVersion) > 0) {
-      chrome.storage.local.set({ hasUpdate: true, latestVersion: latestVersion });
-    } else {
-      chrome.storage.local.set({ hasUpdate: false });
-    }
-  } catch (error) {
-    console.error('Güncelleme kontrolü sırasında hata:', error);
-    chrome.storage.local.set({ hasUpdate: false });
-  }
 }
-
 function compareVersions(v1, v2) {
-  const parts1 = v1.replace(/^v/, '').split('.').map(Number);
-  const parts2 = v2.replace(/^v/, '').split('.').map(Number);
-  for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
-    const p1 = parts1[i] || 0;
-    const p2 = parts2[i] || 0;
-    if (p1 > p2) return 1;
-    if (p1 < p2) return -1;
-  }
-  return 0;
+    const parts1 = v1.split('.').map(Number);
+    const parts2 = v2.split('.').map(Number);
+    for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
+        const p1 = parts1[i] || 0;
+        const p2 = parts2[i] || 0;
+        if (p1 > p2) return 1;
+        if (p1 < p2) return -1;
+    }
+    return 0;
 }
-
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "wexProfileDownload",
-    title: chrome.i18n.getMessage("contextMenuTitle"),
+    title: "WeXProfile ile Profil Bilgilerini Göster",
     contexts: ["page"],
     documentUrlPatterns: ["*://*.instagram.com/*"]
   });
   chrome.storage.sync.set({
     darkMode: true,
-    fontFamily: 'Poppins, sans-serif',
-    themeTemplate: 'default'
+    fontFamily: "'Poppins', sans-serif",
+    themeTemplate: 'default',
+    buttonStyle: 'modern',
+    showFollowerChange: true,
+    language: 'tr'
   });
   chrome.storage.local.set({ [PROFILE_HISTORY_KEY]: {} });
   checkUpdates();
@@ -95,13 +96,14 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 });
 
 chrome.action.onClicked.addListener((tab) => {
-  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-    if (tabs[0] && tabs[0].url.includes("instagram.com")) {
-      handleProfileAnalysis(tabs[0].url, tabs[0].id, false);
-    } else {
-      sendNotification(chrome.i18n.getMessage("errorTitle"), chrome.i18n.getMessage("notInstagramPageError"));
-    }
-  });
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        const currentTab = tabs[0];
+        if (currentTab && currentTab.url && currentTab.url.includes("instagram.com")) {
+            chrome.action.setPopup({ tabId: currentTab.id, popup: "popup.html" });
+        } else {
+            sendNotification("Hata", "Lütfen bir Instagram sayfasında kullanın.");
+        }
+    });
 });
 
 async function handleProfileAnalysis(url, tabId, isContextMenuClick) {
@@ -109,23 +111,23 @@ async function handleProfileAnalysis(url, tabId, isContextMenuClick) {
     return currentProfileFetchPromise;
   }
   currentProfileFetchUrl = url;
+
   currentProfileFetchPromise = fetchProfileData(url)
     .then(async (data) => {
-      await chrome.storage.local.set({ cachedProfile: data, cacheUrl: url });
-      chrome.action.setPopup({ tabId: tabId, popup: "popup.html" }, () => {
-        if (chrome.runtime.lastError) {
-          console.error("Popup setleme hatası:", chrome.runtime.lastError.message);
-        } else if (isContextMenuClick) {
-          sendNotification(chrome.i18n.getMessage("infoTitle"), chrome.i18n.getMessage("profileReadyNotification"));
-        }
+      await chrome.storage.local.set({
+          cachedProfile: data,
+          cacheUrl: url,
+          cacheTimestamp: Date.now()
       });
+      if (isContextMenuClick) {
+        sendNotification("Bilgi", "Profil bilgileri hazır! Detayları görmek için WeXProfile ikonuna tıklayın.");
+      }
       return data;
     })
     .catch(async (error) => {
-      console.error("WeXProfile Error:", error);
-      sendNotification(chrome.i18n.getMessage("errorTitle"), `${chrome.i18n.getMessage("profileFetchError")}: ${error.message}`);
-      await chrome.storage.local.remove(['cachedProfile', 'cacheUrl']);
-      currentProfileFetchUrl = null;
+      console.error("WeXProfile Hata: Profil analizi başarısız oldu.", error.message);
+      sendNotification("Hata", `${error.message}`);
+      await chrome.storage.local.remove(['cachedProfile', 'cacheUrl', 'cacheTimestamp']);
       throw error;
     })
     .finally(() => {
@@ -139,19 +141,24 @@ async function handleProfileAnalysis(url, tabId, isContextMenuClick) {
 
 function getInstagramUsername(link) {
   return new Promise((resolve, reject) => {
-    const profileRegex = /(?<=instagram\.com\/)[A-Za-z0-9_.]+(?=\/|$)/;
-    const match = link.match(profileRegex);
-    if (match && match[0] && !['p', 'reels', 'stories', 'tv'].includes(match[0])) {
-      resolve(match[0]);
-    } else {
-      reject(new Error(chrome.i18n.getMessage("notProfilePageError")));
+    try {
+      const url = new URL(link);
+      const pathSegments = url.pathname.split('/').filter(Boolean);
+      const forbiddenSegments = ['p', 'reels', 'stories', 'tv', 'explore', 'direct'];
+      if (pathSegments.length > 0 && !forbiddenSegments.includes(pathSegments[0])) {
+        resolve(pathSegments[0]);
+      } else {
+        reject(new Error("Geçerli bir profil sayfası değil. Lütfen bir kullanıcı profilini ziyaret edin."));
+      }
+    } catch(e) {
+      reject(new Error("Geçersiz URL formatı."));
     }
   });
 }
 
 async function fetchImageAsDataURL(imageUrl) {
   try {
-    const response = await fetch(imageUrl);
+    const response = await fetch(imageUrl, { mode: 'cors' });
     if (!response.ok) throw new Error(`Resim çekilemedi: ${response.statusText}`);
     const blob = await response.blob();
     return new Promise((resolve, reject) => {
@@ -161,85 +168,80 @@ async function fetchImageAsDataURL(imageUrl) {
       reader.readAsDataURL(blob);
     });
   } catch (error) {
-    console.error("Resim Data URL'e dönüştürülürken hata:", error);
+    console.error("WeXProfile Hata: Resim Data URL'e dönüştürülemedi.", error);
     return null;
   }
 }
 
 async function updateProfileHistoryAndGetDataWithChanges(newUserData) {
-  const storageData = await chrome.storage.local.get(PROFILE_HISTORY_KEY);
-  let history = storageData[PROFILE_HISTORY_KEY] || {};
-
-  const userId = newUserData.id;
-  const oldUserData = history[userId];
-
-  if (oldUserData) {
-    newUserData.followerChange = newUserData.followers - oldUserData.followers;
-    newUserData.followingChange = newUserData.following - oldUserData.following;
-  } else {
+    const { [PROFILE_HISTORY_KEY]: history = {} } = await chrome.storage.local.get(PROFILE_HISTORY_KEY);
+    const userId = newUserData.id;
+    const oldUserData = history[userId];
     newUserData.followerChange = 0;
     newUserData.followingChange = 0;
-  }
-
-  history[userId] = {
-    followers: newUserData.followers,
-    following: newUserData.following,
-    timestamp: Date.now()
-  };
-
-  const historyKeys = Object.keys(history);
-  if (historyKeys.length > HISTORY_LIMIT) {
-    const oldestKey = historyKeys.sort((a, b) => history[a].timestamp - history[b].timestamp)[0];
-    delete history[oldestKey];
-  }
-
-  await chrome.storage.local.set({ [PROFILE_HISTORY_KEY]: history });
-
-  return newUserData;
+    if (oldUserData) {
+        newUserData.followerChange = newUserData.followers - oldUserData.followers;
+        newUserData.followingChange = newUserData.following - oldUserData.following;
+    }
+    history[userId] = {
+        followers: newUserData.followers,
+        following: newUserData.following,
+        timestamp: Date.now()
+    };
+    const historyKeys = Object.keys(history);
+    if (historyKeys.length > HISTORY_LIMIT) {
+        const oldestKey = historyKeys.sort((a, b) => history[a].timestamp - history[b].timestamp)[0];
+        delete history[oldestKey];
+    }
+    await chrome.storage.local.set({ [PROFILE_HISTORY_KEY]: history });
+    return newUserData;
 }
 
-async function getInstagramUserInfo(username, userAgentIndex = 0) {
+async function fetchWithUARetry(url, options = {}, userAgentIndex = 0) {
+    if (userAgentIndex >= USER_AGENTS.length) {
+        throw new Error("Tüm User-Agent denemeleri başarısız oldu. Lütfen bir süre sonra tekrar deneyin.");
+    }
+    await updateUserAgentRule(USER_AGENTS[userAgentIndex]);
+    try {
+        const response = await fetch(url, options);
+        if ([401, 403, 429].includes(response.status)) {
+            const errorData = await response.json().catch(() => ({}));
+            const message = errorData.message || `API ${response.status} hatası verdi.`;
+            console.warn(`WeXProfile Uyarı: User-Agent #${userAgentIndex + 1} ile istek başarısız oldu. (${message}). Bir sonraki deneniyor...`);
+            return fetchWithUARetry(url, options, userAgentIndex + 1);
+        }
+        if (!response.ok) {
+           const text = await response.text();
+           throw new Error(`Instagram API yanıtı başarısız: ${response.status} - ${text}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.warn(`WeXProfile Uyarı: User-Agent #${userAgentIndex + 1} ile ağ hatası. Bir sonraki deneniyor...`, error);
+        return fetchWithUARetry(url, options, userAgentIndex + 1);
+    }
+}
+
+async function getInstagramUserInfo(username) {
   const url = `https://i.instagram.com/api/v1/users/web_profile_info/?username=${username}`;
-  await updateUserAgentRule(USER_AGENTS[userAgentIndex]);
-
-  try {
-    const res = await fetch(url);
-    if (!res.ok) {
-      if (userAgentIndex < USER_AGENTS.length - 1) {
-        console.warn(`API isteği ${userAgentIndex + 1}. User-Agent ile başarısız oldu. Tekrar deneniyor...`);
-        return getInstagramUserInfo(username, userAgentIndex + 1);
-      }
-      const text = await res.text();
-      throw new Error(`Instagram API yanıtı başarısız: ${res.status} - ${text}`);
-    }
-    const out = await res.json();
-
-    if (out.data && out.data.user) {
-      const user = out.data.user;
-      const profilePicDataURL = await fetchImageAsDataURL(user.profile_pic_url);
-
-      let userData = {
-        id: user.id,
-        username: user.username,
-        fullName: user.full_name,
-        biography: user.biography,
-        followers: user.edge_followed_by?.count || 0,
-        following: user.edge_follow?.count || 0,
-        posts: user.edge_owner_to_timeline_media?.count || 0,
-        isPrivate: user.is_private,
-        isVerified: user.is_verified,
-        profilePicUrlForPreview: profilePicDataURL
-      };
-      return await updateProfileHistoryAndGetDataWithChanges(userData);
-    } else {
-      throw new Error("API yanıtında kullanıcı bilgileri bulunamadı.");
-    }
-  } catch (error) {
-    if (userAgentIndex < USER_AGENTS.length - 1) {
-      console.warn(`API isteği ${userAgentIndex + 1}. User-Agent ile başarısız oldu. Tekrar deneniyor...`);
-      return getInstagramUserInfo(username, userAgentIndex + 1);
-    }
-    throw error;
+  const out = await fetchWithUARetry(url);
+  if (out.data && out.data.user) {
+    const user = out.data.user;
+    const profilePicDataURL = await fetchImageAsDataURL(user.profile_pic_url);
+    let userData = {
+      id: user.id,
+      username: user.username,
+      fullName: user.full_name,
+      biography: user.biography,
+      followers: user.edge_followed_by?.count || 0,
+      following: user.edge_follow?.count || 0,
+      posts: user.edge_owner_to_timeline_media?.count || 0,
+      isPrivate: user.is_private,
+      isVerified: user.is_verified,
+      profilePicUrlForPreview: profilePicDataURL
+    };
+    return await updateProfileHistoryAndGetDataWithChanges(userData);
+  } else {
+    throw new Error("API yanıtında beklenen kullanıcı verisi bulunamadı.");
   }
 }
 
@@ -248,31 +250,17 @@ async function fetchProfileData(url) {
   return getInstagramUserInfo(username);
 }
 
-async function getHdProfilePhotoUrl(instagramUserId, userAgentIndex = 0) {
+async function getHdProfilePhotoUrl(instagramUserId) {
   const url = `https://i.instagram.com/api/v1/users/${instagramUserId}/info/`;
-  await updateUserAgentRule(USER_AGENTS[userAgentIndex]);
-
   try {
-    const res = await fetch(url);
-    if (!res.ok) {
-      if (userAgentIndex < USER_AGENTS.length - 1) {
-        console.warn(`HD fotoğraf isteği ${userAgentIndex + 1}. User-Agent ile başarısız oldu. Tekrar deneniyor...`);
-        return getHdProfilePhotoUrl(instagramUserId, userAgentIndex + 1);
-      }
-      throw new Error(`Instagram API yanıtı başarısız: ${res.status}`);
-    }
-    const out = await res.json();
-
+    const out = await fetchWithUARetry(url);
     if (out.user?.hd_profile_pic_url_info?.url) {
       return out.user.hd_profile_pic_url_info.url;
     } else {
       throw new Error("API yanıtında HD profil fotoğrafı URL'si bulunamadı.");
     }
   } catch (error) {
-    if (userAgentIndex < USER_AGENTS.length - 1) {
-      console.warn(`HD fotoğraf isteği ${userAgentIndex + 1}. User-Agent ile başarısız oldu. Tekrar deneniyor...`);
-      return getHdProfilePhotoUrl(instagramUserId, userAgentIndex + 1);
-    }
+    console.error("WeXProfile Hata: HD fotoğraf URL'si alınamadı.", error);
     throw error;
   }
 }
@@ -285,10 +273,10 @@ async function openHdProfilePhoto() {
       chrome.tabs.create({ url: hdUrl });
     } catch (error) {
       console.error("HD fotoğraf açılırken hata:", error);
-      sendNotification(chrome.i18n.getMessage("errorTitle"), `${chrome.i18n.getMessage("openHdPhotoError")}: ${error.message}`);
+      sendNotification("Hata", `HD fotoğraf açılamadı: ${error.message}`);
     }
   } else {
-    sendNotification(chrome.i18n.getMessage("errorTitle"), chrome.i18n.getMessage("noCachedDataError"));
+    sendNotification("Hata", "Önbellekte profil verisi bulunamadı.");
   }
 }
 
@@ -303,128 +291,121 @@ async function downloadProfilePhoto() {
         conflictAction: 'uniquify',
         saveAs: true
       });
-    } catch (error) {
-      console.error("HD fotoğraf indirilirken hata:", error);
-      sendNotification(chrome.i18n.getMessage("errorTitle"), `${chrome.i18n.getMessage("downloadPhotoError")}: ${error.message}`);
+    } catch (error) {      console.error("HD fotoğraf indirilirken hata:", error);
+      sendNotification("Hata", `Fotoğraf indirilemedi: ${error.message}`);
     }
   } else {
-    sendNotification(chrome.i18n.getMessage("errorTitle"), chrome.i18n.getMessage("noCachedDataError"));
+    sendNotification("Hata", "Önbellekte profil verisi bulunamadı.");
   }
 }
 
-// Hata veren downloadJSON fonksiyonu Data URI kullanarak yeniden yazıldı.
-async function downloadJSON(filename, data) {
-  try {
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const reader = new FileReader();
-    reader.onload = function() {
-      const dataUrl = reader.result;
-      chrome.downloads.download({
-        url: dataUrl,
-        filename: filename,
-        conflictAction: 'uniquify',
-        saveAs: true
-      });
-    };
-    reader.readAsDataURL(blob);
-  } catch (error) {
-    console.error("JSON indirilirken hata:", error);
-    sendNotification(chrome.i18n.getMessage("errorTitle"), `${chrome.i18n.getMessage("downloadJsonError")}: ${error.message}`);
+async function downloadJSON() {
+  const { cachedProfile } = await chrome.storage.local.get('cachedProfile');
+  if (cachedProfile) {
+      try {
+        const jsonString = JSON.stringify(cachedProfile, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(jsonString);
+
+        chrome.downloads.download({
+            url: dataUri,
+            filename: `instagram_${cachedProfile.username}_profile.json`,
+            conflictAction: 'uniquify',
+            saveAs: true
+        });
+      } catch (error) {
+        console.error("WeXProfile Hata: JSON indirilirken bir hata oluştu.", error);
+        sendNotification("Hata", "JSON verisi indirilemedi.");
+      }
+  } else {
+    sendNotification("Hata", "JSON indirilemedi: Önbellekte veri yok.");
   }
 }
+
 
 function sendNotification(title, message) {
   chrome.notifications.create({
     type: "basic",
     iconUrl: "icon.png",
-    title: title,
+    title: `WeXProfile: ${title}`,
     message: message,
     priority: 2
   });
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  switch (request.action) {
-    case 'getProfileData':
-      chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
-        const activeTabUrl = tabs[0]?.url;
-        if (!activeTabUrl?.includes("instagram.com")) {
-          sendResponse({ success: false, error: chrome.i18n.getMessage("notInstagramPageError") });
-          return;
-        }
+  (async () => {
+    switch (request.action) {
+      case 'getProfileData':
         try {
-          let dataToReturn;
-          if (currentProfileFetchPromise && currentProfileFetchUrl === activeTabUrl) {
-            dataToReturn = await currentProfileFetchPromise;
-          } else {
-            const { cachedProfile, cacheUrl } = await chrome.storage.local.get(['cachedProfile', 'cacheUrl']);
-            if (cachedProfile && cacheUrl === activeTabUrl) {
-              dataToReturn = cachedProfile;
-            } else {
-              dataToReturn = await handleProfileAnalysis(activeTabUrl, tabs[0].id, false);
-            }
+          const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+          const activeTab = tabs[0];
+          const activeUrl = activeTab.url;
+          if (!activeUrl || !activeUrl.includes("instagram.com")) {
+            throw new Error("Lütfen bir Instagram sayfasında kullanın.");
           }
+
+          const { cachedProfile, cacheUrl, cacheTimestamp } = await chrome.storage.local.get(['cachedProfile', 'cacheUrl', 'cacheTimestamp']);
+
+          if (cachedProfile && cacheUrl === activeUrl && (Date.now() - cacheTimestamp < CACHE_TTL)) {
+            console.log("WeXProfile Bilgi: Önbellek geçerli, önbellekteki veri kullanılıyor. (Spam önlendi)");
+            sendResponse({ success: true, data: cachedProfile });
+            return;
+          }
+
+          console.log("WeXProfile Bilgi: Önbellek geçersiz veya süresi dolmuş. Yeni veri çekiliyor...");
+          const dataToReturn = await handleProfileAnalysis(activeUrl, activeTab.id, false);
           sendResponse({ success: true, data: dataToReturn });
+
         } catch (error) {
           sendResponse({ success: false, error: error.message });
         }
-      });
-      return true;
+        break;
 
-    case 'openHdPhoto':
-      openHdProfilePhoto();
-      sendResponse({ success: true });
-      break;
-
-    case 'downloadPhoto':
-      downloadProfilePhoto();
-      sendResponse({ success: true });
-      break;
-
-    case 'downloadJSON':
-      chrome.storage.local.get('cachedProfile', async (result) => {
-        if (result.cachedProfile) {
-          await downloadJSON(`instagram_${result.cachedProfile.username}_profile.json`, result.cachedProfile);
-          sendResponse({ success: true });
-        } else {
-          sendResponse({ success: false, error: chrome.i18n.getMessage("noCachedDataError") });
-        }
-      });
-      return true;
-
-    case 'clearHistory':
-      chrome.storage.local.set({ [PROFILE_HISTORY_KEY]: {} }, () => {
-        console.log("Takipçi geçmişi temizlendi.");
-        sendNotification(chrome.i18n.getMessage("infoTitle"), chrome.i18n.getMessage("historyCleared"));
+      case 'openHdPhoto':
+        await openHdProfilePhoto();
         sendResponse({ success: true });
-      });
-      return true;
+        break;
 
-    case 'getSettingsAndUpdates':
-      chrome.storage.sync.get(['darkMode', 'fontFamily', 'themeTemplate'], (settings) => {
-        chrome.storage.local.get(['hasUpdate', 'latestVersion'], (updateInfo) => {
-          sendResponse({ success: true, settings, updateInfo });
-        });
-      });
-      return true;
-
-    case 'setSettings':
-      chrome.storage.sync.set(request.settings, () => {
+      case 'downloadPhoto':
+        await downloadProfilePhoto();
         sendResponse({ success: true });
-      });
-      return true;
-      
-    case 'openGithub':
-      chrome.tabs.create({ url: 'https://github.com/Wek1d/WeXProfile-Downloader?tab=readme-ov-file' });
-      sendResponse({ success: true });
-      return true;
+        break;
 
-    case 'checkUpdatesNow':
-      checkUpdates();
-      sendResponse({ success: true });
-      return true;
+      case 'downloadJSON':
+        await downloadJSON();
+        sendResponse({ success: true });
+        break;
 
-    default:
-      sendResponse({ success: false, error: chrome.i18n.getMessage("unknownActionError") });
-  }
+      case 'clearHistory':
+        await chrome.storage.local.set({ [PROFILE_HISTORY_KEY]: {} });
+        sendNotification("Bilgi", "Takipçi değişim geçmişi başarıyla temizlendi.");
+        sendResponse({ success: true });
+        break;
+
+      case 'getSettingsAndUpdates':
+        const settings = await chrome.storage.sync.get(['darkMode', 'fontFamily', 'themeTemplate', 'buttonStyle', 'showFollowerChange', 'language']);
+        const updateInfo = await chrome.storage.local.get(['hasUpdate', 'latestVersion']);
+        sendResponse({ success: true, settings, updateInfo });
+        break;
+
+      case 'setSettings':
+        await chrome.storage.sync.set(request.settings);
+        sendResponse({ success: true });
+        break;
+
+      case 'openGithub':
+        chrome.tabs.create({ url: 'https://github.com/Wek1d/WeXProfile-Downloader' });
+        sendResponse({ success: true });
+        break;
+
+      case 'checkUpdatesNow':
+        await checkUpdates();
+        sendResponse({ success: true });
+        break;
+
+      default:
+        sendResponse({ success: false, error: "Bilinmeyen eylem" });
+    }
+  })();
+  return true;
 });

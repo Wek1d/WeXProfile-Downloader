@@ -3,7 +3,7 @@
     "message": "WeXProfile Downloader"
   },
   "appDesc": {
-    "message": "Scarica, visualizza in anteprima facilmente le foto del profilo di Instagram e tieni traccia dei cambiamenti dei follower."
+    "message": "Scarica facilmente le foto del profilo Instagram, visualizzale in anteprima e traccia i cambiamenti dei follower."
   },
   "contextMenuTitle": {
     "message": "Mostra informazioni del profilo con WeXProfile"
@@ -12,34 +12,34 @@
     "message": "Informazioni"
   },
   "profileReadyNotification": {
-    "message": "Le informazioni del profilo sono pronte! Clicca sull'icona di WeXProfile per vedere i dettagli."
+    "message": "Le informazioni del profilo sono pronte! Clicca sull'icona WeXProfile per vedere i dettagli."
   },
   "errorTitle": {
     "message": "Errore"
   },
   "notInstagramPageError": {
-    "message": "Per favore, usa questo su una pagina di profilo Instagram."
+    "message": "Si prega di utilizzare su una pagina del profilo Instagram."
   },
   "profileFetchError": {
-    "message": "Si è verificato un errore durante il recupero dei dati del profilo"
+    "message": "Si è verificato un errore durante il recupero delle informazioni del profilo."
   },
   "notProfilePageError": {
-    "message": "Nessuna pagina di profilo Instagram valida trovata. Per favore, visita il profilo di un utente."
+    "message": "Non è stata trovata una pagina del profilo Instagram valida. Si prega di visitare un profilo utente."
   },
   "openHdPhotoError": {
-    "message": "Impossibile aprire la foto del profilo HD"
+    "message": "Non è stato possibile aprire la foto del profilo HD."
   },
   "downloadPhotoError": {
-    "message": "Impossibile scaricare la foto del profilo"
+    "message": "Non è stato possibile scaricare la foto del profilo."
   },
   "downloadJsonTitle": {
     "message": "Scarica i dati del profilo come JSON"
   },
   "noCachedDataError": {
-    "message": "Nessun dato del profilo trovato nella cache. Per favore, aggiorna la pagina e riprova."
+    "message": "Nessun dato del profilo trovato nella cache. Si prega di aggiornare la pagina e riprovare."
   },
   "popupFetchError": {
-    "message": "Impossibile ottenere i dati del profilo. Per favore, aggiorna la pagina e riprova."
+    "message": "Non è stato possibile recuperare i dati del profilo. Si prega di aggiornare la pagina e riprovare."
   },
   "unknownActionError": {
     "message": "Azione sconosciuta"
@@ -60,7 +60,7 @@
     "message": "Scarica"
   },
   "defaultBio": {
-    "message": "Nessuna biografia"
+    "message": "Nessuna biografia disponibile"
   },
   "privateLabel": {
     "message": "Privato"
@@ -81,19 +81,19 @@
     "message": "Sei sicuro di voler eliminare la cronologia dei cambiamenti dei follower salvata per tutti i profili?"
   },
   "historyCleared": {
-    "message": "La cronologia dei cambiamenti dei follower è stata cancellata con successo."
+    "message": "Cronologia dei cambiamenti dei follower cancellata con successo."
   },
   "settingsTitle": {
     "message": "Impostazioni"
   },
   "fontFamilyLabel": {
-    "message": "Famiglia di caratteri"
+    "message": "Carattere"
   },
   "themeTemplateLabel": {
     "message": "Tema colore"
   },
   "imageLoadError": {
-    "message": "Si è verificato un errore durante il caricamento dell'immagine del profilo."
+    "message": "Si è verificato un errore durante il caricamento della foto del profilo."
   },
   "githubTitle": {
     "message": "Pagina GitHub"
@@ -103,5 +103,14 @@
   },
   "updateBtnText": {
     "message": "Aggiorna"
+  },
+  "buttonStyleLabel": {
+    "message": "Stile pulsante classico"
+  },
+  "followerChangeLabel": {
+    "message": "Mostra cambiamenti follower"
+  },
+  "languageLabel": {
+    "message": "Lingua"
   }
 }
