@@ -35,16 +35,14 @@ WeXProfile Downloader is a user-friendly browser extension that allows you to ef
 ### 📸 Screenshots
 
 <p align="center">
-<img width="1699" height="1079" alt="WeXProfile Screenshot" src="https://github.com/user-attachments/assets/0a6c264e-9af2-4aab-8bbd-0ed059c29b9b" />
+<img width="1307" height="755" alt="image" src="https://github.com/user-attachments/assets/2934c1a2-ad3a-4db9-864d-e88622938206" />
+
 </p>
 
 ### 🎬 Demo (Optional)
+![Animation](https://github.com/user-attachments/assets/71bcb2b9-c1b5-4114-bd84-ecc20a700d69)
 
-_Replace this with a GIF or video demonstrating the extension's features. Here is an example placeholder:_
-```markdown
-<p align="center">
-  <img src="[https://github.com/user-attachments/assets/your-gif-id](https://github.com/user-attachments/assets/your-gif-id)" alt="WeXProfile Demo" />
-</p>
+
 🚀 Installation
 There are two ways to install the extension:
 
