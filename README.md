@@ -39,7 +39,7 @@ WeXProfile Downloader is a user-friendly browser extension that allows you to ef
 
 </p>
 
-### 🎬 Demo (Optional)
+### 🎬 Demo 
 ![Animation](https://github.com/user-attachments/assets/71bcb2b9-c1b5-4114-bd84-ecc20a700d69)
 
 
