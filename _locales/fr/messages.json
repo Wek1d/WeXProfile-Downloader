@@ -3,43 +3,43 @@
     "message": "WeXProfile Downloader"
   },
   "appDesc": {
-    "message": "Téléchargez facilement les photos de profil Instagram, prévisualisez-les et suivez les changements d'abonnés."
+    "message": "Téléchargez des photos de profil Instagram, analysez les abonnés et détectez les désabonnements."
   },
   "contextMenuTitle": {
-    "message": "Afficher les informations du profil avec WeXProfile"
+    "message": "Afficher les infos de profil avec WeXProfile"
   },
   "infoTitle": {
-    "message": "Information"
+    "message": "Info"
   },
   "profileReadyNotification": {
-    "message": "Les informations de profil sont prêtes ! Cliquez sur l'icône WeXProfile pour voir les détails."
+    "message": "Les informations de profil sont prêtes ! Cliquez sur l'icône de l'extension pour les détails."
   },
   "errorTitle": {
     "message": "Erreur"
   },
   "notInstagramPageError": {
-    "message": "Veuillez utiliser sur une page de profil Instagram."
+    "message": "Veuillez utiliser sur une page Instagram."
   },
   "profileFetchError": {
-    "message": "Une erreur est survenue lors de la récupération des informations du profil."
+    "message": "Échec de la récupération des informations de profil"
   },
   "notProfilePageError": {
-    "message": "Page de profil Instagram valide introuvable. Veuillez visiter un profil d'utilisateur."
+    "message": "Ce n'est pas une page de profil valide."
   },
   "openHdPhotoError": {
-    "message": "Impossible d'ouvrir la photo de profil HD."
+    "message": "Échec de l'ouverture de la photo HD"
   },
   "downloadPhotoError": {
-    "message": "Impossible de télécharger la photo de profil."
+    "message": "Échec du téléchargement de la photo"
   },
   "downloadJsonTitle": {
-    "message": "Télécharger les données du profil au format JSON"
+    "message": "Télécharger en JSON"
   },
   "noCachedDataError": {
-    "message": "Aucune donnée de profil trouvée dans le cache. Veuillez rafraîchir la page et réessayer."
+    "message": "Aucune donnée trouvée dans le cache"
   },
   "popupFetchError": {
-    "message": "Impossible de récupérer les données du profil. Veuillez rafraîchir la page et réessayer."
+    "message": "Échec de la récupération des données"
   },
   "unknownActionError": {
     "message": "Action inconnue"
@@ -60,57 +60,87 @@
     "message": "Télécharger"
   },
   "defaultBio": {
-    "message": "Aucune biographie disponible"
+    "message": "Pas de biographie"
   },
   "privateLabel": {
     "message": "Privé"
   },
   "copyUsernameTitle": {
-    "message": "Copier le nom d'utilisateur"
+    "message": "Copier"
   },
   "copiedText": {
     "message": "Copié !"
   },
   "changeThemeTitle": {
-    "message": "Changer de thème"
+    "message": "Thème"
   },
   "clearHistoryTitle": {
-    "message": "Effacer l'historique des abonnés"
+    "message": "Effacer l'historique"
   },
   "clearHistoryConfirm": {
-    "message": "Êtes-vous sûr de vouloir supprimer l'historique des changements d'abonnés sauvegardé pour tous les profils ?"
+    "message": "Êtes-vous sûr de vouloir supprimer l'historique ?"
   },
   "historyCleared": {
-    "message": "Historique des changements d'abonnés effacé avec succès."
+    "message": "Historique effacé"
   },
   "settingsTitle": {
     "message": "Paramètres"
   },
   "fontFamilyLabel": {
-    "message": "Police"
+    "message": "Famille de police"
   },
   "themeTemplateLabel": {
-    "message": "Thème de couleur"
+    "message": "Couleur du thème"
   },
   "imageLoadError": {
-    "message": "Une erreur est survenue lors du chargement de la photo de profil."
+    "message": "Échec du chargement de la photo"
   },
   "githubTitle": {
-    "message": "Page GitHub"
+    "message": "GitHub"
   },
   "updateAvailable": {
-    "message": "Une nouvelle mise à jour est disponible !"
+    "message": "Mise à jour disponible"
   },
   "updateBtnText": {
     "message": "Mettre à jour"
   },
   "buttonStyleLabel": {
-    "message": "Style de bouton classique"
+    "message": "Boutons classiques"
   },
   "followerChangeLabel": {
-    "message": "Afficher les changements d'abonnés"
+    "message": "Afficher les changements"
   },
   "languageLabel": {
     "message": "Langue"
+  },
+  "scanningFollowers": {
+    "message": "Analyse des abonnés..."
+  },
+  "scanningFollowing": {
+    "message": "Analyse des abonnements..."
+  },
+  "scanComplete": {
+    "message": "Analyse terminée"
+  },
+  "unfollowersFound": {
+    "message": "personnes ne vous suivent pas en retour"
+  },
+  "unfollowingProgress": {
+    "message": "Désabonnement en cours..."
+  },
+  "operationComplete": {
+    "message": "Opération terminée"
+  },
+  "startScanBtn": {
+    "message": "Lancer l'analyse"
+  },
+  "pauseScanBtn": {
+    "message": "Pause"
+  },
+  "resumeScanBtn": {
+    "message": "Reprendre"
+  },
+  "unfollowSelectedBtn": {
+    "message": "Se désabonner des sélectionnés"
   }
 }

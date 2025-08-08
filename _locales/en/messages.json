@@ -3,7 +3,7 @@
     "message": "WeXProfile Downloader"
   },
   "appDesc": {
-    "message": "Easily download Instagram profile photos, preview them, and track follower changes."
+    "message": "Download Instagram profile pictures, analyze followers, and detect unfollowers."
   },
   "contextMenuTitle": {
     "message": "Show Profile Info with WeXProfile"
@@ -12,34 +12,34 @@
     "message": "Info"
   },
   "profileReadyNotification": {
-    "message": "Profile info is ready! Click the WeXProfile icon to see the details."
+    "message": "Profile info is ready! Click the extension icon for details."
   },
   "errorTitle": {
     "message": "Error"
   },
   "notInstagramPageError": {
-    "message": "Please use on an Instagram profile page."
+    "message": "Please use on an Instagram page."
   },
   "profileFetchError": {
-    "message": "An error occurred while fetching profile information"
+    "message": "Failed to fetch profile info"
   },
   "notProfilePageError": {
-    "message": "A valid Instagram profile page was not found. Please visit a user profile."
+    "message": "Not a valid profile page."
   },
   "openHdPhotoError": {
-    "message": "Could not open HD profile photo"
+    "message": "Failed to open HD photo"
   },
   "downloadPhotoError": {
-    "message": "Could not download profile photo"
+    "message": "Failed to download photo"
   },
   "downloadJsonTitle": {
-    "message": "Download profile data as JSON"
+    "message": "Download as JSON"
   },
   "noCachedDataError": {
-    "message": "No profile data found in cache. Please refresh the page and try again."
+    "message": "No data found in cache"
   },
   "popupFetchError": {
-    "message": "Could not fetch profile data. Please refresh the page and try again."
+    "message": "Failed to fetch data"
   },
   "unknownActionError": {
     "message": "Unknown action"
@@ -60,28 +60,28 @@
     "message": "Download"
   },
   "defaultBio": {
-    "message": "No bio available"
+    "message": "No bio"
   },
   "privateLabel": {
     "message": "Private"
   },
   "copyUsernameTitle": {
-    "message": "Copy username"
+    "message": "Copy"
   },
   "copiedText": {
     "message": "Copied!"
   },
   "changeThemeTitle": {
-    "message": "Change Theme"
+    "message": "Theme"
   },
   "clearHistoryTitle": {
-    "message": "Clear Follower History"
+    "message": "Clear History"
   },
   "clearHistoryConfirm": {
-    "message": "Are you sure you want to delete the saved follower change history for all profiles?"
+    "message": "Are you sure you want to delete the history?"
   },
   "historyCleared": {
-    "message": "Follower change history successfully cleared."
+    "message": "History cleared"
   },
   "settingsTitle": {
     "message": "Settings"
@@ -90,27 +90,57 @@
     "message": "Font Family"
   },
   "themeTemplateLabel": {
-    "message": "Color Theme"
+    "message": "Theme Color"
   },
   "imageLoadError": {
-    "message": "An error occurred while loading the profile photo."
+    "message": "Failed to load photo"
   },
   "githubTitle": {
-    "message": "GitHub Page"
+    "message": "GitHub"
   },
   "updateAvailable": {
-    "message": "A new update is available!"
+    "message": "Update Available"
   },
   "updateBtnText": {
     "message": "Update"
   },
   "buttonStyleLabel": {
-    "message": "Classic Button Style"
+    "message": "Classic Buttons"
   },
   "followerChangeLabel": {
-    "message": "Show Follower Change"
+    "message": "Show Changes"
   },
   "languageLabel": {
     "message": "Language"
+  },
+  "scanningFollowers": {
+    "message": "Scanning followers..."
+  },
+  "scanningFollowing": {
+    "message": "Scanning following..."
+  },
+  "scanComplete": {
+    "message": "Scan complete"
+  },
+  "unfollowersFound": {
+    "message": "people are not following you back"
+  },
+  "unfollowingProgress": {
+    "message": "Unfollowing..."
+  },
+  "operationComplete": {
+    "message": "Operation complete"
+  },
+  "startScanBtn": {
+    "message": "Start Scan"
+  },
+  "pauseScanBtn": {
+    "message": "Pause"
+  },
+  "resumeScanBtn": {
+    "message": "Resume"
+  },
+  "unfollowSelectedBtn": {
+    "message": "Unfollow Selected"
   }
 }

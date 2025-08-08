@@ -4,7 +4,7 @@
 
 <h1 align="center">WeXProfile Downloader</h1>
 
-<p align="center">A powerful Chrome Extension to view and download Instagram profile photos in HD.</p>
+<p align="center">Advanced Instagram profile viewer with HD downloads and unfollower detection</p>
 
 <p align="center">
   <a href="https://github.com/Wek1d/WeXProfile-Downloader/releases/latest">
@@ -16,68 +16,97 @@
   <a href="https://github.com/Wek1d/WeXProfile-Downloader/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/Wek1d/WeXProfile-Downloader?style=for-the-badge&color=green" alt="License"/>
   </a>
+  <a href="https://chrome.google.com/webstore/detail/wexprofile-downloader/">
+    <img src="https://img.shields.io/chrome-web-store/v/EXTENSION_ID?style=for-the-badge&logo=google-chrome" alt="Chrome Web Store"/>
+  </a>
 </p>
 
-WeXProfile Downloader is a user-friendly browser extension that allows you to effortlessly view and download high-resolution Instagram profile pictures. With a single click, you can access detailed profile information, including follower count, bio, and a direct link to the HD profile photo. This version has been fully updated to comply with Manifest V3, ensuring enhanced security and performance.
+WeXProfile Downloader is a comprehensive Instagram toolkit that lets you:
+- Download HD profile pictures
+- Analyze follower/following statistics
+- Detect who doesn't follow you back
+- Track follower changes over time
+
+Built with Manifest V3 for enhanced security and performance.
 
 ---
 
-### ✨ Key Features
+### ✨ Premium Features
 
-* **HD Profile Picture Download:** Download the highest-quality version of any Instagram profile picture with a single click.
-* **Detailed Profile Info:** Instantly view key profile details such as username, full name, biography, post count, followers, and following count.
-* **JSON Data Download:** Download all profile data, including follower and following change history, as a single JSON file.
-* **New Tab Preview:** Open the profile picture directly in a new tab for a closer look.
-* **Account Status Indicators:** The extension clearly shows whether a profile is private or verified.
-* **Customization:** Toggle between light and dark themes, and choose from different color templates and fonts to match your preference.
-* **Update Notifications:** The extension automatically checks for new updates and notifies you when a new version is available.
+**Profile Analysis**
+- HD Profile Picture Download (1080x1080)
+- Full profile metadata (bio, posts, followers)
+- Follower change tracking (daily/weekly/monthly)
+- Verified & private account indicators
+- JSON data export
 
-### 📸 Screenshots
+**Unfollower Detection** (Inspired by [InstagramUnfollowers](https://github.com/davidarroyo1234/InstagramUnfollowers))
+- Scan your followers/following
+- Identify non-reciprocal relationships
+- Bulk unfollow with safety limits
+- Progress tracking with visual feedback
+
+**Customization**
+- Light/dark mode with 5 color themes
+- 9 font options
+- Classic/modern button styles
+- Multi-language support (6 languages)
+
+**Privacy & Safety**
+- No data collection policy
+- Rate-limited API calls
+- Randomized delays to prevent detection
+- Local storage only (no cloud sync)
+
+---
+
+### 🖼️ Screenshots
 
 <p align="center">
-<img width="1307" height="755" alt="image" src="https://github.com/user-attachments/assets/2934c1a2-ad3a-4db9-864d-e88622938206" />
-
+  <img src="screenshots/profile-view.png" width="45%" alt="Profile View"/>
+  <img src="screenshots/unfollower-view.png" width="45%" alt="Unfollower View"/>  
 </p>
 
-### 🎬 Demo 
-![Animation](https://github.com/user-attachments/assets/71bcb2b9-c1b5-4114-bd84-ecc20a700d69)
+---
 
+### 🛠️ Installation
 
-🚀 Installation
-There are two ways to install the extension:
+**Manual Installation**
+git clone https://github.com/Wek1d/WeXProfile-Downloader.git 
+cd WeXProfile-Downloader
+Open chrome://extensions
 
-Method 1: Download from Releases (Recommended)
-Go to the Releases page of this repository.
+Enable Developer mode
 
-Download the Source code (zip) file for the latest version.
+Click "Load unpacked"
 
-Extract the downloaded .zip file to a folder on your computer.
+Select the cloned folder
 
-Navigate to chrome://extensions in your Chrome browser.
+🌍 Multi-Language Support
+We support 6 languages:
 
-Enable "Developer mode" in the top-right corner.
+English (en)
 
-Click "Load unpacked" and select the folder you extracted.
+Turkish (tr)
 
-Method 2: Clone the Repository
-Clone the repository: git clone https://github.com/Wek1d/WeXProfile-Downloader.git
+Spanish (es)
 
-Navigate to chrome://extensions in your Chrome browser.
+French (fr)
 
-Enable "Developer mode" in the top-right corner.
+German (de)
 
-Click "Load unpacked" and select the WeXProfile-Downloader folder you cloned.
+Italian (it)
 
-💡 Usage
-Go to any Instagram profile page.
+Contribute translations via Pull Requests!
 
-Click the WeXProfile icon in your browser's toolbar.
+⚠️ Important Notes
+Requires active Instagram login
 
-View the profile information and photo in the pop-up window.
+Use unfollow tool responsibly (max 50/day recommended)
 
-Use the "Open in New Tab" or "Download" buttons to take action on the profile picture.
+Not affiliated with Instagram/Meta
 
-Use the icon buttons at the bottom to download JSON data or clear history.
+📜 License
+MIT License - See LICENSE for details.
 
-📄 License
-This project is licensed under the MIT License. See the LICENSE file in the main directory for more details.
+Credits to InstagramUnfollowers for inspiration on the unfollower detection algorithm.

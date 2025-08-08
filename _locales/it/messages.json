@@ -3,43 +3,43 @@
     "message": "WeXProfile Downloader"
   },
   "appDesc": {
-    "message": "Scarica facilmente le foto del profilo Instagram, visualizzale in anteprima e traccia i cambiamenti dei follower."
+    "message": "Scarica le foto del profilo di Instagram, analizza i follower e individua chi non ti segue più."
   },
   "contextMenuTitle": {
-    "message": "Mostra informazioni del profilo con WeXProfile"
+    "message": "Mostra info profilo con WeXProfile"
   },
   "infoTitle": {
-    "message": "Informazioni"
+    "message": "Info"
   },
   "profileReadyNotification": {
-    "message": "Le informazioni del profilo sono pronte! Clicca sull'icona WeXProfile per vedere i dettagli."
+    "message": "Le informazioni del profilo sono pronte! Clicca sull'icona dell'estensione per i dettagli."
   },
   "errorTitle": {
     "message": "Errore"
   },
   "notInstagramPageError": {
-    "message": "Si prega di utilizzare su una pagina del profilo Instagram."
+    "message": "Si prega di utilizzare su una pagina Instagram."
   },
   "profileFetchError": {
-    "message": "Si è verificato un errore durante il recupero delle informazioni del profilo."
+    "message": "Impossibile recuperare le informazioni del profilo"
   },
   "notProfilePageError": {
-    "message": "Non è stata trovata una pagina del profilo Instagram valida. Si prega di visitare un profilo utente."
+    "message": "Non è una pagina del profilo valida."
   },
   "openHdPhotoError": {
-    "message": "Non è stato possibile aprire la foto del profilo HD."
+    "message": "Impossibile aprire la foto HD"
   },
   "downloadPhotoError": {
-    "message": "Non è stato possibile scaricare la foto del profilo."
+    "message": "Impossibile scaricare la foto"
   },
   "downloadJsonTitle": {
-    "message": "Scarica i dati del profilo come JSON"
+    "message": "Scarica come JSON"
   },
   "noCachedDataError": {
-    "message": "Nessun dato del profilo trovato nella cache. Si prega di aggiornare la pagina e riprovare."
+    "message": "Nessun dato trovato nella cache"
   },
   "popupFetchError": {
-    "message": "Non è stato possibile recuperare i dati del profilo. Si prega di aggiornare la pagina e riprovare."
+    "message": "Impossibile recuperare i dati"
   },
   "unknownActionError": {
     "message": "Azione sconosciuta"
@@ -60,28 +60,28 @@
     "message": "Scarica"
   },
   "defaultBio": {
-    "message": "Nessuna biografia disponibile"
+    "message": "Nessuna biografia"
   },
   "privateLabel": {
     "message": "Privato"
   },
   "copyUsernameTitle": {
-    "message": "Copia nome utente"
+    "message": "Copia"
   },
   "copiedText": {
     "message": "Copiato!"
   },
   "changeThemeTitle": {
-    "message": "Cambia tema"
+    "message": "Tema"
   },
   "clearHistoryTitle": {
-    "message": "Cancella cronologia follower"
+    "message": "Cancella cronologia"
   },
   "clearHistoryConfirm": {
-    "message": "Sei sicuro di voler eliminare la cronologia dei cambiamenti dei follower salvata per tutti i profili?"
+    "message": "Sei sicuro di voler eliminare la cronologia?"
   },
   "historyCleared": {
-    "message": "Cronologia dei cambiamenti dei follower cancellata con successo."
+    "message": "Cronologia cancellata"
   },
   "settingsTitle": {
     "message": "Impostazioni"
@@ -90,27 +90,57 @@
     "message": "Carattere"
   },
   "themeTemplateLabel": {
-    "message": "Tema colore"
+    "message": "Colore del tema"
   },
   "imageLoadError": {
-    "message": "Si è verificato un errore durante il caricamento della foto del profilo."
+    "message": "Impossibile caricare la foto"
   },
   "githubTitle": {
-    "message": "Pagina GitHub"
+    "message": "GitHub"
   },
   "updateAvailable": {
-    "message": "È disponibile un nuovo aggiornamento!"
+    "message": "Aggiornamento disponibile"
   },
   "updateBtnText": {
     "message": "Aggiorna"
   },
   "buttonStyleLabel": {
-    "message": "Stile pulsante classico"
+    "message": "Pulsanti classici"
   },
   "followerChangeLabel": {
-    "message": "Mostra cambiamenti follower"
+    "message": "Mostra cambiamenti"
   },
   "languageLabel": {
     "message": "Lingua"
+  },
+  "scanningFollowers": {
+    "message": "Scansione dei follower in corso..."
+  },
+  "scanningFollowing": {
+    "message": "Scansione dei seguiti in corso..."
+  },
+  "scanComplete": {
+    "message": "Scansione completata"
+  },
+  "unfollowersFound": {
+    "message": "persone non ti seguono più"
+  },
+  "unfollowingProgress": {
+    "message": "Smetti di seguire..."
+  },
+  "operationComplete": {
+    "message": "Operazione completata"
+  },
+  "startScanBtn": {
+    "message": "Avvia scansione"
+  },
+  "pauseScanBtn": {
+    "message": "Pausa"
+  },
+  "resumeScanBtn": {
+    "message": "Riprendi"
+  },
+  "unfollowSelectedBtn": {
+    "message": "Smetti di seguire i selezionati"
   }
 }

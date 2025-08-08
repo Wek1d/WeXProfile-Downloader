@@ -1,18 +1,16 @@
 /* popup.css */
 
 :root {
-  /* Renk temaları için temel değişkenler */
   --primary-gradient: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
   --secondary-gradient: linear-gradient(45deg, #405DE6, #5851DB);
+  --danger-gradient: linear-gradient(45deg, #ed4956, #a02d37);
   
-  /* Önizleme butonları için sabit renkler (bug'ı önlemek için) */
   --preview-default: linear-gradient(45deg, #f09433, #e6683c, #dc2743);
   --preview-blue: linear-gradient(45deg, #0095f6, #0076a8);
   --preview-green: linear-gradient(45deg, #4CAF50, #2E7D32);
   --preview-purple: linear-gradient(45deg, #673AB7, #4527A0);
   --preview-pink: linear-gradient(45deg, #ff69b4, #ff1493);
 
-  /* Genel Stil Değişkenleri */
   --text-color: #262626;
   --bg-color: #fafafa;
   --card-bg: rgba(255, 255, 255, 0.7);
@@ -22,6 +20,7 @@
   --error-color: #ed4956;
   --update-color: #3f51b5;
   --global-font: 'Poppins', sans-serif;
+  --primary-color-for-check: #dc2743;
 }
 
 [data-theme="dark"] {
@@ -32,149 +31,368 @@
   --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   font-family: var(--global-font, 'Poppins', sans-serif);
   background-color: var(--bg-color);
   color: var(--text-color);
-  width: 340px;
-  min-height: 480px;
+  width: 350px;
+  height: 500px;
   padding: 16px;
   overflow: hidden;
   transition: background-color 0.4s, color 0.4s;
+  position: relative;
 }
 
-.app-container {
-  display: flex;
+/* YAPI: Ekran geçişlerini ve ana layout'u yöneten yapı */
+.view {
+  display: none;
   flex-direction: column;
   height: 100%;
   width: 100%;
 }
-
-.update-notification {
-    display: none; /* Varsayılan olarak gizli, JS ile gösterilecek */
-    justify-content: space-between;
-    align-items: center;
-    background-color: var(--update-color);
-    color: white;
-    padding: 10px 15px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    animation: fadeIn 0.5s ease-out;
+.view.active-view {
+  display: flex;
 }
+
+.update-notification { display: none; justify-content: space-between; align-items: center; background-color: var(--update-color); color: white; padding: 10px 15px; border-radius: 8px; margin-bottom: 12px; animation: fadeIn 0.5s ease-out; flex-shrink: 0; }
 .update-notification p { font-size: 14px; }
 #updateBtn { background: white; color: var(--update-color); border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: transform 0.2s; }
 #updateBtn:hover { transform: scale(1.05); }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-.header h1 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  background: var(--primary-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  transition: background 0.4s ease;
-}
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-shrink: 0; }
+.header h1 { font-family: 'Montserrat', sans-serif; font-size: 22px; font-weight: 700; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .header-actions { display: flex; gap: 8px; }
-.theme-toggle, .settings-btn { background: var(--card-bg); border: 1px solid var(--border-color); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: none; transition: transform 0.2s, box-shadow 0.2s, background-color 0.4s, border-color 0.4s; }
+.theme-toggle, .settings-btn { background: var(--card-bg); border: 1px solid var(--border-color); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: none; transition: all 0.2s; color: var(--text-color);}
 .theme-toggle:hover, .settings-btn:hover { transform: scale(1.1); }
 .theme-toggle i { position: absolute; transition: opacity 0.4s, transform 0.4s; }
 .theme-toggle .fa-moon { color: #f1c40f; }
 .theme-toggle .fa-sun { color: #f39c12; opacity: 0; transform: rotate(90deg); }
 [data-theme="dark"] .theme-toggle .fa-moon { opacity: 0; transform: rotate(-90deg); }
 [data-theme="dark"] .theme-toggle .fa-sun { opacity: 1; transform: rotate(0deg); }
-.settings-btn i { color: var(--text-color); transition: color 0.4s; }
+.settings-btn i { color: var(--text-color); }
 
-.profile-container { flex-grow: 1; background: var(--card-bg); border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--border-color); animation: fadeIn 0.5s ease-out; }
-.profile-pic-container { position: relative; width: 120px; height: 120px; margin: 0 auto 16px; border-radius: 50%; padding: 4px; background: var(--primary-gradient); transition: background 0.4s; }
-.profile-pic { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 4px solid var(--bg-color); opacity: 0; transition: opacity 0.4s, border-color 0.4s; }
-.profile-pic.loaded { opacity: 1; }
-.loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100px; height: 100px; display: flex; justify-content: space-between; align-items: center; }
-.loader div { width: 16px; height: 16px; background: #fff; border-radius: 50%; animation: bounce 0.6s infinite ease-in-out; }
+/* DÜZELTME: Profil kabı, dikey boşluklar ve ölçekleme iyileştirildi */
+.profile-container { 
+  flex-grow: 1; 
+  background: var(--card-bg); 
+  border-radius: 16px; 
+  padding: 12px;
+  box-shadow: var(--shadow); 
+  backdrop-filter: blur(10px); 
+  -webkit-backdrop-filter: blur(10px); 
+  border: 1px solid var(--border-color); 
+  animation: fadeIn 0.5s ease-out; 
+  margin-bottom: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.profile-pic-container { position: relative; width: 110px; height: 110px; margin: 0 auto 10px; border-radius: 50%; padding: 4px; background: var(--primary-gradient); flex-shrink: 0; }
+.profile-pic { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 4px solid var(--bg-color); }
+.profile-pic-container .loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90px; height: 90px; display: flex; justify-content: space-between; align-items: center; }
+.loader div { width: 14px; height: 14px; background: #fff; border-radius: 50%; animation: bounce 0.6s infinite ease-in-out; }
 .loader div:nth-child(1) { animation-delay: -0.32s; }
 .loader div:nth-child(2) { animation-delay: -0.16s; }
-.profile-info { text-align: center; }
-#username { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 600; margin-bottom: 4px; cursor: pointer; transition: opacity 0.2s; }
-#username:hover { opacity: 0.8; }
-#fullName { font-size: 16px; font-weight: 500; margin-bottom: 12px; opacity: 0.9; }
-.bio { font-size: 14px; margin-bottom: 16px; color: var(--text-color); opacity: 0.7; line-height: 1.5; }
-.stats { display: flex; justify-content: space-around; margin: 20px 0; }
-.stat { display: flex; flex-direction: column; align-items: center; transition: transform 0.2s; }
-.stat:hover { transform: scale(1.05); }
+.profile-info { text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+#username { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 600; margin-bottom: 4px; cursor: pointer; }
+#fullName { font-size: 16px; font-weight: 500; margin-bottom: 8px; opacity: 0.9; }
+.bio { font-size: 14px; margin-bottom: 12px; color: var(--text-color); opacity: 0.7; line-height: 1.5; }
+.stats { display: flex; justify-content: space-around; margin: 12px 0; }
+.stat { display: flex; flex-direction: column; align-items: center; }
 .stat-count-wrapper { display: flex; align-items: baseline; gap: 4px; }
-.stat span:first-child { font-weight: 600; font-size: 18px; }
+#postsCount, #followersCount, #followingCount { font-weight: 600; font-size: 18px; }
 .stat span:last-child { font-size: 13px; opacity: 0.7; text-transform: uppercase; }
 .change-indicator { font-size: 11px; font-weight: 700; padding: 2px 4px; border-radius: 4px; margin-left: 2px; }
 .change-indicator.positive { color: var(--success-color); }
 .change-indicator.negative { color: var(--error-color); }
 
-/* --- Buton Stilleri --- */
-.actions { display: flex; gap: 12px; margin-bottom: 16px; }
-.btn { flex: 1; padding: 12px; border: none; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s ease; font-size: 14px; min-height: 44px; font-family: inherit; }
-.btn:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
-.btn:active { transform: translateY(0); }
-/* Modern Buton Stili (Varsayılan) */
+/* DÜZELTME: Buton stilleri daha belirgin ve yönetilebilir hale getirildi */
+.actions { display: flex; gap: 12px; flex-shrink: 0; margin-bottom: 12px; }
+.btn { flex: 1; padding: 12px; border: none; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease; font-size: 14px; min-height: 44px; font-family: inherit; }
+.btn:disabled { cursor: not-allowed; opacity: 0.6; transform: none; box-shadow: none; }
+
+/* Modern Stil (Varsayılan) */
 [data-button-style="modern"] .btn { border-radius: 50px; }
-/* Klasik Buton Stili */
+[data-button-style="modern"] .btn:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+[data-button-style="modern"] .btn:active { transform: translateY(0); }
+
+/* Klasik Stil */
 [data-button-style="classic"] .btn { border-radius: 8px; padding: 10px; }
-.btn-primary { background: var(--secondary-gradient); color: white; transition: background 0.4s; }
-.btn-secondary { background: var(--card-bg); color: var(--text-color); border: 1px solid var(--border-color); transition: background-color 0.4s, color 0.4s, border-color 0.4s; }
+[data-button-style="classic"] .btn:hover { filter: brightness(0.95); transform: translateY(-2px); }
+[data-button-style="classic"] .btn:active { filter: brightness(0.9); transform: translateY(0); }
 
+.btn-primary { background: var(--secondary-gradient); color: white; }
+.btn-secondary { background: var(--card-bg); color: var(--text-color); border: 1px solid var(--border-color); }
+.btn-danger { background: var(--danger-gradient); color: white; }
 
-/* --- Footer Butonları --- */
-.footer {
-  margin-top: auto;
-  padding-top: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 12px;
-  opacity: 0.8;
-  width: 100%;
-}
-.btn-icon-footer { background: transparent; border: none; width: 40px; height: 40px; border-radius: 50%; color: var(--text-color); font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s, background-color 0.3s, color 0.3s; flex-shrink: 0; }
+.footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; opacity: 0.8; width: 100%; flex-shrink: 0; }
+.btn-icon-footer { background: transparent; border: none; width: 40px; height: 40px; border-radius: 50%; color: var(--text-color); font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; flex-shrink: 0; }
 .btn-icon-footer:hover { background-color: var(--border-color); transform: scale(1.1); }
-.version { flex-grow: 1; text-align: center; opacity: 0.6; }
+.version { flex-grow: 1; text-align: center; opacity: 0.6; cursor: default; }
 
 .verified-badge { color: #0095f6; margin-left: 5px; }
 .private-badge { display: inline-block; background: var(--error-color); color: white; font-size: 10px; padding: 3px 7px; border-radius: 6px; margin-left: 8px; font-weight: 500; vertical-align: middle; }
 
-/* --- AYARLAR POP-UP (KONUMLANDIRMA DÜZELTİLDİ) --- */
-.settings-popup {
-  position: fixed; /* DÜZELTME: Layout'u bozmaması için fixed olmalı */
+/* --- UNFINDER SAYFASI STİLLERİ (GÜZELLEŞTİRİLDİ) --- */
+.unfinder-status { 
+  padding: 12px; 
+  text-align: center; 
+  background: var(--card-bg); 
+  border-radius: 12px; 
+  margin-bottom: 15px; 
+  flex-shrink: 0; 
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
+}
+#unfinder-status-text { 
+  font-size: 14px; 
+  opacity: 0.8; 
+  font-weight: 500;
+}
+
+.progress-bar-container { 
+  width: 100%; 
+  background-color: var(--border-color); 
+  border-radius: 10px; 
+  height: 10px; 
+  margin-top: 12px; 
+  overflow: hidden; 
+  display: none;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+.progress-bar { 
+  width: 0%; 
+  height: 100%; 
+  background: var(--primary-gradient); 
+  transition: width 0.3s ease;
+  border-radius: 10px;
+}
+
+.unfinder-list { 
+  flex-grow: 1; 
+  overflow-y: auto; 
+  padding-right: 8px;
+  margin-bottom: 0;
+  max-height: calc(100% - 140px); /* Alttaki buton alanını hesaba kat */
+}
+
+.unfinder-item { 
+  display: flex; 
+  align-items: center; 
+  padding: 12px; 
+  margin-bottom: 10px; 
+  background-color: var(--card-bg); 
+  border-radius: 12px; 
+  border: 1px solid var(--border-color); 
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.unfinder-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px 0 rgba(0, 0, 0, 0.15);
+  border-color: rgba(220, 39, 67, 0.3);
+}
+
+.unfinder-item.unfollowed-success { 
+  background-color: rgba(76, 175, 80, 0.15); 
+  border-color: var(--success-color);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+}
+
+.unfinder-item.unfollowed-fail { 
+  background-color: rgba(237, 73, 86, 0.15); 
+  border-color: var(--error-color);
+  box-shadow: 0 4px 15px rgba(237, 73, 86, 0.2);
+}
+
+.unfinder-item-pic { 
+  width: 45px; 
+  height: 45px; 
+  border-radius: 50%; 
+  object-fit: cover; 
+  margin-right: 12px;
+  border: 2px solid var(--border-color);
+  transition: border-color 0.3s;
+}
+
+.unfinder-item:hover .unfinder-item-pic {
+  border-color: rgba(220, 39, 67, 0.5);
+}
+
+.unfinder-item-info { 
+  flex-grow: 1; 
+  min-width: 0;
+}
+
+.unfinder-item-info .username { 
+  font-weight: 600; 
+  font-size: 15px;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.unfinder-item-info .fullname { 
+  font-size: 13px; 
+  opacity: 0.7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.unfinder-item .verified-badge { 
+  font-size: 14px; 
+  margin-left: 4px;
+}
+
+/* Modern Toggle Switch Stili (Checkbox yerine) */
+.unfinder-item-toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.unfinder-item-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.unfinder-toggle-slider {
+  position: absolute;
+  cursor: pointer;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: none; /* DÜZELTME: Varsayılan olarak gizli olmalı */
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  animation: fadeInBackground 0.3s ease;
+  right: 0;
+  bottom: 0;
+  background-color: var(--border-color);
+  transition: all 0.3s ease;
+  border-radius: 24px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
 }
-.settings-content { background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 25px; border-radius: 16px; width: 90%; max-width: 300px; box-shadow: var(--shadow); transform: scale(0.9); animation: scaleIn 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; }
+
+.unfinder-toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: all 0.3s ease;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.unfinder-item-toggle input:checked + .unfinder-toggle-slider {
+  background: var(--primary-gradient);
+}
+
+.unfinder-item-toggle input:checked + .unfinder-toggle-slider:before {
+  transform: translateX(20px);
+}
+
+.unfinder-item-toggle:hover .unfinder-toggle-slider {
+  transform: scale(1.05);
+}
+
+/* Unfinder Aksiyonları - Her zaman altta görünür */
+.unfinder-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--card-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--shadow);
+}
+
+.unfinder-actions .btn {
+  min-height: 42px;
+  font-size: 14px;
+  padding: 12px 16px;
+  font-weight: 600;
+}
+
+.btn-unfollow-selected {
+  background: var(--danger-gradient);
+  color: white;
+  flex: 2;
+}
+
+.btn-select-all {
+  background: var(--secondary-gradient);
+  color: white;
+  flex: 1;
+}
+
+/* Liste Scrollbar Stili - Geliştirilmiş */
+.unfinder-list::-webkit-scrollbar { 
+  width: 8px; 
+}
+.unfinder-list::-webkit-scrollbar-track { 
+  background: transparent; 
+}
+.unfinder-list::-webkit-scrollbar-thumb { 
+  background: linear-gradient(45deg, var(--border-color), rgba(220, 39, 67, 0.3));
+  border-radius: 10px;
+  transition: background 0.3s;
+}
+.unfinder-list::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, rgba(220, 39, 67, 0.5), rgba(220, 39, 67, 0.7));
+}
+
+/* Unfinder boş durum stili */
+.unfinder-empty {
+  text-align: center;
+  padding: 40px 20px;
+  opacity: 0.7;
+}
+
+.unfinder-empty i {
+  font-size: 48px;
+  margin-bottom: 16px;
+  color: var(--border-color);
+}
+
+.unfinder-empty h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.unfinder-empty p {
+  font-size: 14px;
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
+/* Ayarlar Pop-up Stilleri */
+.settings-popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: none; justify-content: center; align-items: center; z-index: 1000; animation: fadeInBackground 0.3s ease; }
+.settings-content { background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 25px; border-radius: 16px; width: 90%; max-width: 320px; box-shadow: var(--shadow); transform: scale(0.9); animation: scaleIn 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; }
 .settings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
 .settings-header h3 { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 600; }
 .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-color); opacity: 0.7; transition: opacity 0.2s, transform 0.2s; }
 .close-btn:hover { opacity: 1; transform: rotate(90deg); }
-
 .setting-group, .setting-group-toggle { margin-bottom: 20px; }
 .setting-group label, .setting-group-toggle label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; opacity: 0.8; }
 #fontSelect, #languageSelect { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-size: 14px; font-family: inherit; transition: all 0.3s; }
-
-/* Tema Seçenekleri */
 .theme-options { display: flex; justify-content: space-around; gap: 10px; padding-top: 5px; }
 .theme-option { width: 38px; height: 38px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; position: relative; transition: transform 0.2s, border-color 0.2s; }
 .theme-option.active { border-color: var(--text-color); transform: scale(1.1); }
@@ -183,8 +401,6 @@ body {
 .theme-option[data-theme="green"] { background: var(--preview-green); }
 .theme-option[data-theme="purple"] { background: var(--preview-purple); }
 .theme-option[data-theme="pink"] { background: var(--preview-pink); }
-
-/* Toggle Switch Stilleri */
 .setting-group-toggle { display: flex; justify-content: space-between; align-items: center; }
 .setting-group-toggle label { margin-bottom: 0; }
 .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
@@ -195,8 +411,7 @@ input:checked + .slider { background-color: var(--success-color); }
 input:focus + .slider { box-shadow: 0 0 1px var(--success-color); }
 input:checked + .slider:before { transform: translateX(22px); }
 
-/* Hata Mesajı */
-.error-message { text-align: center; padding: 20px; color: var(--error-color); font-size: 14px; }
+.error-message { text-align: center; padding: 20px; color: var(--error-color); font-size: 14px; margin: auto; }
 .error-message i { font-size: 28px; margin-bottom: 12px; display: block; }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }

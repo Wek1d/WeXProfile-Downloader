@@ -3,7 +3,7 @@
     "message": "WeXProfile Downloader"
   },
   "appDesc": {
-    "message": "Instagram profil fotoğraflarını kolayca indir, önizle ve takipçi değişimlerini takip et."
+    "message": "Instagram profil fotoğraflarını indirin, takipçi analizi yapın ve takip etmeyenleri tespit edin."
   },
   "contextMenuTitle": {
     "message": "WeXProfile ile Profil Bilgilerini Göster"
@@ -12,37 +12,37 @@
     "message": "Bilgi"
   },
   "profileReadyNotification": {
-    "message": "Profil bilgileri hazır! Detayları görmek için WeXProfile ikonuna tıklayın."
+    "message": "Profil bilgileri hazır! Detaylar için eklenti ikonuna tıklayın."
   },
   "errorTitle": {
     "message": "Hata"
   },
   "notInstagramPageError": {
-    "message": "Lütfen bir Instagram profil sayfasında kullanın."
+    "message": "Lütfen bir Instagram sayfasında kullanın."
   },
   "profileFetchError": {
-    "message": "Profil bilgileri alınırken bir hata oluştu"
+    "message": "Profil bilgileri alınamadı"
   },
   "notProfilePageError": {
-    "message": "Geçerli bir Instagram profil sayfası bulunamadı. Lütfen bir kullanıcı profilini ziyaret edin."
+    "message": "Geçerli bir profil sayfası değil."
   },
   "openHdPhotoError": {
-    "message": "HD profil fotoğrafı açılamadı"
+    "message": "HD fotoğraf açılamadı"
   },
   "downloadPhotoError": {
-    "message": "Profil fotoğrafı indirilemedi"
+    "message": "Fotoğraf indirilemedi"
   },
   "downloadJsonTitle": {
-    "message": "Profil verilerini JSON olarak indir"
+    "message": "JSON olarak indir"
   },
   "noCachedDataError": {
-    "message": "Önbellekte profil verisi bulunamadı. Lütfen sayfayı yenileyip tekrar deneyin."
+    "message": "Önbellekte veri bulunamadı"
   },
   "popupFetchError": {
-    "message": "Profil verileri alınamadı. Sayfayı yenileyip tekrar deneyin."
+    "message": "Veri alınamadı"
   },
   "unknownActionError": {
-    "message": "Bilinmeyen eylem"
+    "message": "Bilinmeyen işlem"
   },
   "postsLabel": {
     "message": "Gönderi"
@@ -66,22 +66,22 @@
     "message": "Gizli"
   },
   "copyUsernameTitle": {
-    "message": "Kullanıcı adını kopyala"
+    "message": "Kopyala"
   },
   "copiedText": {
     "message": "Kopyalandı!"
   },
   "changeThemeTitle": {
-    "message": "Temayı Değiştir"
+    "message": "Tema"
   },
   "clearHistoryTitle": {
-    "message": "Takipçi Geçmişini Temizle"
+    "message": "Geçmişi Temizle"
   },
   "clearHistoryConfirm": {
-    "message": "Tüm profiller için kaydedilmiş takipçi değişim geçmişini silmek istediğinize emin misiniz?"
+    "message": "Geçmişi silmek istediğinize emin misiniz?"
   },
   "historyCleared": {
-    "message": "Takipçi değişim geçmişi başarıyla temizlendi."
+    "message": "Geçmiş temizlendi"
   },
   "settingsTitle": {
     "message": "Ayarlar"
@@ -90,27 +90,57 @@
     "message": "Yazı Tipi"
   },
   "themeTemplateLabel": {
-    "message": "Renk Teması"
+    "message": "Tema Rengi"
   },
   "imageLoadError": {
-    "message": "Profil fotoğrafı yüklenirken bir hata oluştu."
+    "message": "Fotoğraf yüklenemedi"
   },
   "githubTitle": {
-    "message": "GitHub Sayfası"
+    "message": "GitHub"
   },
   "updateAvailable": {
-    "message": "Yeni bir güncelleme mevcut!"
+    "message": "Güncelleme Mevcut"
   },
   "updateBtnText": {
     "message": "Güncelle"
   },
   "buttonStyleLabel": {
-    "message": "Klasik Buton Stili"
+    "message": "Klasik Butonlar"
   },
   "followerChangeLabel": {
-    "message": "Takipçi Değişimini Göster"
+    "message": "Değişimleri Göster"
   },
   "languageLabel": {
     "message": "Dil"
+  },
+  "scanningFollowers": {
+    "message": "Takipçiler taranıyor..."
+  },
+  "scanningFollowing": {
+    "message": "Takip edilenler taranıyor..."
+  },
+  "scanComplete": {
+    "message": "Tarama tamamlandı"
+  },
+  "unfollowersFound": {
+    "message": "kişi seni takip etmiyor"
+  },
+  "unfollowingProgress": {
+    "message": "Takipten çıkılıyor..."
+  },
+  "operationComplete": {
+    "message": "İşlem tamam"
+  },
+  "startScanBtn": {
+    "message": "Taramayı Başlat"
+  },
+  "pauseScanBtn": {
+    "message": "Duraklat"
+  },
+  "resumeScanBtn": {
+    "message": "Devam Et"
+  },
+  "unfollowSelectedBtn": {
+    "message": "Seçilenleri Bırak"
   }
 }

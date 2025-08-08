@@ -3,43 +3,43 @@
     "message": "WeXProfile Downloader"
   },
   "appDesc": {
-    "message": "Einfach Instagram-Profilbilder herunterladen, vorab ansehen und Follower-Änderungen verfolgen."
+    "message": "Instagram-Profilbilder herunterladen, Follower analysieren und Entfolger erkennen."
   },
   "contextMenuTitle": {
     "message": "Profilinformationen mit WeXProfile anzeigen"
   },
   "infoTitle": {
-    "message": "Information"
+    "message": "Info"
   },
   "profileReadyNotification": {
-    "message": "Profilinformationen sind bereit! Klicken Sie auf das WeXProfile-Symbol, um die Details anzuzeigen."
+    "message": "Profilinformationen sind bereit! Klicken Sie auf das Erweiterungssymbol für Details."
   },
   "errorTitle": {
     "message": "Fehler"
   },
   "notInstagramPageError": {
-    "message": "Bitte verwenden Sie dies auf einer Instagram-Profilseite."
+    "message": "Bitte verwenden Sie dies auf einer Instagram-Seite."
   },
   "profileFetchError": {
-    "message": "Beim Abrufen der Profilinformationen ist ein Fehler aufgetreten."
+    "message": "Profilinformationen konnten nicht abgerufen werden"
   },
   "notProfilePageError": {
-    "message": "Keine gültige Instagram-Profilseite gefunden. Bitte besuchen Sie ein Benutzerprofil."
+    "message": "Dies ist keine gültige Profilseite."
   },
   "openHdPhotoError": {
-    "message": "HD-Profilfoto konnte nicht geöffnet werden."
+    "message": "HD-Foto konnte nicht geöffnet werden"
   },
   "downloadPhotoError": {
-    "message": "Profilfoto konnte nicht heruntergeladen werden."
+    "message": "Foto konnte nicht heruntergeladen werden"
   },
   "downloadJsonTitle": {
-    "message": "Profildaten als JSON herunterladen"
+    "message": "Als JSON herunterladen"
   },
   "noCachedDataError": {
-    "message": "Es wurden keine Profildaten im Cache gefunden. Bitte aktualisieren Sie die Seite und versuchen Sie es erneut."
+    "message": "Keine Daten im Cache gefunden"
   },
   "popupFetchError": {
-    "message": "Profildaten konnten nicht abgerufen werden. Bitte aktualisieren Sie die Seite und versuchen Sie es erneut."
+    "message": "Daten konnten nicht abgerufen werden"
   },
   "unknownActionError": {
     "message": "Unbekannte Aktion"
@@ -51,7 +51,7 @@
     "message": "Follower"
   },
   "followingLabel": {
-    "message": "Folgt"
+    "message": "Gefolgt"
   },
   "openInNewTabBtn": {
     "message": "In neuem Tab öffnen"
@@ -60,28 +60,28 @@
     "message": "Herunterladen"
   },
   "defaultBio": {
-    "message": "Keine Biografie vorhanden"
+    "message": "Keine Biografie"
   },
   "privateLabel": {
     "message": "Privat"
   },
   "copyUsernameTitle": {
-    "message": "Benutzernamen kopieren"
+    "message": "Kopieren"
   },
   "copiedText": {
     "message": "Kopiert!"
   },
   "changeThemeTitle": {
-    "message": "Thema wechseln"
+    "message": "Thema"
   },
   "clearHistoryTitle": {
-    "message": "Follower-Verlauf löschen"
+    "message": "Verlauf löschen"
   },
   "clearHistoryConfirm": {
-    "message": "Sind Sie sicher, dass Sie den Follower-Änderungsverlauf für alle Profile löschen möchten?"
+    "message": "Sind Sie sicher, dass Sie den Verlauf löschen möchten?"
   },
   "historyCleared": {
-    "message": "Follower-Änderungsverlauf erfolgreich gelöscht."
+    "message": "Verlauf gelöscht"
   },
   "settingsTitle": {
     "message": "Einstellungen"
@@ -90,27 +90,57 @@
     "message": "Schriftart"
   },
   "themeTemplateLabel": {
-    "message": "Farbthema"
+    "message": "Designfarbe"
   },
   "imageLoadError": {
-    "message": "Beim Laden des Profilfotos ist ein Fehler aufgetreten."
+    "message": "Foto konnte nicht geladen werden"
   },
   "githubTitle": {
-    "message": "GitHub-Seite"
+    "message": "GitHub"
   },
   "updateAvailable": {
-    "message": "Ein neues Update ist verfügbar!"
+    "message": "Update verfügbar"
   },
   "updateBtnText": {
     "message": "Aktualisieren"
   },
   "buttonStyleLabel": {
-    "message": "Klassischer Button-Stil"
+    "message": "Klassische Schaltflächen"
   },
   "followerChangeLabel": {
-    "message": "Follower-Änderungen anzeigen"
+    "message": "Änderungen anzeigen"
   },
   "languageLabel": {
     "message": "Sprache"
+  },
+  "scanningFollowers": {
+    "message": "Follower werden gescannt..."
+  },
+  "scanningFollowing": {
+    "message": "Gefolgte werden gescannt..."
+  },
+  "scanComplete": {
+    "message": "Scan abgeschlossen"
+  },
+  "unfollowersFound": {
+    "message": "Personen folgen Ihnen nicht mehr"
+  },
+  "unfollowingProgress": {
+    "message": "Entfolgen..."
+  },
+  "operationComplete": {
+    "message": "Vorgang abgeschlossen"
+  },
+  "startScanBtn": {
+    "message": "Scan starten"
+  },
+  "pauseScanBtn": {
+    "message": "Pause"
+  },
+  "resumeScanBtn": {
+    "message": "Fortsetzen"
+  },
+  "unfollowSelectedBtn": {
+    "message": "Ausgewählte nicht mehr folgen"
   }
 }

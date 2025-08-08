@@ -11,80 +11,92 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-  <div class="app-container">
-    <div id="updateNotification" class="update-notification" style="display:none;">
-      <p><span data-i18n="updateAvailable">Yeni bir güncelleme mevcut!</span> v<span id="latestVersion"></span></p>
-      <button id="updateBtn" data-i18n="updateBtnText">Güncelle</button>
-    </div>
-    
-    <div class="header">
-      <h1 data-i18n="appName">WeXProfile</h1>
-      <div class="header-actions">
-        <button id="settingsBtn" class="settings-btn" title="Ayarlar">
-          <i class="fas fa-cog"></i>
-        </button>
-        <button id="themeToggle" class="theme-toggle" title="Temayı Değiştir">
-          <i class="fas fa-moon"></i>
-          <i class="fas fa-sun"></i>
-        </button>
-      </div>
-    </div>
 
-    <div class="profile-container">
-      <div class="profile-pic-container">
-        <img id="profilePic" src="" alt="Profil Fotoğrafı" class="profile-pic">
-        <div class="loader"><div></div><div></div><div></div></div>
+  <div id="profileView" class="view active-view">
+    <div class="app-container">
+      <div id="updateNotification" class="update-notification" style="display:none;">
+        <p><span data-i18n="updateAvailable">Yeni bir güncelleme mevcut!</span> v<span id="latestVersion"></span></p>
+        <button id="updateBtn" data-i18n="updateBtnText">Güncelle</button>
       </div>
       
-      <div class="profile-info">
-        <h2 id="username" title="Kullanıcı adını kopyala">@kullaniciadi</h2>
-        <h3 id="fullName">Tam Ad</h3>
-        <p id="bio" class="bio" data-i18n="defaultBio">Biyografi burada görünecek...</p>
+      <div class="header">
+        <h1 data-i18n="appName">WeXProfile</h1>
+        <div class="header-actions">
+          <button id="unfollowerBtn" class="theme-toggle" title="Unfollower Aracı">
+            <i class="fas fa-user-minus"></i>
+          </button>
+          <button id="settingsBtn" class="settings-btn" title="Ayarlar">
+            <i class="fas fa-cog"></i>
+          </button>
+          <button id="themeToggle" class="theme-toggle" title="Temayı Değiştir">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="profile-container">
+        <div class="profile-pic-container">
+          <img id="profilePic" src="" alt="Profil Fotoğrafı" class="profile-pic">
+          <div class="loader"><div></div><div></div><div></div></div>
+        </div>
         
-        <div class="stats">
-          <div class="stat">
-            <div class="stat-count-wrapper">
-              <span id="postsCount">0</span>
+        <div class="profile-info">
+          <h2 id="username" title="Kullanıcı adını kopyala">@kullaniciadi</h2>
+          <h3 id="fullName">Tam Ad</h3>
+          <p id="bio" class="bio" data-i18n="defaultBio">Biyografi burada görünecek...</p>
+          
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-count-wrapper"><span id="postsCount">0</span></div>
+              <span data-i18n="postsLabel">Gönderi</span>
             </div>
-            <span data-i18n="postsLabel">Gönderi</span>
-          </div>
-          <div class="stat">
-            <div class="stat-count-wrapper">
-              <span id="followersCount">0</span>
-              <span id="followersChange"></span>
+            <div class="stat">
+              <div class="stat-count-wrapper"><span id="followersCount">0</span><span id="followersChange"></span></div>
+              <span data-i18n="followersLabel">Takipçi</span>
             </div>
-            <span data-i18n="followersLabel">Takipçi</span>
-          </div>
-          <div class="stat">
-            <div class="stat-count-wrapper">
-              <span id="followingCount">0</span>
-              <span id="followingChange"></span>
+            <div class="stat">
+              <div class="stat-count-wrapper"><span id="followingCount">0</span><span id="followingChange"></span></div>
+              <span data-i18n="followingLabel">Takip</span>
             </div>
-            <span data-i18n="followingLabel">Takip</span>
           </div>
         </div>
       </div>
+      
+      <div class="actions">
+        <button id="openHdBtn" class="btn btn-primary"><i class="fas fa-external-link-alt"></i> <span data-i18n="openInNewTabBtn">Yeni Sekmede Aç</span></button>
+        <button id="downloadBtn" class="btn btn-secondary"><i class="fas fa-download"></i> <span data-i18n="downloadBtn">İndir</span></button>
+      </div>
+      
+      <div class="footer">
+        <button id="githubBtn" class="btn-icon-footer" title="GitHub Sayfasına Git"><i class="fab fa-github"></i></button>
+        <button id="downloadJsonBtn" class="btn-icon-footer" title="Profil verilerini JSON olarak indir"><i class="fas fa-file-code"></i></button>
+        <p class="version">v3.1.0</p>
+        <button id="clearHistoryBtn" class="btn-icon-footer" title="Takipçi Geçmişini Temizle"><i class="fas fa-trash-alt"></i></button>
+      </div>
     </div>
-    
-    <div class="actions">
-      <button id="openHdBtn" class="btn btn-primary">
-        <i class="fas fa-external-link-alt"></i> <span data-i18n="openInNewTabBtn">Yeni Sekmede Aç</span>
-      </button>
-      <button id="downloadBtn" class="btn btn-secondary">
-        <i class="fas fa-download"></i> <span data-i18n="downloadBtn">İndir</span>
-      </button>
-    </div>
-    
-    <div class="footer">
-      <button id="githubBtn" class="btn-icon-footer" title="GitHub Sayfasına Git">
-        <i class="fab fa-github"></i>
-      </button>
-      <button id="downloadJsonBtn" class="btn-icon-footer" title="Profil verilerini JSON olarak indir">
-        <i class="fas fa-file-code"></i>
-      </button>
-      <p class="version">v3.0.0</p> <button id="clearHistoryBtn" class="btn-icon-footer" title="Takipçi Geçmişini Temizle">
-        <i class="fas fa-trash-alt"></i>
-      </button>
+  </div>
+
+  <div id="unfinderView" class="view">
+    <div class="app-container">
+      <div class="header">
+        <h1>WeXUnfollower</h1>
+        <div class="header-actions">
+          <button id="backToProfileBtn" class="theme-toggle" title="Geri Dön"><i class="fas fa-arrow-left"></i></button>
+        </div>
+      </div>
+      <div id="unfinder-status" class="unfinder-status">
+        <p id="unfinder-status-text">Seni takip etmeyenleri bulmak için taramayı başlat.</p>
+        <div id="unfinder-progress-bar" class="progress-bar-container"><div class="progress-bar"></div></div>
+      </div>
+      <div id="unfinder-list" class="unfinder-list">
+        </div>
+      <div id="unfinder-actions" class="actions">
+        <button id="startScanBtn" class="btn btn-primary"><i class="fas fa-search"></i> Taramayı Başlat</button>
+        <button id="pauseScanBtn" class="btn btn-secondary" style="display: none;"><i class="fas fa-pause"></i> Duraklat</button>
+        <button id="resumeScanBtn" class="btn btn-primary" style="display: none;"><i class="fas fa-play"></i> Devam Et</button>
+        <button id="unfollowSelectedBtn" class="btn btn-danger" style="display: none;"><i class="fas fa-user-slash"></i> Seçilenleri Bırak (<span id="unfollow-selected-count">0</span>)</button>
+      </div>
     </div>
   </div>
 
@@ -95,7 +107,6 @@
         <button id="closeSettingsBtn" class="close-btn">&times;</button>
       </div>
       <div class="settings-body">
-
         <div class="setting-group">
             <label data-i18n="languageLabel">Dil</label>
             <select id="languageSelect">
@@ -107,7 +118,6 @@
               <option value="it">İtaliano</option>
             </select>
         </div>
-
         <div class="setting-group">
           <label data-i18n="fontFamilyLabel">Yazı Tipi</label>
           <select id="fontSelect">
@@ -122,7 +132,6 @@
             <option value="'Yu Gothic', sans-serif">Yu Gothic</option>
           </select>
         </div>
-        
         <div class="setting-group">
           <label data-i18n="themeTemplateLabel">Renk Teması</label>
           <div class="theme-options">
@@ -133,23 +142,14 @@
             <button class="theme-option" data-theme="pink" title="Pembe"></button>
           </div>
         </div>
-        
         <div class="setting-group-toggle">
             <label for="buttonStyleToggle" data-i18n="buttonStyleLabel">Klasik Buton Stili</label>
-            <label class="switch">
-                <input type="checkbox" id="buttonStyleToggle">
-                <span class="slider round"></span>
-            </label>
+            <label class="switch"><input type="checkbox" id="buttonStyleToggle"><span class="slider round"></span></label>
         </div>
-
         <div class="setting-group-toggle">
             <label for="followerChangeToggle" data-i18n="followerChangeLabel">Takipçi Değişimini Göster</label>
-            <label class="switch">
-                <input type="checkbox" id="followerChangeToggle">
-                <span class="slider round"></span>
-            </label>
+            <label class="switch"><input type="checkbox" id="followerChangeToggle"><span class="slider round"></span></label>
         </div>
-
       </div>
     </div>
   </div>
