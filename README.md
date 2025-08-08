@@ -63,8 +63,10 @@ Built with Manifest V3 for enhanced security and performance.
 ### 🖼️ Screenshots
 
 <p align="center">
-  <img src="screenshots/profile-view.png" width="45%" alt="Profile View"/>
-  <img src="screenshots/unfollower-view.png" width="45%" alt="Unfollower View"/>  
+  <img width="370" height="531" alt="image" src="https://github.com/user-attachments/assets/dcb2bce6-9bc9-40bf-94e3-e86949568bb7" />
+
+  <img width="391" height="629" alt="image" src="https://github.com/user-attachments/assets/b8a19cf0-c209-4da7-a2c5-b87ca3b193e3" />
+
 </p>
 
 ---
