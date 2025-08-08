@@ -109,6 +109,6 @@ Use unfollow tool responsibly (max 50/day recommended)
 Not affiliated with Instagram/Meta
 
 📜 License
-MIT License - See LICENSE for details.
+MIT License - See [LICENSE](https://github.com/Wek1d/WeXProfile-Downloader?tab=MIT-1-ov-file) for details.
 
 Credits to InstagramUnfollowers for inspiration on the unfollower detection algorithm.
