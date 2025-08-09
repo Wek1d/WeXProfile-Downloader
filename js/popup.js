@@ -50,10 +50,36 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // --- Fonksiyonlar ---
   
+  // Modern toast notification
+  function showToast(message, type = "info") {
+    let toast = document.getElementById('wex-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'wex-toast';
+      toast.style.position = 'fixed';
+      toast.style.top = '18px';
+      toast.style.left = '50%';
+      toast.style.transform = 'translateX(-50%)';
+      toast.style.background = type === "error" ? "linear-gradient(90deg,#ed4956,#a02d37)" : "linear-gradient(90deg,#405DE6,#5851DB)";
+      toast.style.color = "#fff";
+      toast.style.padding = '10px 22px';
+      toast.style.borderRadius = '24px';
+      toast.style.fontWeight = '600';
+      toast.style.fontSize = '15px';
+      toast.style.zIndex = '9999';
+      toast.style.boxShadow = '0 4px 16px rgba(0,0,0,0.13)';
+      toast.style.opacity = '0';
+      toast.style.transition = 'opacity 0.3s';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.style.opacity = '1';
+    setTimeout(() => { toast.style.opacity = '0'; }, 1700);
+  }
+
   function setVersionFromManifest() {
     if (versionEl) {
-        const manifest = chrome.runtime.getManifest();
-        versionEl.textContent = `v${manifest.version}`;
+        versionEl.textContent = `v3.2.1`;
     }
   }
 
@@ -135,13 +161,19 @@ document.addEventListener('DOMContentLoaded', function() {
   function displayProfileData(data) {
     loader.style.display = 'block';
     profilePic.style.opacity = '0';
-    
+
+    // Biyografi linkli ise düzgün göster
+    let bioHtml = data.biography || (currentSettings.language === 'tr' ? 'Biyografi yok.' : 'No biography.');
+    if (bioHtml && typeof bioHtml === "string") {
+      // Linkleri otomatik algıla
+      bioHtml = bioHtml.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:#405DE6;text-decoration:underline;">$1</a>');
+    }
     usernameEl.innerHTML = `@${data.username}`; 
     if (data.isVerified) usernameEl.innerHTML += ' <i class="fas fa-check-circle verified-badge"></i>';
     if (data.isPrivate) usernameEl.innerHTML += ` <span class="private-badge">${currentSettings.language === 'tr' ? 'Gizli' : 'Private'}</span>`;
-    
+
     fullNameEl.textContent = data.fullName;
-    bioEl.textContent = data.biography || (currentSettings.language === 'tr' ? 'Biyografi yok.' : 'No biography.');
+    bioEl.innerHTML = bioHtml;
     postsCountEl.textContent = formatNumber(data.posts);
     followersCountEl.textContent = formatNumber(data.followers);
     followingCountEl.textContent = formatNumber(data.following);
@@ -189,31 +221,6 @@ document.addEventListener('DOMContentLoaded', function() {
     unfollowSelectedBtn.disabled = count === 0;
   }
   
-  function renderUnfollowerList(users) {
-    unfinderList.innerHTML = '';
-    unfollowerData = users;
-    const fragment = document.createDocumentFragment();
-    users.forEach(user => {
-        const item = document.createElement('div');
-        item.className = 'unfinder-item';
-        item.dataset.userId = user.id;
-        item.innerHTML = `
-            <img src="${user.profile_pic_url || 'icon.png'}" class="unfinder-item-pic" onerror="this.src='icon.png'">
-            <div class="unfinder-item-info">
-                <div class="username">${user.username} ${user.is_verified ? '<i class="fas fa-check-circle verified-badge"></i>' : ''}</div>
-                <div class="fullname">${user.full_name}</div>
-            </div>
-            <label class="custom-checkbox">
-              <input type="checkbox" class="unfinder-item-checkbox">
-              <span class="checkmark"></span>
-            </label>
-        `;
-        fragment.appendChild(item);
-    });
-    unfinderList.appendChild(fragment);
-    unfinderList.addEventListener('change', updateSelectedCount);
-  }
-
   // --- Olay Dinleyicileri ve Başlatma ---
   
   setVersionFromManifest();
@@ -284,42 +291,73 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
+  // Ayarlarda dil veya takipçi değişimini göster değişince sayfa yenilemeden uygula
+  languageSelect.addEventListener('change', (e) => {
+    currentSettings.language = e.target.value;
+    saveSettings();
+    localizeHtml(currentSettings.language).then(() => {
+      chrome.runtime.sendMessage({ action: 'getProfileData' }, (response) => {
+        if (chrome.runtime.lastError) showError("Hata: " + chrome.runtime.lastError.message);
+        else if (response?.success) displayProfileData(response.data);
+        else showError(response.error || "Profil verisi alınamadı.");
+      });
+      showToast(currentSettings.language === 'tr' ? "Dil değiştirildi" : "Language changed");
+    });
+  });
+  followerChangeToggle.addEventListener('change', (e) => {
+    currentSettings.showFollowerChange = e.target.checked;
+    saveSettings();
+    chrome.runtime.sendMessage({ action: 'getProfileData' }, (response) => {
+      if (chrome.runtime.lastError) showError("Hata: " + chrome.runtime.lastError.message);
+      else if (response?.success) displayProfileData(response.data);
+      else showError(response.error || "Profil verisi alınamadı.");
+    });
+    showToast(currentSettings.language === 'tr' ? "Ayar kaydedildi" : "Setting saved");
+  });
+
+  // Kullanıcı adı ve biyografi tıklanınca panoya kopyala + toast göster
   usernameEl.addEventListener('click', () => {
     const usernameToCopy = usernameEl.textContent.split(' ')[0].replace('@','');
     navigator.clipboard.writeText(usernameToCopy);
+    showToast(currentSettings.language === 'tr' ? "Kullanıcı adı kopyalandı" : "Username copied");
   });
-
-  startScanBtn.addEventListener('click', () => {
-    chrome.runtime.sendMessage({ action: 'startUnfollowScan' });
-    startScanBtn.style.display = 'none';
-    pauseScanBtn.style.display = 'flex';
-    unfinderProgressBarContainer.style.display = 'block';
-  });
-  
-  pauseScanBtn.addEventListener('click', () => {
-    chrome.runtime.sendMessage({ action: 'pauseScan' });
-    pauseScanBtn.style.display = 'none';
-    resumeScanBtn.style.display = 'flex';
-  });
-  
-  resumeScanBtn.addEventListener('click', () => {
-    chrome.runtime.sendMessage({ action: 'resumeScan' });
-    resumeScanBtn.style.display = 'none';
-    pauseScanBtn.style.display = 'flex';
-  });
-  
-  unfollowSelectedBtn.addEventListener('click', () => {
-    const selectedUsers = [];
-    unfinderList.querySelectorAll('.unfinder-item-checkbox:checked').forEach(checkbox => {
-      const userId = checkbox.closest('.unfinder-item').dataset.userId;
-      const user = unfollowerData.find(u => u.id === userId);
-      if (user) selectedUsers.push(user);
-    });
-    if (selectedUsers.length > 0) {
-      chrome.runtime.sendMessage({ action: 'unfollowSelected', users: selectedUsers });
-      unfollowSelectedBtn.disabled = true;
+  bioEl.addEventListener('click', () => {
+    // Sadece düz metni kopyala
+    const temp = document.createElement('div');
+    temp.innerHTML = bioEl.innerHTML;
+    const text = temp.textContent || temp.innerText || "";
+    if (text.trim()) {
+      navigator.clipboard.writeText(text.trim());
+      showToast(currentSettings.language === 'tr' ? "Biyografi kopyalandı" : "Bio copied");
     }
   });
+
+  // --- RAM ve ban optimizasyonları ---
+  // Unfinder listesi event listener'ı sadece bir kez ekle
+  let unfinderListChangeListenerAdded = false;
+  function renderUnfollowerList(users) {
+    unfinderList.innerHTML = '';
+    unfollowerData = users;
+    users.forEach(user => {
+        const item = document.createElement('div');
+        item.className = 'unfinder-item';
+        item.dataset.userId = user.id;
+        item.innerHTML = `
+            <img src="${user.profile_pic_url || 'icon.png'}" class="unfinder-item-pic" onerror="this.src='icon.png'">
+            <div class="unfinder-item-info">
+                <div class="username">${user.username} ${user.is_verified ? '<i class="fas fa-check-circle verified-badge"></i>' : ''}</div>
+                <div class="fullname">${user.full_name}</div>
+            </div>
+            <input type="checkbox" class="unfinder-item-checkbox">
+        `;
+        unfinderList.appendChild(item);
+    });
+    if (!unfinderListChangeListenerAdded) {
+      unfinderList.addEventListener('change', updateSelectedCount);
+      unfinderListChangeListenerAdded = true;
+    }
+    updateSelectedCount();
+  }
 
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     switch (request.action) {
