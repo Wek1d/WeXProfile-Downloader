@@ -39,24 +39,31 @@ Built with Manifest V3 for enhanced security and performance.
 - Follower change tracking (daily/weekly/monthly)
 - Verified & private account indicators
 - JSON data export
+- **Follower Change Chart**: Visualize your follower history with daily/weekly/monthly graphs
+- **Clear Follower History**: Easily reset your follower change tracking
 
 **Unfollower Detection** (Inspired by [InstagramUnfollowers](https://github.com/davidarroyo1234/InstagramUnfollowers))
 - Scan your followers/following
 - Identify non-reciprocal relationships
 - Bulk unfollow with safety limits
 - Progress tracking with visual feedback
+- **Customizable Scan Speed**: Adjust scan/unfollow delays for safety
+- **Pause/Resume Scanning**: Control the unfollower scan process
+- **Advanced Filtering**: Filter by verified, private, profile picture, etc.
 
 **Customization**
 - Light/dark mode with 5 color themes
 - 9 font options
 - Classic/modern button styles
 - Multi-language support (6 languages)
+- **Theme & Font Live Preview**: Instantly see changes in the popup
 
 **Privacy & Safety**
 - No data collection policy
 - Rate-limited API calls
 - Randomized delays to prevent detection
 - Local storage only (no cloud sync)
+- **Open Source**: All code is public and auditable
 
 ---
 
