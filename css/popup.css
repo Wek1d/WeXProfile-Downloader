@@ -91,10 +91,14 @@ body {
 }
 .profile-pic-container { position: relative; width: 110px; height: 110px; margin: 0 auto 10px; border-radius: 50%; padding: 4px; background: var(--primary-gradient); flex-shrink: 0; }
 .profile-pic { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 4px solid var(--bg-color); }
-.profile-pic-container .loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90px; height: 90px; display: flex; justify-content: space-between; align-items: center; }
+.profile-pic-container .loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90px; height: 90px; display: flex; justify-content: space-between; align-items: center; z-index: 2; pointer-events: none; animation: rotate360 1.2s linear infinite; }
 .loader div { width: 14px; height: 14px; background: #fff; border-radius: 50%; animation: bounce 0.6s infinite ease-in-out; }
 .loader div:nth-child(1) { animation-delay: -0.32s; }
 .loader div:nth-child(2) { animation-delay: -0.16s; }
+@keyframes rotate360 {
+  0% { transform: translate(-50%, -50%) rotate(0deg);}
+  100% { transform: translate(-50%, -50%) rotate(360deg);}
+}
 .profile-info { text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
 #username { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 600; margin-bottom: 4px; cursor: pointer; }
 #fullName { font-size: 16px; font-weight: 500; margin-bottom: 8px; opacity: 0.9; }
@@ -259,7 +263,7 @@ body {
 #fontSelect, #languageSelect { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-size: 14px; font-family: inherit; transition: all 0.3s; }
 .theme-options { display: flex; justify-content: space-around; gap: 10px; padding-top: 5px; }
 .theme-option { width: 38px; height: 38px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; position: relative; transition: transform 0.2s, border-color 0.2s; }
-.theme-option.active { border-color: var(--text-color); transform: scale(1.1); }
+.theme-option.active { border-color: var(--primary-color-for-check, #dc2743) !important; transform: scale(1.15); }
 .theme-option[data-theme="default"] { background: var(--preview-default); }
 .theme-option[data-theme="blue"] { background: var(--preview-blue); }
 .theme-option[data-theme="green"] { background: var(--preview-green); }
@@ -464,4 +468,167 @@ input:checked + .slider:before { transform: translateX(22px); }
 #wex-toast {
   pointer-events: none;
   user-select: none;
+}
+
+/* --- MODAL ve GRAFİK PANELİ --- */
+.wex-modal {
+  position: fixed;
+  z-index: 9999;
+  left: 0; top: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.45);
+  display: flex; align-items: center; justify-content: center;
+  animation: fadeInBackground 0.2s;
+}
+.wex-modal[data-theme="dark"] {
+  background: rgba(0,0,0,0.75);
+}
+.wex-modal-content {
+  background: var(--card-bg);
+  color: var(--text-color);
+  border-radius: 16px;
+  min-width: 260px;
+  max-width: 95vw;
+  box-shadow: var(--shadow);
+  padding: 0;
+  animation: scaleIn 0.2s;
+  display: flex; flex-direction: column;
+  border: 1px solid var(--border-color);
+}
+.wex-modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 20px 8px 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+.wex-modal-title { font-size: 18px; font-weight: 600; }
+.wex-modal-close {
+  background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-color); opacity: 0.7;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.wex-modal-close:hover { opacity: 1; transform: rotate(90deg);}
+.wex-modal-body {
+  padding: 18px 20px 8px 20px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.wex-modal-body label { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+.wex-modal-body input[type="number"] {
+  width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border-color);
+  background: var(--bg-color); color: var(--text-color); font-size: 14px; font-family: inherit; margin-top: 4px; margin-bottom: 8px;
+}
+.wex-modal-footer {
+  padding: 12px 20px 18px 20px;
+  display: flex; justify-content: flex-end; gap: 10px;
+}
+.wex-modal-download-btn { min-width: 90px; }
+.wex-chart-content { min-width: 320px; max-width: 420px; }
+.wex-chart-toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+#followerChart { width: 100%; background: var(--bg-color); border-radius: 8px; }
+
+/* --- UNFINDER TARAYICI AYAR PANELİ --- */
+.unfinder-settings-panel {
+  position: absolute;
+  top: 60px;
+  right: 12px;
+  z-index: 1001;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.18);
+  min-width: 260px;
+  max-width: 320px;
+  padding: 0;
+  animation: scaleIn 0.18s;
+}
+.unfinder-settings-inner {
+  padding: 18px 20px 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.unfinder-settings-title {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--text-color);
+}
+.unfinder-settings-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.unfinder-settings-fields label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-color);
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.unfinder-settings-fields input[type="number"] {
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-size: 13px;
+  font-family: inherit;
+  margin-top: 2px;
+}
+.unfinder-settings-warning {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: #ed4956;
+  margin: 8px 0 0 0;
+}
+.unfinder-settings-warning i {
+  font-size: 16px;
+}
+.unfinder-settings-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+.unfinder-settings-actions .btn {
+  min-width: 80px;
+  font-size: 14px;
+  padding: 8px 0;
+}
+
+/* Grafik paneli select kutusu için modern ve tematik stil */
+.wex-chart-range-select {
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 7px 16px;
+  background: var(--card-bg);
+  color: var(--text-color);
+  border: 1.5px solid var(--border-color);
+  margin-right: 8px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.wex-chart-range-select:focus {
+  border-color: var(--primary-color-for-check, #dc2743);
+  box-shadow: 0 0 0 2px var(--primary-color-for-check, #dc2743)22;
+}
+
+/* --- scanSettingsGroup eski stillerini kaldır (artık ayarlar popup'ında yok) --- */
+.settings-body .setting-group input[type="number"] {
+  /* kaldırıldı */
+}
+.settings-body .setting-group label[style*="margin-bottom:6px"] {
+  /* kaldırıldı */
+}
+.settings-body .setting-group > div > div {
+  /* kaldırıldı */
+}
+.settings-body .setting-group > div > div:last-child {
+  /* kaldırıldı */
 }

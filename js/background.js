@@ -5,11 +5,12 @@ import { UnfollowerScanner } from './unfollower.js';
 let currentProfileFetchPromise = null;
 let currentProfileFetchUrl = null;
 let currentScanner = null;
+let scanTimings = null;
 
 const USER_AGENT_RULE_ID_API = 1;
 const USER_AGENT_RULE_ID_GQL = 2;
 const PROFILE_HISTORY_KEY = 'profileHistory';
-const HISTORY_LIMIT = 100;
+const HISTORY_LIMIT = 500;
 const CACHE_TTL = 5 * 60 * 1000;
 
 const USER_AGENTS = [
@@ -157,12 +158,21 @@ function getInstagramUsername(link) {
     try {
       const url = new URL(link);
       const pathSegments = url.pathname.split('/').filter(Boolean);
-      const forbiddenSegments = ['p', 'reels', 'stories', 'tv', 'explore', 'direct'];
-      if (pathSegments.length > 0 && !forbiddenSegments.includes(pathSegments[0])) {
+      // Daha fazla forbidden segment ekle
+      const forbiddenSegments = [
+        'p', 'reels', 'stories', 'tv', 'explore', 'direct', 'accounts', 'about', 'developer', 'directory', 'privacy', 'terms', 'api'
+      ];
+      // Sadece bir segment ve forbidden değilse kullanıcı adı
+      if (pathSegments.length === 1 && !forbiddenSegments.includes(pathSegments[0])) {
         resolve(pathSegments[0]);
-      } else {
-        reject(new Error("Geçerli bir profil sayfası değil. Lütfen bir kullanıcı profilini ziyaret edin."));
+        return;
       }
+      // /username/ şeklinde ise de kabul et
+      if (pathSegments.length === 2 && !forbiddenSegments.includes(pathSegments[0]) && pathSegments[1] === '') {
+        resolve(pathSegments[0]);
+        return;
+      }
+      reject(new Error("Geçerli bir profil sayfası değil. Lütfen bir kullanıcı profilini ziyaret edin."));
     } catch(e) {
       reject(new Error("Geçersiz URL formatı."));
     }
@@ -192,23 +202,33 @@ async function fetchImageAsDataURL(imageUrl) {
 async function updateProfileHistoryAndGetDataWithChanges(newUserData) {
     const { [PROFILE_HISTORY_KEY]: history = {} } = await chrome.storage.local.get(PROFILE_HISTORY_KEY);
     const userId = newUserData.id;
-    const oldUserData = history[userId];
+    let oldEntries = history[userId];
+    let lastEntry = null;
+    if (Array.isArray(oldEntries) && oldEntries.length > 0) {
+        lastEntry = oldEntries[oldEntries.length - 1];
+    } else if (oldEntries && oldEntries.timestamp) {
+        lastEntry = oldEntries;
+        oldEntries = [oldEntries];
+    } else {
+        oldEntries = [];
+    }
     newUserData.followerChange = 0;
     newUserData.followingChange = 0;
-    if (oldUserData) {
-        newUserData.followerChange = newUserData.followers - oldUserData.followers;
-        newUserData.followingChange = newUserData.following - oldUserData.following;
+    if (lastEntry) {
+        newUserData.followerChange = newUserData.followers - lastEntry.followers;
+        newUserData.followingChange = newUserData.following - lastEntry.following;
     }
-    history[userId] = {
+    // Yeni kaydı sona ekle
+    oldEntries.push({
         followers: newUserData.followers,
         following: newUserData.following,
         timestamp: Date.now()
-    };
-    const historyKeys = Object.keys(history);
-    if (historyKeys.length > HISTORY_LIMIT) {
-        const oldestKey = historyKeys.sort((a, b) => history[a].timestamp - history[b].timestamp)[0];
-        delete history[oldestKey];
+    });
+    // Limit aşılırsa en eskiyi çıkar
+    if (oldEntries.length > HISTORY_LIMIT) {
+        oldEntries = oldEntries.slice(-HISTORY_LIMIT);
     }
+    history[userId] = oldEntries;
     await chrome.storage.local.set({ [PROFILE_HISTORY_KEY]: history });
     return newUserData;
 }
@@ -243,11 +263,19 @@ async function getInstagramUserInfo(username) {
   if (out.data && out.data.user) {
     const user = out.data.user;
     const profilePicDataURL = await fetchImageAsDataURL(user.profile_pic_url);
+    // Biyografi için hem biography_with_entities hem biography kontrolü
+    let biography = '';
+    if (user.biography_with_entities && user.biography_with_entities.raw_text) {
+      biography = user.biography_with_entities.raw_text;
+    } else if (user.biography) {
+      biography = user.biography;
+    }
     let userData = {
       id: user.id,
       username: user.username,
       fullName: user.full_name,
-      biography: user.biography,
+      biography: biography,
+      biography_with_entities: user.biography_with_entities, // popup.js'de de kullanılabilir
       followers: user.edge_followed_by?.count || 0,
       following: user.edge_follow?.count || 0,
       posts: user.edge_owner_to_timeline_media?.count || 0,
@@ -392,7 +420,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       case 'setSettings': await chrome.storage.sync.set(request.settings); sendResponse({ success: true }); break;
       case 'openGithub': chrome.tabs.create({ url: 'https://github.com/Wek1d/WeXProfile-Downloader' }); sendResponse({ success: true }); break;
       case 'checkUpdatesNow': await checkUpdates(); sendResponse({ success: true }); break;
-
+      case 'setScanTimings':
+        scanTimings = request.timings;
+        chrome.storage.sync.set({ scanTimings });
+        break;
       case 'startUnfollowScan':
         if (currentScanner?.isScanning) return;
         const userId = await getCookie('ds_user_id');
@@ -400,6 +431,23 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (!userId || !csrfToken) {
           sendNotification("Hata", "Giriş yapılamadı. Lütfen Instagram'a giriş yaptığınızdan emin olun.");
           return;
+        }
+        // Tarama hızına göre delay ayarları
+        let config;
+        // Use scanTimings from storage if available
+        if (!scanTimings) {
+          const syncData = await chrome.storage.sync.get(['scanTimings']);
+          scanTimings = syncData.scanTimings;
+        }
+        if (scanTimings) {
+          config = {
+            timeBetweenRequests: scanTimings.scanDelay,
+            timeAfterFiveRequests: scanTimings.scanDelayAfterFive,
+            timeBetweenUnfollows: scanTimings.unfollowDelay,
+            timeAfterFiveUnfollows: scanTimings.unfollowDelayAfterFive
+          };
+        } else {
+          config = { timeBetweenRequests: 1800, timeAfterFiveRequests: 12000, timeBetweenUnfollows: 4000, timeAfterFiveUnfollows: 180000 };
         }
         currentScanner = new UnfollowerScanner({
             userId, csrfToken,
@@ -411,7 +459,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
               chrome.runtime.sendMessage({ action: 'scanResult', data: users });
             },
             onComplete: (c) => chrome.runtime.sendMessage({ action: 'scanComplete', data: c }),
-            onUnfollowProgress: (l) => chrome.runtime.sendMessage({ action: 'unfollowProgress', data: l })
+            onUnfollowProgress: (l) => chrome.runtime.sendMessage({ action: 'unfollowProgress', data: l }),
+            config // hız ayarı iletilecek
         });
         currentScanner.scan();
         break;
