@@ -1,8 +1,4 @@
-// js/popup.js
-
-document.addEventListener('DOMContentLoaded', function() {
-  // --- Element Referansları ---
-  const profileView = document.getElementById('profileView');
+nst profileView = document.getElementById('profileView');
   const unfinderView = document.getElementById('unfinderView');
   const profilePic = document.getElementById('profilePic');
   const usernameEl = document.getElementById('username');
@@ -292,7 +288,12 @@ document.addEventListener('DOMContentLoaded', function() {
     chrome.runtime.sendMessage({ action: 'startUnfollowScan' });
     startScanBtn.style.display = 'none';
     pauseScanBtn.style.display = 'flex';
+    resumeScanBtn.style.display = 'none';
     unfinderProgressBarContainer.style.display = 'block';
+    unfinderProgressBar.style.width = '0%';
+    unfinderStatusText.textContent = currentSettings.language === 'tr' ? 'Tarama başlatılıyor...' : 'Scan starting...';
+    // --- Tarama başlarken seçilenleri kaldır butonunu gizle ---
+    unfollowSelectedBtn.style.display = 'none';
   });
   
   pauseScanBtn.addEventListener('click', () => {
@@ -766,4 +767,86 @@ document.addEventListener('DOMContentLoaded', function() {
   //     throw new Error("Geçerli bir profil sayfası değil.");
   //   } catch(e) { throw new Error("Geçersiz URL formatı."); }
   // }
+
+  // --- Tarama ilerlemesini güncelleyen fonksiyon ---
+  function updateScanProgress(data) {
+    if (!data) return;
+    if (data.type === 'start') {
+      unfinderStatusText.textContent = currentSettings.language === 'tr' ? 'Tarama başlatılıyor...' : 'Scan starting...';
+      unfinderProgressBar.style.width = '0%';
+      unfinderProgressBarContainer.style.display = 'block';
+      pauseScanBtn.style.display = 'flex';
+      resumeScanBtn.style.display = 'none';
+      startScanBtn.style.display = 'none';
+    } else if (data.type === 'error') {
+      unfinderStatusText.textContent = data.message || (currentSettings.language === 'tr' ? 'Tarama sırasında hata.' : 'Scan error.');
+      unfinderProgressBarContainer.style.display = 'none';
+      pauseScanBtn.style.display = 'none';
+      resumeScanBtn.style.display = 'none';
+      startScanBtn.style.display = 'flex';
+    } else if (data.type === 'followers' || data.type === 'following') {
+      const label = data.type === 'followers'
+        ? (currentSettings.language === 'tr' ? 'Takipçi' : 'Followers')
+        : (currentSettings.language === 'tr' ? 'Takip' : 'Following');
+      unfinderStatusText.textContent = `${label} ${data.scanned}/${data.total} (${data.percentage}%)`;
+      unfinderProgressBar.style.width = `${data.percentage}%`;
+      unfinderProgressBarContainer.style.display = 'block';
+    }
+  }
+
+  // --- Tarama tamamlandığında ---
+  function handleScanComplete(data) {
+    unfinderStatusText.textContent = currentSettings.language === 'tr'
+      ? `Tarama tamamlandı. Takipçi: ${data.summary.followers}, Takip: ${data.summary.following}, Takip etmeyen: ${data.summary.unfollowers}`
+      : `Scan complete. Followers: ${data.summary.followers}, Following: ${data.summary.following}, Not following back: ${data.summary.unfollowers}`;
+    unfinderProgressBar.style.width = '100%';
+    unfinderProgressBarContainer.style.display = 'none';
+    pauseScanBtn.style.display = 'none';
+    resumeScanBtn.style.display = 'none';
+    // --- Buton görünürlüğü güncelle ---
+    startScanBtn.style.display = 'none';
+    unfollowSelectedBtn.style.display = 'flex';
+    unfollowSelectedBtn.disabled = false;
+  }
+
+  // --- Tarama sonucu unfollower listesi ---
+  function handleScanResult(users) {
+    renderUnfollowerList(users);
+    updateSelectedCount();
+    // --- Buton görünürlüğü güncelle ---
+    startScanBtn.style.display = 'none';
+    unfollowSelectedBtn.style.display = 'flex';
+    unfollowSelectedBtn.disabled = users.length === 0;
+  }
+
+  // --- Mesaj dinleyici: Tarama ilerlemesi ve sonucu için ---
+  chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+    if (msg.action === 'scanProgress') {
+      updateScanProgress(msg.data);
+    }
+    if (msg.action === 'scanResult') {
+      handleScanResult(msg.data);
+    }
+    if (msg.action === 'scanComplete') {
+      handleScanComplete(msg.data);
+    }
+    // --- Takipten çıkarma sonrası kutucuğu yeşil/kırmızı yap ---
+    // DÜZELTME: msg.data.user yerine msg.data ve msg.user kontrolü
+    if (msg.action === 'unfollowProgress') {
+      // msg.data.user veya msg.user olabilir, ikisini de kontrol et
+      const user = msg.user || (msg.data && msg.data.user);
+      const success = typeof msg.success !== "undefined" ? msg.success : (msg.data && msg.data.success);
+      if (user && typeof success !== "undefined") {
+        const item = unfinderList.querySelector(`.unfinder-item[data-user-id="${user.id}"]`);
+        if (item) {
+          item.classList.remove('unfollowed-success', 'unfollowed-fail');
+          if (success) {
+            item.classList.add('unfollowed-success');
+          } else {
+            item.classList.add('unfollowed-fail');
+          }
+        }
+      }
+    }
+  });
 });
