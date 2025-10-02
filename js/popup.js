@@ -1,4 +1,8 @@
-nst profileView = document.getElementById('profileView');
+// js/popup.js
+
+document.addEventListener('DOMContentLoaded', function() {
+  // --- Element Referansları ---
+  const profileView = document.getElementById('profileView');
   const unfinderView = document.getElementById('unfinderView');
   const profilePic = document.getElementById('profilePic');
   const usernameEl = document.getElementById('username');
@@ -43,6 +47,7 @@ nst profileView = document.getElementById('profileView');
 
   let currentSettings = {};
   let unfollowerData = [];
+  let i18nMessages = {}; // Çeviri mesajlarını sakla
   
   // --- Fonksiyonlar ---
   
@@ -62,11 +67,9 @@ nst profileView = document.getElementById('profileView');
     currentSettings = settings;
     document.body.setAttribute('data-theme', settings.darkMode ? 'dark' : 'light');
     document.body.style.setProperty('--global-font', settings.fontFamily);
-    // DÜZELTME: Buton stilini tüm body'e uygulayarak popup içindeki her şeyin etkilenmesini sağla
     document.body.setAttribute('data-button-style', settings.buttonStyle === 'classic' ? 'classic' : 'modern');
     applyThemeTemplate(settings.themeTemplate, settings.darkMode);
     
-    // Ayar menüsündeki elemanları güncelle
     fontSelect.value = settings.fontFamily;
     languageSelect.value = settings.language;
     buttonStyleToggle.checked = settings.buttonStyle === 'classic';
@@ -98,30 +101,39 @@ nst profileView = document.getElementById('profileView');
     root.style.setProperty('--primary-color-for-check', checkColor);
   }
 
+  // Çeviri fonksiyonu - mesajları önbelleğe al
   async function localizeHtml(lang = 'tr') {
     try {
         const url = chrome.runtime.getURL(`_locales/${lang}/messages.json`);
         const response = await fetch(url);
         if (!response.ok) throw new Error(`Dil dosyası yüklenemedi: ${response.statusText}`);
-        const messages = await response.json();
+        i18nMessages = await response.json();
+        
+        // HTML elementlerini çevir
         document.querySelectorAll('[data-i18n]').forEach(el => {
-            if (messages[el.dataset.i18n]) {
-              const msg = messages[el.dataset.i18n].message;
+            if (i18nMessages[el.dataset.i18n]) {
+              const msg = i18nMessages[el.dataset.i18n].message;
               const span = el.querySelector('span');
-              if (el.tagName === 'BUTTON' && span && !span.id) { // id'li span'lar hariç (unfollow-selected-count)
+              if (el.tagName === 'BUTTON' && span && !span.id) {
                   span.textContent = msg;
               } else {
                   el.textContent = msg;
               }
             }
         });
+        
         document.querySelectorAll('[data-i18n-title]').forEach(el => {
-          if (messages[el.dataset.i18nTitle]) {
-            el.title = messages[el.dataset.i18nTitle].message;
+          if (i18nMessages[el.dataset.i18nTitle]) {
+            el.title = i18nMessages[el.dataset.i18nTitle].message;
           }
         });
 
     } catch(e) { console.error("Dil hatası:", e); }
+  }
+  
+  // Çeviri helper fonksiyonu
+  function t(key) {
+    return i18nMessages[key]?.message || key;
   }
   
   function saveSettings() {
@@ -134,12 +146,11 @@ nst profileView = document.getElementById('profileView');
 
     usernameEl.innerHTML = `@${data.username}`;
     if (data.isVerified) usernameEl.innerHTML += ' <i class="fas fa-check-circle verified-badge"></i>';
-    if (data.isPrivate) usernameEl.innerHTML += ` <span class="private-badge">${currentSettings.language === 'tr' ? 'Gizli' : 'Private'}</span>`;
+    if (data.isPrivate) usernameEl.innerHTML += ` <span class="private-badge">${t('privateLabel')}</span>`;
 
     fullNameEl.textContent = data.fullName;
-    // Biyografi: biography_with_entities > biography > fallback
     let bio = data.biography_with_entities?.raw_text || data.biography || '';
-    if (!bio) bio = (currentSettings.language === 'tr' ? 'Biyografi yok.' : 'No biography.');
+    if (!bio) bio = t('defaultBio');
     bioEl.textContent = bio;
     postsCountEl.textContent = formatNumber(data.posts);
     followersCountEl.textContent = formatNumber(data.followers);
@@ -154,7 +165,7 @@ nst profileView = document.getElementById('profileView');
 
     profilePic.src = data.profilePicUrlForPreview || '';
     profilePic.onload = () => { profilePic.style.opacity = '1'; loader.style.display = 'none'; };
-    profilePic.onerror = () => { loader.style.display = 'none'; showError(currentSettings.language === 'tr' ? "Profil fotoğrafı yüklenemedi." : "Failed to load profile picture."); }
+    profilePic.onerror = () => { loader.style.display = 'none'; showError(t('imageLoadError')); }
   }
   
   function displayChange(element, change) {
@@ -214,20 +225,23 @@ nst profileView = document.getElementById('profileView');
   setVersionFromManifest();
 
   chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, (response) => {
-    if (response?.success) {
-      applySettings(response.settings);
-      localizeHtml(response.settings.language);
-      if (response.updateInfo.hasUpdate) {
-        latestVersionEl.textContent = response.updateInfo.latestVersion;
-        updateNotification.style.display = 'flex';
-      }
+  if (response?.success) {
+    applySettings(response.settings);
+    localizeHtml(response.settings.language).then(() => {
+      // *** YENİ: Çeviri bittikten sonra unfinder başlangıç metnini güncelle ***
+      unfinderStatusText.textContent = t('scanStartMessage');
+    });
+    if (response.updateInfo.hasUpdate) {
+      latestVersionEl.textContent = response.updateInfo.latestVersion;
+      updateNotification.style.display = 'flex';
     }
-  });
+  }
+});
 
   chrome.runtime.sendMessage({ action: 'getProfileData' }, (response) => {
-    if (chrome.runtime.lastError) showError("Hata: " + chrome.runtime.lastError.message);
+    if (chrome.runtime.lastError) showError(t('profileFetchError') + ": " + chrome.runtime.lastError.message);
     else if (response?.success) displayProfileData(response.data);
-    else showError(response.error || "Profil verisi alınamadı.");
+    else showError(response.error || t('profileFetchError'));
   });
 
   unfollowerBtn.addEventListener('click', () => switchView(unfinderView));
@@ -271,10 +285,7 @@ nst profileView = document.getElementById('profileView');
   downloadJsonBtn.addEventListener('click', openExportModal);
   
   clearHistoryBtn.addEventListener('click', async () => {
-    const url = chrome.runtime.getURL(`_locales/${currentSettings.language}/messages.json`);
-    const res = await fetch(url);
-    const msgs = await res.json();
-    if (confirm(msgs.clearHistoryConfirm.message)) {
+    if (confirm(t('clearHistoryConfirm'))) {
       chrome.runtime.sendMessage({ action: 'clearHistory' }, () => window.location.reload());
     }
   });
@@ -291,8 +302,7 @@ nst profileView = document.getElementById('profileView');
     resumeScanBtn.style.display = 'none';
     unfinderProgressBarContainer.style.display = 'block';
     unfinderProgressBar.style.width = '0%';
-    unfinderStatusText.textContent = currentSettings.language === 'tr' ? 'Tarama başlatılıyor...' : 'Scan starting...';
-    // --- Tarama başlarken seçilenleri kaldır butonunu gizle ---
+    unfinderStatusText.textContent = t('scanStarting');
     unfollowSelectedBtn.style.display = 'none';
   });
   
@@ -321,13 +331,12 @@ nst profileView = document.getElementById('profileView');
     }
   });
 
-  // --- YENİ: JSON Modal ve Grafik Paneli için DOM ekle ---
-  // Modal ve panel HTML'i ekle
+  // --- Modal ve panel HTML'i ekle ---
   const modalHtml = `
     <div id="exportModal" class="wex-modal" style="display:none;">
       <div class="wex-modal-content">
         <div class="wex-modal-header">
-          <span class="wex-modal-title">Veri Dışa Aktar</span>
+          <span class="wex-modal-title" data-i18n="exportDataTitle">Veri Dışa Aktar</span>
           <button class="wex-modal-close">&times;</button>
         </div>
         <div class="wex-modal-body">
@@ -336,22 +345,22 @@ nst profileView = document.getElementById('profileView');
           <label><input type="radio" name="exportFormat" value="txt"> TXT</label>
         </div>
         <div class="wex-modal-footer">
-          <button class="wex-modal-download-btn btn btn-primary">İndir</button>
+          <button class="wex-modal-download-btn btn btn-primary" data-i18n="downloadBtn">İndir</button>
         </div>
       </div>
     </div>
     <div id="chartPanel" class="wex-modal" style="display:none;">
       <div class="wex-modal-content wex-chart-content">
         <div class="wex-modal-header">
-          <span class="wex-modal-title">Takipçi Değişim Grafiği</span>
+          <span class="wex-modal-title" data-i18n="followerChartTitle">Takipçi Değişim Grafiği</span>
           <button class="wex-modal-close">&times;</button>
         </div>
         <div class="wex-modal-body">
           <div class="wex-chart-toolbar">
             <select id="chartRangeSelect">
-              <option value="daily">Günlük</option>
-              <option value="weekly">Haftalık</option>
-              <option value="monthly">Aylık</option>
+              <option value="daily" data-i18n="chartRangeDaily">Günlük</option>
+              <option value="weekly" data-i18n="chartRangeWeekly">Haftalık</option>
+              <option value="monthly" data-i18n="chartRangeMonthly">Aylık</option>
             </select>
             <button id="exportChartBtn" class="btn btn-secondary" style="margin-left:8px;"><i class="fas fa-image"></i> PNG</button>
           </div>
@@ -363,81 +372,63 @@ nst profileView = document.getElementById('profileView');
   `;
   document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-  // --- Grafik butonunu footer'a ekle ---
+  // Grafik butonu
   const graphBtn = document.createElement('button');
   graphBtn.id = 'chartBtn';
   graphBtn.className = 'btn-icon-footer';
-  graphBtn.title = 'Takipçi Değişim Grafiği';
+  graphBtn.setAttribute('data-i18n-title', 'chartBtnTitle');
+  graphBtn.title = t('chartBtnTitle');
   graphBtn.innerHTML = '<i class="fas fa-chart-line"></i>';
   downloadJsonBtn.parentNode.insertBefore(graphBtn, downloadJsonBtn.nextSibling);
 
-  // --- Tarama ayarları formunu ayarlar popup'ına ekle ---
-  const settingsBody = document.querySelector('.settings-body');
-  const scanSettingsGroup = document.createElement('div');
-  scanSettingsGroup.className = 'setting-group';
-  scanSettingsGroup.innerHTML = `
-    <label style="margin-bottom:6px;font-weight:600;">Tarama Ayarları</label>
-    <div style="display:flex;flex-direction:column;gap:8px;">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="flex:1;">Arama döngüleri arası (ms)</span>
-        <input type="number" id="scanDelay" min="500" max="999999" style="width:80px;">
+  // Unfinder ayar paneli
+  const unfinderHeaderActions = unfinderView.querySelector('.header-actions');
+  const unfinderSettingsBtn = document.createElement('button');
+  unfinderSettingsBtn.id = 'unfinderSettingsBtn';
+  unfinderSettingsBtn.className = 'settings-btn';
+  unfinderSettingsBtn.setAttribute('data-i18n-title', 'scanSettingsTitle');
+  unfinderSettingsBtn.title = t('scanSettingsTitle');
+  unfinderSettingsBtn.innerHTML = '<i class="fas fa-sliders-h"></i>';
+  unfinderHeaderActions.insertBefore(unfinderSettingsBtn, unfinderHeaderActions.firstChild);
+
+  const unfinderSettingsPanel = document.createElement('div');
+  unfinderSettingsPanel.id = 'unfinderSettingsPanel';
+  unfinderSettingsPanel.className = 'unfinder-settings-panel';
+  unfinderSettingsPanel.style.display = 'none';
+  unfinderSettingsPanel.innerHTML = `
+    <div class="unfinder-settings-inner">
+      <div class="unfinder-settings-title"><i class="fas fa-sliders-h"></i> <span data-i18n="scanSettingsTitle">Tarama Ayarları</span></div>
+      <div class="unfinder-settings-fields">
+        <label>
+          <span data-i18n="scanDelayLabel">Arama döngüleri arası (ms)</span>
+          <input type="number" id="scanDelay" min="500" max="999999">
+        </label>
+        <label>
+          <span data-i18n="scanDelayAfterFiveLabel">5 döngüden sonra bekleme (ms)</span>
+          <input type="number" id="scanDelayAfterFive" min="4000" max="999999">
+        </label>
+        <label>
+          <span data-i18n="unfollowDelayLabel">Unfollow arası (ms)</span>
+          <input type="number" id="unfollowDelay" min="1000" max="999999">
+        </label>
+        <label>
+          <span data-i18n="unfollowDelayAfterFiveLabel">5 unfollowdan sonra bekleme (ms)</span>
+          <input type="number" id="unfollowDelayAfterFive" min="70000" max="999999">
+        </label>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="flex:1;">5 döngüden sonra bekleme (ms)</span>
-        <input type="number" id="scanDelayAfterFive" min="4000" max="999999" style="width:80px;">
+      <div class="unfinder-settings-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span data-i18n="scanSettingsWarning">Değerleri düşürmek ban riskini artırır.</span>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="flex:1;">Unfollow arası (ms)</span>
-        <input type="number" id="unfollowDelay" min="1000" max="999999" style="width:80px;">
+      <div class="unfinder-settings-actions">
+        <button id="unfinderSettingsSaveBtn" class="btn btn-primary"><i class="fas fa-save"></i> <span data-i18n="saveBtn">Kaydet</span></button>
+        <button id="unfinderSettingsCancelBtn" class="btn btn-secondary"><i class="fas fa-times"></i> <span data-i18n="closeBtn">Kapat</span></button>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="flex:1;">5 unfollowdan sonra bekleme (ms)</span>
-        <input type="number" id="unfollowDelayAfterFive" min="70000" max="999999" style="width:80px;">
-      </div>
-      <div style="font-size:12px;color:#ed4956;margin-top:4px;">⚠️ Değerleri düşürmek ban riskini artırır.</div>
     </div>
   `;
-  settingsBody.appendChild(scanSettingsGroup);
+  unfinderView.querySelector('.app-container').appendChild(unfinderSettingsPanel);
 
-  // --- Tarama ayarları input referansları ---
-  const scanDelayInput = document.getElementById('scanDelay');
-  const scanDelayAfterFiveInput = document.getElementById('scanDelayAfterFive');
-  const unfollowDelayInput = document.getElementById('unfollowDelay');
-  const unfollowDelayAfterFiveInput = document.getElementById('unfollowDelayAfterFive');
-
-  // --- Tarama ayarlarını yükle ---
-  function loadScanTimings() {
-    chrome.storage.sync.get(['scanTimings'], (data) => {
-      const timings = data.scanTimings || {
-        scanDelay: 1800,
-        scanDelayAfterFive: 12000,
-        unfollowDelay: 4000,
-        unfollowDelayAfterFive: 180000
-      };
-      scanDelayInput.value = timings.scanDelay;
-      scanDelayAfterFiveInput.value = timings.scanDelayAfterFive;
-      unfollowDelayInput.value = timings.unfollowDelay;
-      unfollowDelayAfterFiveInput.value = timings.unfollowDelayAfterFive;
-    });
-  }
-  loadScanTimings();
-
-  // --- Tarama ayarları değişince kaydet ---
-  [scanDelayInput, scanDelayAfterFiveInput, unfollowDelayInput, unfollowDelayAfterFiveInput].forEach(input => {
-    input.addEventListener('change', () => {
-      const timings = {
-        scanDelay: Number(scanDelayInput.value),
-        scanDelayAfterFive: Number(scanDelayAfterFiveInput.value),
-        unfollowDelay: Number(unfollowDelayInput.value),
-        unfollowDelayAfterFive: Number(unfollowDelayAfterFiveInput.value)
-      };
-      chrome.storage.sync.set({ scanTimings: timings }, () => {
-        chrome.runtime.sendMessage({ action: 'setScanTimings', timings });
-      });
-    });
-  });
-
-  // --- Modal ve panel referansları ---
+  // Modal referansları
   const exportModal = document.getElementById('exportModal');
   const chartPanel = document.getElementById('chartPanel');
   const chartCloseBtns = document.querySelectorAll('.wex-modal-close');
@@ -447,7 +438,6 @@ nst profileView = document.getElementById('profileView');
   const chartSummary = document.getElementById('chartSummary');
   let chartInstance = null;
 
-  // --- Modal Theme ---
   function applyModalTheme() {
     const theme = currentSettings.themeTemplate || 'default';
     const dark = currentSettings.darkMode;
@@ -458,17 +448,16 @@ nst profileView = document.getElementById('profileView');
     });
   }
 
-  // --- Modal Aç/Kapat ---
   function openExportModal() { applyModalTheme(); exportModal.style.display = 'flex'; }
   function closeExportModal() { exportModal.style.display = 'none'; }
   function openChartPanel() { applyModalTheme(); chartPanel.style.display = 'flex'; renderChart(); }
   function closeChartPanel() { chartPanel.style.display = 'none'; if (chartInstance) { chartInstance.destroy(); chartInstance = null; } }
+  
   chartCloseBtns.forEach(btn => btn.onclick = () => { closeExportModal(); closeChartPanel(); });
   [exportModal, chartPanel].forEach(modal => {
     modal.onclick = e => { if (e.target === modal) { closeExportModal(); closeChartPanel(); } };
   });
 
-  // --- Export Modal: Download Button ---
   exportDownloadBtn.addEventListener('click', async () => {
     const format = exportModal.querySelector('input[name="exportFormat"]:checked').value;
     chrome.runtime.sendMessage({ action: 'getProfileData' }, (response) => {
@@ -488,18 +477,17 @@ nst profileView = document.getElementById('profileView');
         blob = new Blob([csv], { type: 'text/csv' });
         filename = `${username}_${dateStr}.csv`;
       } else {
-        // TXT: More info than before
         const txt = [
-          `Kullanıcı: ${data.username}`,
-          `Ad: ${data.fullName}`,
-          `Takipçi: ${data.followers}`,
-          `Takip: ${data.following}`,
-          `Gönderi: ${data.posts}`,
-          `Gizli: ${data.isPrivate ? 'Evet' : 'Hayır'}`,
-          `Onaylı: ${data.isVerified ? 'Evet' : 'Hayır'}`,
-          `Biyografi: ${data.biography || '-'}`,
-          `Profil ID: ${data.id}`,
-          `Tarih: ${dateStr}`
+          `${t('usernameLabel')}: ${data.username}`,
+          `${t('fullNameLabel')}: ${data.fullName}`,
+          `${t('followersLabel')}: ${data.followers}`,
+          `${t('followingLabel')}: ${data.following}`,
+          `${t('postsLabel')}: ${data.posts}`,
+          `${t('isPrivateLabel')}: ${data.isPrivate ? t('yesLabel') : t('noLabel')}`,
+          `${t('isVerifiedLabel')}: ${data.isVerified ? t('yesLabel') : t('noLabel')}`,
+          `${t('bioLabel')}: ${data.biography || '-'}`,
+          `${t('profileIdLabel')}: ${data.id}`,
+          `${t('dateLabel')}: ${dateStr}`
         ].join('\n');
         blob = new Blob([txt], { type: 'text/plain' });
         filename = `${username}_${dateStr}.txt`;
@@ -515,15 +503,13 @@ nst profileView = document.getElementById('profileView');
     });
   });
 
-  // --- Grafik Butonu: Panel Aç ---
   graphBtn.addEventListener('click', openChartPanel);
 
-  // --- Chart Panel: Chart.js ---
   async function renderChart() {
     chrome.storage.local.get('profileHistory', ({ profileHistory }) => {
       if (!profileHistory) {
-        chartSummary.innerHTML = "Takipçi geçmişi yok.";
-        if (chartInstance) chartInstance.destroy();
+        chartSummary.innerHTML = t('noHistoryData');
+                if (chartInstance) chartInstance.destroy();
         return;
       }
       chrome.storage.local.get('cachedProfile', ({ cachedProfile }) => {
@@ -531,13 +517,12 @@ nst profileView = document.getElementById('profileView');
         if (!userId) {
           const userIds = Object.keys(profileHistory);
           if (!userIds.length) {
-            chartSummary.innerHTML = "Takipçi geçmişi yok.";
+            chartSummary.innerHTML = t('noHistoryData');
             if (chartInstance) chartInstance.destroy();
             return;
           }
           userId = userIds[userIds.length-1];
         }
-        // --- DÜZELTME: profileHistory[userId] artık dizi olmalı ---
         let entries = [];
         if (Array.isArray(profileHistory[userId])) {
           entries = profileHistory[userId].map(entry => ({
@@ -545,7 +530,6 @@ nst profileView = document.getElementById('profileView');
             followers: entry.followers
           }));
         } else if (profileHistory[userId]) {
-          // Eski tekil kayıt desteği
           entries = [{
             date: new Date(profileHistory[userId].timestamp),
             followers: profileHistory[userId].followers
@@ -553,22 +537,22 @@ nst profileView = document.getElementById('profileView');
         }
         entries.sort((a, b) => a.date - b.date);
         if (!entries.length) {
-          chartSummary.innerHTML = "Takipçi geçmişi yok.";
+          chartSummary.innerHTML = t('noHistoryData');
           if (chartInstance) chartInstance.destroy();
           return;
         }
-        // Range filter
         const range = chartRangeSelect.value;
         let filtered = [];
         if (range === 'daily') filtered = entries.slice(-30);
         else if (range === 'weekly') filtered = entries.filter((_,i) => i%7===0).slice(-12);
         else filtered = entries.filter((_,i) => i%30===0).slice(-12);
-        // Chart data
+        
         const labels = filtered.map(e => e.date.toLocaleDateString());
         const values = filtered.map(e => e.followers);
         const totalChange = values.length > 1 ? values[values.length-1] - values[0] : 0;
         const percent = values.length > 1 ? ((values[values.length-1] - values[0]) / values[0] * 100).toFixed(1) : 0;
-        chartSummary.innerHTML = `Toplam değişim: <b style="color:${totalChange>=0?'#4CAF50':'#ed4956'}">${totalChange>=0?'+':''}${totalChange}</b> (${percent}%)`;
+        chartSummary.innerHTML = `${t('totalChangeLabel')}: <b style="color:${totalChange>=0?'#4CAF50':'#ed4956'}">${totalChange>=0?'+':''}${totalChange}</b> (${percent}%)`;
+        
         const pointBg = values.map((v,i,arr) => {
           if (i===0) return '#ccc';
           return v>arr[i-1] ? '#4CAF50' : v<arr[i-1] ? '#ed4956' : '#aaa';
@@ -584,7 +568,7 @@ nst profileView = document.getElementById('profileView');
           data: {
             labels,
             datasets: [{
-              label: 'Takipçi',
+              label: t('followersLabel'),
               data: values,
               borderColor: lineColor,
               backgroundColor: 'rgba(76,175,80,0.08)',
@@ -610,16 +594,6 @@ nst profileView = document.getElementById('profileView');
       });
     });
   }
-  // Grafik select kutusuna class ekle (daha belirgin ve temaya uygun)
-  chartRangeSelect.classList.add('wex-chart-range-select');
-  chartRangeSelect.style.fontSize = '15px';
-  chartRangeSelect.style.fontWeight = '600';
-  chartRangeSelect.style.borderRadius = '8px';
-  chartRangeSelect.style.padding = '7px 16px';
-  chartRangeSelect.style.background = 'var(--card-bg)';
-  chartRangeSelect.style.color = 'var(--text-color)';
-  chartRangeSelect.style.border = '1.5px solid var(--border-color)';
-  chartRangeSelect.style.marginRight = '8px';
 
   chartRangeSelect.addEventListener('change', renderChart);
   exportChartBtn.addEventListener('click', () => {
@@ -633,74 +607,7 @@ nst profileView = document.getElementById('profileView');
     setTimeout(() => a.remove(), 500);
   });
 
-  // --- Scan Settings eski kodlarını kaldır ---
-  // (scanSettingsBtn ve scanSettingsModal ile ilgili kodlar tamamen kaldırıldı)
-
-  // --- Grafik panelindeki seçim kutusunu temaya uygun yap ---
-  // (CSS kısmı popup.css'de, burada sadece class ekle)
-  chartRangeSelect.classList.add('wex-chart-range-select');
-
-  // --- Tarama ayarlarını ayarlardan kaldır ---
-  // (scanSettingsGroup'u settingsBody'den kaldır)
-  settingsBody.removeChild(scanSettingsGroup);
-
-  // --- UnfinderView'da geri tuşunun soluna ayarlar butonu ekle ---
-  const unfinderHeaderActions = unfinderView.querySelector('.header-actions');
-  const unfinderSettingsBtn = document.createElement('button');
-  unfinderSettingsBtn.id = 'unfinderSettingsBtn';
-  unfinderSettingsBtn.className = 'settings-btn';
-  unfinderSettingsBtn.title = 'Unfollower Tarama Ayarları';
-  unfinderSettingsBtn.innerHTML = '<i class="fas fa-sliders-h"></i>';
-  unfinderHeaderActions.insertBefore(unfinderSettingsBtn, unfinderHeaderActions.firstChild);
-
-  // --- Unfinder ayar panelini oluştur ve ekle ---
-  const unfinderSettingsPanel = document.createElement('div');
-  unfinderSettingsPanel.id = 'unfinderSettingsPanel';
-  unfinderSettingsPanel.className = 'unfinder-settings-panel';
-  unfinderSettingsPanel.style.display = 'none';
-  unfinderSettingsPanel.innerHTML = `
-    <div class="unfinder-settings-inner">
-      <div class="unfinder-settings-title"><i class="fas fa-sliders-h"></i> Tarama Ayarları</div>
-      <div class="unfinder-settings-fields">
-        <label title="Her arama döngüsü sonrası bekleme süresi (ms)">
-          Arama döngüleri arası (ms)
-          <input type="number" id="scanDelay" min="500" max="999999">
-        </label>
-        <label title="5 arama döngüsünden sonra ekstra bekleme süresi (ms)">
-          5 döngüden sonra bekleme (ms)
-          <input type="number" id="scanDelayAfterFive" min="4000" max="999999">
-        </label>
-        <label title="Her unfollow işlemi sonrası bekleme süresi (ms)">
-          Unfollow arası (ms)
-          <input type="number" id="unfollowDelay" min="1000" max="999999">
-        </label>
-        <label title="5 unfollowdan sonra ekstra bekleme süresi (ms)">
-          5 unfollowdan sonra bekleme (ms)
-          <input type="number" id="unfollowDelayAfterFive" min="70000" max="999999">
-        </label>
-      </div>
-      <div class="unfinder-settings-warning">
-        <i class="fas fa-exclamation-triangle"></i>
-        <span>Değerleri düşürmek ban riskini artırır.</span>
-      </div>
-      <div class="unfinder-settings-actions">
-        <button id="unfinderSettingsSaveBtn" class="btn btn-primary"><i class="fas fa-save"></i> Kaydet</button>
-        <button id="unfinderSettingsCancelBtn" class="btn btn-secondary"><i class="fas fa-times"></i> Kapat</button>
-      </div>
-    </div>
-  `;
-  unfinderView.querySelector('.app-container').appendChild(unfinderSettingsPanel);
-
-  // --- Unfinder ayar paneli aç/kapat fonksiyonu ---
-  unfinderSettingsBtn.addEventListener('click', () => {
-    unfinderSettingsPanel.style.display = unfinderSettingsPanel.style.display === 'none' ? 'block' : 'none';
-    loadScanTimings();
-  });
-  document.getElementById('unfinderSettingsCancelBtn').addEventListener('click', () => {
-    unfinderSettingsPanel.style.display = 'none';
-  });
-
-  // --- Unfinder ayarlarını yükle ---
+  // Unfinder ayarları
   function loadScanTimings() {
     chrome.storage.sync.get(['scanTimings'], (data) => {
       const timings = data.scanTimings || {
@@ -716,7 +623,15 @@ nst profileView = document.getElementById('profileView');
     });
   }
 
-  // --- Unfinder ayarlarını kaydet ---
+  unfinderSettingsBtn.addEventListener('click', () => {
+    unfinderSettingsPanel.style.display = unfinderSettingsPanel.style.display === 'none' ? 'block' : 'none';
+    loadScanTimings();
+  });
+  
+  document.getElementById('unfinderSettingsCancelBtn').addEventListener('click', () => {
+    unfinderSettingsPanel.style.display = 'none';
+  });
+
   document.getElementById('unfinderSettingsSaveBtn').addEventListener('click', () => {
     const timings = {
       scanDelay: Number(document.getElementById('scanDelay').value),
@@ -730,10 +645,8 @@ nst profileView = document.getElementById('profileView');
     });
   });
 
-  // --- WeXUnfollower başlığı temaya uygun olsun ---
   function updateUnfinderHeaderTheme() {
     const theme = currentSettings.themeTemplate || 'default';
-    const dark = currentSettings.darkMode;
     const header = unfinderView.querySelector('.header h1');
     if (!header) return;
     let gradient;
@@ -748,78 +661,58 @@ nst profileView = document.getElementById('profileView');
     header.style.backgroundClip = 'text';
     header.style.color = 'transparent';
   }
-  // applySettings çağrıldığında da güncelle
+
   const origApplySettings = applySettings;
   applySettings = function(settings) {
     origApplySettings(settings);
     updateUnfinderHeaderTheme();
   };
 
-  // --- Profil linki algılama fonksiyonunu güncelle (daha esnek) ---
-  // Bu kod popup.js'de değil, background.js'de olmalı. Ama burada örnek:
-  // function getInstagramUsername(link) {
-  //   try {
-  //     const url = new URL(link);
-  //     const pathSegments = url.pathname.split('/').filter(Boolean);
-  //     const forbidden = ['p', 'reels', 'stories', 'tv', 'explore', 'direct', 'accounts', 'about', 'developer', 'directory', 'privacy', 'terms', 'api'];
-  //     if (pathSegments.length === 1 && !forbidden.includes(pathSegments[0])) return pathSegments[0];
-  //     if (pathSegments.length > 1 && !forbidden.includes(pathSegments[0]) && pathSegments[1] === '') return pathSegments[0];
-  //     throw new Error("Geçerli bir profil sayfası değil.");
-  //   } catch(e) { throw new Error("Geçersiz URL formatı."); }
-  // }
-
-  // --- Tarama ilerlemesini güncelleyen fonksiyon ---
   function updateScanProgress(data) {
     if (!data) return;
     if (data.type === 'start') {
-      unfinderStatusText.textContent = currentSettings.language === 'tr' ? 'Tarama başlatılıyor...' : 'Scan starting...';
+      unfinderStatusText.textContent = t('scanStarting');
       unfinderProgressBar.style.width = '0%';
       unfinderProgressBarContainer.style.display = 'block';
       pauseScanBtn.style.display = 'flex';
       resumeScanBtn.style.display = 'none';
       startScanBtn.style.display = 'none';
     } else if (data.type === 'error') {
-      unfinderStatusText.textContent = data.message || (currentSettings.language === 'tr' ? 'Tarama sırasında hata.' : 'Scan error.');
+      unfinderStatusText.textContent = data.message || t('scanError');
       unfinderProgressBarContainer.style.display = 'none';
       pauseScanBtn.style.display = 'none';
       resumeScanBtn.style.display = 'none';
       startScanBtn.style.display = 'flex';
     } else if (data.type === 'followers' || data.type === 'following') {
-      const label = data.type === 'followers'
-        ? (currentSettings.language === 'tr' ? 'Takipçi' : 'Followers')
-        : (currentSettings.language === 'tr' ? 'Takip' : 'Following');
+      const label = data.type === 'followers' ? t('followersLabel') : t('followingLabel');
       unfinderStatusText.textContent = `${label} ${data.scanned}/${data.total} (${data.percentage}%)`;
       unfinderProgressBar.style.width = `${data.percentage}%`;
       unfinderProgressBarContainer.style.display = 'block';
     }
   }
 
-  // --- Tarama tamamlandığında ---
   function handleScanComplete(data) {
-    unfinderStatusText.textContent = currentSettings.language === 'tr'
-      ? `Tarama tamamlandı. Takipçi: ${data.summary.followers}, Takip: ${data.summary.following}, Takip etmeyen: ${data.summary.unfollowers}`
-      : `Scan complete. Followers: ${data.summary.followers}, Following: ${data.summary.following}, Not following back: ${data.summary.unfollowers}`;
+    unfinderStatusText.textContent = t('scanCompleteText')
+      .replace('{followers}', data.summary.followers)
+      .replace('{following}', data.summary.following)
+      .replace('{unfollowers}', data.summary.unfollowers);
     unfinderProgressBar.style.width = '100%';
     unfinderProgressBarContainer.style.display = 'none';
     pauseScanBtn.style.display = 'none';
     resumeScanBtn.style.display = 'none';
-    // --- Buton görünürlüğü güncelle ---
     startScanBtn.style.display = 'none';
     unfollowSelectedBtn.style.display = 'flex';
     unfollowSelectedBtn.disabled = false;
   }
 
-  // --- Tarama sonucu unfollower listesi ---
   function handleScanResult(users) {
     renderUnfollowerList(users);
     updateSelectedCount();
-    // --- Buton görünürlüğü güncelle ---
     startScanBtn.style.display = 'none';
     unfollowSelectedBtn.style.display = 'flex';
     unfollowSelectedBtn.disabled = users.length === 0;
   }
 
-  // --- Mesaj dinleyici: Tarama ilerlemesi ve sonucu için ---
   chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.action === 'scanProgress') {
       updateScanProgress(msg.data);
@@ -830,10 +723,7 @@ nst profileView = document.getElementById('profileView');
     if (msg.action === 'scanComplete') {
       handleScanComplete(msg.data);
     }
-    // --- Takipten çıkarma sonrası kutucuğu yeşil/kırmızı yap ---
-    // DÜZELTME: msg.data.user yerine msg.data ve msg.user kontrolü
     if (msg.action === 'unfollowProgress') {
-      // msg.data.user veya msg.user olabilir, ikisini de kontrol et
       const user = msg.user || (msg.data && msg.data.user);
       const success = typeof msg.success !== "undefined" ? msg.success : (msg.data && msg.data.success);
       if (user && typeof success !== "undefined") {

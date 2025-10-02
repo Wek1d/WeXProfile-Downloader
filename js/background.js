@@ -2,6 +2,40 @@
 
 import { UnfollowerScanner } from './unfollower.js';
 
+// Çeviri sistemi
+let currentLanguage = 'tr';
+let i18nCache = {};
+
+// Dili storage'dan yükle
+chrome.storage.sync.get(['language'], (data) => {
+  currentLanguage = data.language || 'tr';
+  loadMessages(currentLanguage);
+});
+
+// Dil değiştiğinde güncelle
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'sync' && changes.language) {
+    currentLanguage = changes.language.newValue;
+    loadMessages(currentLanguage);
+  }
+});
+
+// Mesajları yükle
+async function loadMessages(lang) {
+  try {
+    const url = chrome.runtime.getURL(`_locales/${lang}/messages.json`);
+    const response = await fetch(url);
+    i18nCache = await response.json();
+  } catch(e) {
+    console.error("Dil dosyası yüklenemedi:", e);
+  }
+}
+
+// Çeviri fonksiyonu
+function t(key) {
+  return i18nCache[key]?.message || key;
+}
+
 let currentProfileFetchPromise = null;
 let currentProfileFetchUrl = null;
 let currentScanner = null;
@@ -115,7 +149,7 @@ chrome.action.onClicked.addListener((tab) => {
         if (currentTab && currentTab.url && currentTab.url.includes("instagram.com")) {
             chrome.action.setPopup({ tabId: currentTab.id, popup: "popup.html" });
         } else {
-            sendNotification("Hata", "Lütfen bir Instagram sayfasında kullanın.");
+            sendNotification("errorTitle", "notInstagramPageError");
         }
     });
 });
@@ -134,13 +168,13 @@ async function handleProfileAnalysis(url, tabId, isContextMenuClick) {
           cacheTimestamp: Date.now()
       });
       if (isContextMenuClick) {
-        sendNotification("Bilgi", "Profil bilgileri hazır! Detayları görmek için WeXProfile ikonuna tıklayın.");
+        sendNotification("infoTitle", "profileReadyNotification");
       }
       return data;
     })
     .catch(async (error) => {
       console.error("WeXProfile Hata: Profil analizi başarısız oldu.", error.message);
-      sendNotification("Hata", `${error.message}`);
+      sendNotification("errorTitle", "profileFetchError");
       await chrome.storage.local.remove(['cachedProfile', 'cacheUrl', 'cacheTimestamp']);
       throw error;
     })
@@ -317,10 +351,10 @@ async function openHdProfilePhoto() {
       chrome.tabs.create({ url: hdUrl });
     } catch (error) {
       console.error("HD fotoğraf açılırken hata:", error);
-      sendNotification("Hata", `HD fotoğraf açılamadı: ${error.message}`);
+      sendNotification("errorTitle", "openHdPhotoError");
     }
   } else {
-    sendNotification("Hata", "Önbellekte profil verisi bulunamadı.");
+    sendNotification("errorTitle", "noCachedDataError");
   }
 }
 
@@ -337,10 +371,10 @@ async function downloadProfilePhoto() {
       });
     } catch (error) {
       console.error("HD fotoğraf indirilirken hata:", error);
-      sendNotification("Hata", `Fotoğraf indirilemedi: ${error.message}`);
+      sendNotification("errorTitle", "downloadPhotoError");
     }
   } else {
-    sendNotification("Hata", "Önbellekte profil verisi bulunamadı.");
+    sendNotification("errorTitle", "noCachedDataError");
   }
 }
 
@@ -367,12 +401,12 @@ async function downloadJSON() {
 }
 
 
-function sendNotification(title, message) {
+function sendNotification(titleKey, messageKey) {
   chrome.notifications.create({
     type: "basic",
     iconUrl: "icon.png",
-    title: `WeXProfile: ${title}`,
-    message: message,
+    title: `WeXProfile: ${t(titleKey)}`,
+    message: t(messageKey),
     priority: 2
   });
 }
@@ -386,7 +420,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           const activeTab = tabs[0];
           const activeUrl = activeTab.url;
           if (!activeUrl || !activeUrl.includes("instagram.com")) {
-            throw new Error("Lütfen bir Instagram sayfasında kullanın.");
+            throw new Error(t('notInstagramPageError')); 
           }
 
           const { cachedProfile, cacheUrl, cacheTimestamp } = await chrome.storage.local.get(['cachedProfile', 'cacheUrl', 'cacheTimestamp']);
@@ -409,7 +443,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       case 'downloadJSON': await downloadJSON(); sendResponse({ success: true }); break;
       case 'clearHistory':
         await chrome.storage.local.set({ [PROFILE_HISTORY_KEY]: {} });
-        sendNotification("Bilgi", "Takipçi değişim geçmişi başarıyla temizlendi.");
+        sendNotification("infoTitle", "historyCleared");
         sendResponse({ success: true });
         break;
       case 'getSettingsAndUpdates':
@@ -429,7 +463,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         const userId = await getCookie('ds_user_id');
         const csrfToken = await getCookie('csrftoken');
         if (!userId || !csrfToken) {
-          sendNotification("Hata", "Giriş yapılamadı. Lütfen Instagram'a giriş yaptığınızdan emin olun.");
+          sendNotification("errorTitle", "LoginUnfollow");
           return;
         }
         // Tarama hızına göre delay ayarları

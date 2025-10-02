@@ -8,8 +8,11 @@
   "contextMenuTitle": {
     "message": "Profilinformationen mit WeXProfile anzeigen"
   },
+  "LoginUnfollow": {
+    "message": "Bitte melden Sie sich für den Entfolger-Vorgang an"
+  },
   "infoTitle": {
-    "message": "Info"
+    "message": "Information"
   },
   "profileReadyNotification": {
     "message": "Profilinformationen sind bereit! Klicken Sie auf das Erweiterungssymbol für Details."
@@ -18,7 +21,7 @@
     "message": "Fehler"
   },
   "notInstagramPageError": {
-    "message": "Bitte verwenden Sie dies auf einer Instagram-Seite."
+    "message": "Bitte auf einer Instagram-Seite verwenden."
   },
   "profileFetchError": {
     "message": "Profilinformationen konnten nicht abgerufen werden"
@@ -28,6 +31,9 @@
   },
   "openHdPhotoError": {
     "message": "HD-Foto konnte nicht geöffnet werden"
+  },
+  "scanStartMessage": {
+    "message": "Starten Sie den Scan, um herauszufinden, wer Ihnen nicht folgt."
   },
   "downloadPhotoError": {
     "message": "Foto konnte nicht heruntergeladen werden"
@@ -51,7 +57,7 @@
     "message": "Follower"
   },
   "followingLabel": {
-    "message": "Gefolgt"
+    "message": "Folgt"
   },
   "openInNewTabBtn": {
     "message": "In neuem Tab öffnen"
@@ -78,7 +84,7 @@
     "message": "Verlauf löschen"
   },
   "clearHistoryConfirm": {
-    "message": "Sind Sie sicher, dass Sie den Verlauf löschen möchten?"
+    "message": "Sind Sie sicher, dass Sie Ihren Follower-Verlauf löschen möchten?"
   },
   "historyCleared": {
     "message": "Verlauf gelöscht"
@@ -90,25 +96,25 @@
     "message": "Schriftart"
   },
   "themeTemplateLabel": {
-    "message": "Designfarbe"
+    "message": "Farbthema"
   },
   "imageLoadError": {
-    "message": "Foto konnte nicht geladen werden"
+    "message": "Profilfoto konnte nicht geladen werden"
   },
   "githubTitle": {
     "message": "GitHub"
   },
   "updateAvailable": {
-    "message": "Update verfügbar"
+    "message": "Ein neues Update ist verfügbar!"
   },
   "updateBtnText": {
     "message": "Aktualisieren"
   },
   "buttonStyleLabel": {
-    "message": "Klassische Schaltflächen"
+    "message": "Klassischer Button-Stil"
   },
   "followerChangeLabel": {
-    "message": "Änderungen anzeigen"
+    "message": "Follower-Änderung anzeigen"
   },
   "languageLabel": {
     "message": "Sprache"
@@ -123,7 +129,7 @@
     "message": "Scan abgeschlossen"
   },
   "unfollowersFound": {
-    "message": "Personen folgen Ihnen nicht mehr"
+    "message": "Personen folgen Ihnen nicht"
   },
   "unfollowingProgress": {
     "message": "Entfolgen..."
@@ -141,6 +147,90 @@
     "message": "Fortsetzen"
   },
   "unfollowSelectedBtn": {
-    "message": "Ausgewählte nicht mehr folgen"
+    "message": "Ausgewählte entfolgen"
+  },
+  "scanStarting": {
+    "message": "Scan wird gestartet..."
+  },
+  "scanError": {
+    "message": "Während des Scans ist ein Fehler aufgetreten"
+  },
+  "scanCompleteText": {
+    "message": "Scan abgeschlossen. Follower: {followers}, Folgt: {following}, Entfolger: {unfollowers}"
+  },
+  "exportDataTitle": {
+    "message": "Daten exportieren"
+  },
+  "followerChartTitle": {
+    "message": "Follower-Änderungsdiagramm"
+  },
+  "chartRangeDaily": {
+    "message": "Täglich"
+  },
+  "chartRangeWeekly": {
+    "message": "Wöchentlich"
+  },
+  "chartRangeMonthly": {
+    "message": "Monatlich"
+  },
+  "chartBtnTitle": {
+    "message": "Follower-Änderungsdiagramm"
+  },
+  "noHistoryData": {
+    "message": "Kein Follower-Verlauf"
+  },
+  "totalChangeLabel": {
+    "message": "Gesamtänderung"
+  },
+  "scanSettingsTitle": {
+    "message": "Scan-Einstellungen"
+  },
+  "scanDelayLabel": {
+    "message": "Scan-Schleifenverzögerung (ms)"
+  },
+  "scanDelayAfterFiveLabel": {
+    "message": "Verzögerung nach 5 Schleifen (ms)"
+  },
+  "unfollowDelayLabel": {
+    "message": "Entfolgen-Verzögerung (ms)"
+  },
+  "unfollowDelayAfterFiveLabel": {
+    "message": "Verzögerung nach 5 Entfolgen (ms)"
+  },
+  "scanSettingsWarning": {
+    "message": "Das Senken der Werte erhöht das Risiko einer Sperrung."
+  },
+  "saveBtn": {
+    "message": "Speichern"
+  },
+  "closeBtn": {
+    "message": "Schließen"
+  },
+  "usernameLabel": {
+    "message": "Benutzername"
+  },
+  "fullNameLabel": {
+    "message": "Vollständiger Name"
+  },
+  "isPrivateLabel": {
+    "message": "Privates Konto"
+  },
+  "isVerifiedLabel": {
+    "message": "Verifiziertes Konto"
+  },
+  "bioLabel": {
+    "message": "Biografie"
+  },
+  "profileIdLabel": {
+    "message": "Profil-ID"
+  },
+  "dateLabel": {
+    "message": "Datum"
+  },
+  "yesLabel": {
+    "message": "Ja"
+  },
+  "noLabel": {
+    "message": "Nein"
   }
 }

@@ -1,4 +1,13 @@
-ear-gradient(45deg, #4CAF50, #2E7D32);
+/* popup.css */
+
+:root {
+  --primary-gradient: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  --secondary-gradient: linear-gradient(45deg, #405DE6, #5851DB);
+  --danger-gradient: linear-gradient(45deg, #ed4956, #a02d37);
+  
+  --preview-default: linear-gradient(45deg, #f09433, #e6683c, #dc2743);
+  --preview-blue: linear-gradient(45deg, #0095f6, #0076a8);
+  --preview-green: linear-gradient(45deg, #4CAF50, #2E7D32);
   --preview-purple: linear-gradient(45deg, #673AB7, #4527A0);
   --preview-pink: linear-gradient(45deg, #ff69b4, #ff1493);
 

@@ -8,6 +8,9 @@
   "contextMenuTitle": {
     "message": "WeXProfile ile Profil Bilgilerini Göster"
   },
+  "LoginUnfollow": {
+    "message": "Lütfen unfollower işlemi için giriş yapın"
+  },
   "infoTitle": {
     "message": "Bilgi"
   },
@@ -28,6 +31,9 @@
   },
   "openHdPhotoError": {
     "message": "HD fotoğraf açılamadı"
+  },
+    "scanStartMessage": {
+  "message": "Seni takip etmeyenleri bulmak için taramayı başlat."
   },
   "downloadPhotoError": {
     "message": "Fotoğraf indirilemedi"
@@ -78,7 +84,7 @@
     "message": "Geçmişi Temizle"
   },
   "clearHistoryConfirm": {
-    "message": "Geçmişi silmek istediğinize emin misiniz?"
+    "message": "Takipçi geçmişini silmek istediğinize emin misiniz?"
   },
   "historyCleared": {
     "message": "Geçmiş temizlendi"
@@ -90,25 +96,25 @@
     "message": "Yazı Tipi"
   },
   "themeTemplateLabel": {
-    "message": "Tema Rengi"
+    "message": "Renk Teması"
   },
   "imageLoadError": {
-    "message": "Fotoğraf yüklenemedi"
+    "message": "Profil fotoğrafı yüklenemedi"
   },
   "githubTitle": {
     "message": "GitHub"
   },
   "updateAvailable": {
-    "message": "Güncelleme Mevcut"
+    "message": "Yeni bir güncelleme mevcut!"
   },
   "updateBtnText": {
     "message": "Güncelle"
   },
   "buttonStyleLabel": {
-    "message": "Klasik Butonlar"
+    "message": "Klasik Buton Stili"
   },
   "followerChangeLabel": {
-    "message": "Değişimleri Göster"
+    "message": "Takipçi Değişimini Göster"
   },
   "languageLabel": {
     "message": "Dil"
@@ -129,7 +135,7 @@
     "message": "Takipten çıkılıyor..."
   },
   "operationComplete": {
-    "message": "İşlem tamam"
+    "message": "İşlem tamamlandı"
   },
   "startScanBtn": {
     "message": "Taramayı Başlat"
@@ -142,5 +148,89 @@
   },
   "unfollowSelectedBtn": {
     "message": "Seçilenleri Bırak"
+  },
+  "scanStarting": {
+    "message": "Tarama başlatılıyor..."
+  },
+  "scanError": {
+    "message": "Tarama sırasında hata oluştu"
+  },
+  "scanCompleteText": {
+    "message": "Tarama tamamlandı. Takipçi: {followers}, Takip: {following}, Takip etmeyen: {unfollowers}"
+  },
+  "exportDataTitle": {
+    "message": "Veri Dışa Aktar"
+  },
+  "followerChartTitle": {
+    "message": "Takipçi Değişim Grafiği"
+  },
+  "chartRangeDaily": {
+    "message": "Günlük"
+  },
+  "chartRangeWeekly": {
+    "message": "Haftalık"
+  },
+  "chartRangeMonthly": {
+    "message": "Aylık"
+  },
+  "chartBtnTitle": {
+    "message": "Takipçi Değişim Grafiği"
+  },
+  "noHistoryData": {
+    "message": "Takipçi geçmişi yok"
+  },
+  "totalChangeLabel": {
+    "message": "Toplam değişim"
+  },
+  "scanSettingsTitle": {
+    "message": "Tarama Ayarları"
+  },
+  "scanDelayLabel": {
+    "message": "Arama döngüleri arası (ms)"
+  },
+  "scanDelayAfterFiveLabel": {
+    "message": "5 döngüden sonra bekleme (ms)"
+  },
+  "unfollowDelayLabel": {
+    "message": "Unfollow arası (ms)"
+  },
+  "unfollowDelayAfterFiveLabel": {
+    "message": "5 unfollowdan sonra bekleme (ms)"
+  },
+  "scanSettingsWarning": {
+    "message": "Değerleri düşürmek ban riskini artırır."
+  },
+  "saveBtn": {
+    "message": "Kaydet"
+  },
+  "closeBtn": {
+    "message": "Kapat"
+  },
+  "usernameLabel": {
+    "message": "Kullanıcı Adı"
+  },
+  "fullNameLabel": {
+    "message": "Tam Ad"
+  },
+  "isPrivateLabel": {
+    "message": "Gizli Hesap"
+  },
+  "isVerifiedLabel": {
+    "message": "Onaylı Hesap"
+  },
+  "bioLabel": {
+    "message": "Biyografi"
+  },
+  "profileIdLabel": {
+    "message": "Profil ID"
+  },
+  "dateLabel": {
+    "message": "Tarih"
+  },
+  "yesLabel": {
+    "message": "Evet"
+  },
+  "noLabel": {
+    "message": "Hayır"
   }
 }

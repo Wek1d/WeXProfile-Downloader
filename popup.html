@@ -22,13 +22,13 @@
       <div class="header">
         <h1 data-i18n="appName">WeXProfile</h1>
         <div class="header-actions">
-          <button id="unfollowerBtn" class="theme-toggle" title="Unfollower Aracı">
+          <button id="unfollowerBtn" class="theme-toggle" data-i18n-title="unfollowerBtnTitle" title="Unfollower Aracı">
             <i class="fas fa-user-minus"></i>
           </button>
-          <button id="settingsBtn" class="settings-btn" title="Ayarlar">
+          <button id="settingsBtn" class="settings-btn" data-i18n-title="settingsBtnTitle" title="Ayarlar">
             <i class="fas fa-cog"></i>
           </button>
-          <button id="themeToggle" class="theme-toggle" title="Temayı Değiştir">
+          <button id="themeToggle" class="theme-toggle" data-i18n-title="changeThemeTitle" title="Temayı Değiştir">
             <i class="fas fa-moon"></i>
             <i class="fas fa-sun"></i>
           </button>
@@ -42,7 +42,7 @@
         </div>
         
         <div class="profile-info">
-          <h2 id="username" title="Kullanıcı adını kopyala">@kullaniciadi</h2>
+          <h2 id="username" data-i18n-title="copyUsernameTitle" title="Kullanıcı adını kopyala">@kullaniciadi</h2>
           <h3 id="fullName">Tam Ad</h3>
           <p id="bio" class="bio" data-i18n="defaultBio">Biyografi burada görünecek...</p>
           
@@ -69,10 +69,10 @@
       </div>
       
       <div class="footer">
-        <button id="githubBtn" class="btn-icon-footer" title="GitHub Sayfasına Git"><i class="fab fa-github"></i></button>
-        <button id="downloadJsonBtn" class="btn-icon-footer" title="Profil verilerini JSON olarak indir"><i class="fas fa-file-code"></i></button>
-        <p class="version">v3.1.0</p>
-        <button id="clearHistoryBtn" class="btn-icon-footer" title="Takipçi Geçmişini Temizle"><i class="fas fa-trash-alt"></i></button>
+        <button id="githubBtn" class="btn-icon-footer" data-i18n-title="githubTitle" title="GitHub Sayfasına Git"><i class="fab fa-github"></i></button>
+        <button id="downloadJsonBtn" class="btn-icon-footer" data-i18n-title="downloadJsonTitle" title="Profil verilerini JSON olarak indir"><i class="fas fa-file-code"></i></button>
+        <p class="version">v3.2.3</p>
+        <button id="clearHistoryBtn" class="btn-icon-footer" data-i18n-title="clearHistoryTitle" title="Takipçi Geçmişini Temizle"><i class="fas fa-trash-alt"></i></button>
       </div>
     </div>
   </div>
@@ -82,21 +82,19 @@
       <div class="header">
         <h1>WeXUnfollower</h1>
         <div class="header-actions">
-          <button id="backToProfileBtn" class="theme-toggle" title="Geri Dön"><i class="fas fa-arrow-left"></i></button>
+          <button id="backToProfileBtn" class="theme-toggle" data-i18n-title="backBtnTitle" title="Geri Dön"><i class="fas fa-arrow-left"></i></button>
         </div>
       </div>
       <div id="unfinder-status" class="unfinder-status">
-        <p id="unfinder-status-text">Seni takip etmeyenleri bulmak için taramayı başlat.</p>
+        <p id="unfinder-status-text" data-i18n="scanStartMessage">Seni takip etmeyenleri bulmak için taramayı başlat.</p>
         <div id="unfinder-progress-bar" class="progress-bar-container"><div class="progress-bar"></div></div>
       </div>
-      <div id="unfinder-list" class="unfinder-list">
-        <!-- Liste burada JS ile doldurulacak -->
-      </div>
+      <div id="unfinder-list" class="unfinder-list"></div>
       <div id="unfinder-actions" class="actions">
-        <button id="startScanBtn" class="btn btn-primary"><i class="fas fa-search"></i> Taramayı Başlat</button>
-        <button id="pauseScanBtn" class="btn btn-secondary" style="display: none;"><i class="fas fa-pause"></i> Duraklat</button>
-        <button id="resumeScanBtn" class="btn btn-primary" style="display: none;"><i class="fas fa-play"></i> Devam Et</button>
-        <button id="unfollowSelectedBtn" class="btn btn-danger" style="display: none;"><i class="fas fa-user-slash"></i> Seçilenleri Bırak (<span id="unfollow-selected-count">0</span>)</button>
+        <button id="startScanBtn" class="btn btn-primary"><i class="fas fa-search"></i> <span data-i18n="startScanBtn">Taramayı Başlat</span></button>
+        <button id="pauseScanBtn" class="btn btn-secondary" style="display: none;"><i class="fas fa-pause"></i> <span data-i18n="pauseScanBtn">Duraklat</span></button>
+        <button id="resumeScanBtn" class="btn btn-primary" style="display: none;"><i class="fas fa-play"></i> <span data-i18n="resumeScanBtn">Devam Et</span></button>
+        <button id="unfollowSelectedBtn" class="btn btn-danger" style="display: none;"><i class="fas fa-user-slash"></i> <span data-i18n="unfollowSelectedBtn">Seçilenleri Bırak</span> (<span id="unfollow-selected-count">0</span>)</button>
       </div>
     </div>
   </div>
@@ -116,7 +114,7 @@
               <option value="es">Español</option>
               <option value="fr">Français</option>
               <option value="de">Deutsch</option>
-              <option value="it">İtaliano</option>
+              <option value="it">Italiano</option>
             </select>
         </div>
         <div class="setting-group">
@@ -136,11 +134,11 @@
         <div class="setting-group">
           <label data-i18n="themeTemplateLabel">Renk Teması</label>
           <div class="theme-options">
-            <button class="theme-option" data-theme="default" title="Varsayılan"></button>
-            <button class="theme-option" data-theme="blue" title="Mavi"></button>
-            <button class="theme-option" data-theme="green" title="Yeşil"></button>
-            <button class="theme-option" data-theme="purple" title="Mor"></button>
-            <button class="theme-option" data-theme="pink" title="Pembe"></button>
+            <button class="theme-option" data-theme="default" data-i18n-title="themeDefaultTitle" title="Varsayılan"></button>
+            <button class="theme-option" data-theme="blue" data-i18n-title="themeBlueTitle" title="Mavi"></button>
+            <button class="theme-option" data-theme="green" data-i18n-title="themeGreenTitle" title="Yeşil"></button>
+            <button class="theme-option" data-theme="purple" data-i18n-title="themePurpleTitle" title="Mor"></button>
+            <button class="theme-option" data-theme="pink" data-i18n-title="themePinkTitle" title="Pembe"></button>
           </div>
         </div>
         <div class="setting-group-toggle">
