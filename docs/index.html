@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Download HD Instagram profile pictures, track unfollowers, analyze follower changes. Free Chrome & Edge extension for Instagram analytics and profile viewing.">
+    <meta name="keywords" content="instagram downloader, instagram profile picture, instagram unfollower tracker, instagram analytics, instagram follower tracker, chrome extension, edge extension">
+    <title>WeXProfile - Instagram Profile Downloader & Unfollower Tracker</title>
+    
+    <link rel="icon" type="image/png" href="icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            --bg-dark: #0a0a0a;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --text: #ffffff;
+            --text-muted: #a0a0a0;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Glassmorphism Effects */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Animated Background */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 20% 50%, rgba(240, 148, 51, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(188, 24, 136, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 20%, rgba(220, 39, 67, 0.1) 0%, transparent 50%);
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(10, 10, 10, 0.95);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: 900;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            filter: drop-shadow(0 0 10px rgba(240, 148, 51, 0.5));
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1.2rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 10px 30px rgba(240, 148, 51, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(240, 148, 51, 0.5);
+        }
+
+        .btn-secondary {
+            background: var(--glass);
+            color: var(--text);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            margin-bottom: 4rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .feature-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        /* Installation Guide Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--glass);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: scaleIn 0.3s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text);
+        }
+
+        .install-steps {
+            margin-top: 2rem;
+        }
+
+        .install-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+        }
+
+        .step-number {
+            background: var(--primary);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* Download Section */
+        .download-section {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .download-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .download-card {
+            padding: 2rem;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.5s ease;
+        }
+
+        .download-card.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .download-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .download-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .download-card p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 4rem 2rem;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .stats-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .stat-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 2rem 2rem;
+            background: rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--text);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-links a {
+            color: var(--text);
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            transform: translateY(-3px);
+            color: #f09433;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 70%;
+                height: 100vh;
+                background: rgba(10, 10, 10, 0.98);
+                flex-direction: column;
+                padding: 5rem 2rem;
+                transition: right 0.3s ease;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+        }
+
+        /* Scroll Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="icon.png" alt="WeXProfile Logo">
+                <span>WeXProfile</span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#download">Download</a></li>
+                <li><a href="https://github.com/Wek1d/WeXProfile-Downloader">GitHub</a></li>
+            </ul>
+            <div class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Instagram Profile Downloader & Unfollower Tracker</h1>
+            <p>Download HD Instagram profile pictures, track unfollowers, analyze follower changes, and more. Free Chrome & Edge extension for ultimate Instagram analytics.</p>
+            <div class="cta-buttons">
+                <a href="https://microsoftedge.microsoft.com/addons/detail/wexprofile-downloader/ijlpgfcingilmdaioiepclimhkccoaok" class="btn btn-primary" target="_blank">
+                    <i class="fab fa-edge"></i>
+                    Get for Microsoft Edge
+                </a>
+                <a href="#" class="btn btn-secondary" id="manualDownloadBtn">
+                    <i class="fas fa-download"></i>
+                    Manual Download
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="stats-container">
+            <div class="stat-item reveal">
+                <div class="stat-number" data-target="10000">0</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat-item reveal">
+                <div class="stat-number" data-target="50000">0</div>
+                <div class="stat-label">Downloads</div>
+            </div>
+            <div class="stat-item reveal">
+                <div class="stat-number" data-target="6">0</div>
+                <div class="stat-label">Languages</div>
+            </div>
+            <div class="stat-item reveal">
+                <div class="stat-number">4.9</div>
+                <div class="stat-label">User Rating</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <h2 class="section-title">Powerful Instagram Tools</h2>
+        <p class="section-subtitle">Everything you need for Instagram profile analysis and management</p>
+        
+        <div class="features-grid">
+            <div class="feature-card glass-card reveal">
+                <div class="feature-icon"><i class="fas fa-image"></i></div>
+                <h3>HD Profile Pictures</h3>
+                <p>Download Instagram profile pictures in full 1080x1080 HD resolution with one click.</p>
+            </div>
+            
+            <div class="feature-card glass-card reveal">
+                <div class="feature-icon"><i class="fas fa-user-minus"></i></div>
+                <h3>Unfollower Detection</h3>
+                <p>Discover who doesn't follow you back and manage your following list efficiently.</p>
+            </div>
+            
+            <div class="feature-card glass-card reveal">
+                <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                <h3>Follower Analytics</h3>
+                <p>Track follower changes over time with beautiful charts and detailed statistics.</p>
+            </div>
+            
+            <div class="feature-card glass-card reveal">
+                <div class="feature-icon"><i class="fas fa-download"></i></div>
+                <h3>Data Export</h3>
+                <p>Export profile data in JSON, CSV, or TXT formats for your records.</p>
+            </div>
+            
+            <div class="feature-card glass-card reveal">
+                <div class="feature-icon"><i class="fas fa-palette"></i></div>
+                <h3>Full Customization</h3>
+                <p>Choose from 5 themes, 9 fonts, and dark/light modes to match your style.</p>
+            </div>
+            
+            <div class="feature-card glass-card reveal">
+                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3>Privacy First</h3>
+                <p>Zero data collection. All processing happens locally on your device.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section class="download-section" id="download">
+        <h2 class="section-title">Get WeXProfile Now</h2>
+        <p class="section-subtitle">Available on Microsoft Edge Add-ons Store and manual download</p>
+        
+        <div class="download-options">
+            <div class="download-card glass-card reveal">
+                <div class="download-icon">
+                    <i class="fab fa-edge" style="color: #0078D7;"></i>
+                </div>
+                <h3>Microsoft Edge</h3>
+                <p>Install directly from Edge Add-ons Store</p>
+                <a href="https://microsoftedge.microsoft.com/addons/detail/wexprofile-downloader/ijlpgfcingilmdaioiepclimhkccoaok" class="btn btn-primary" target="_blank">
+                    <i class="fas fa-external-link-alt"></i>
+                    Install Now
+                </a>
+            </div>
+            
+            <div class="download-card glass-card reveal">
+                <div class="download-icon">
+                    <i class="fab fa-chrome" style="color: #4285F4;"></i>
+                </div>
+                <h3>Google Chrome</h3>
+                <p>Coming soon to Chrome Web Store</p>
+                <a href="#" class="btn btn-secondary" id="chromeManualBtn">
+                    <i class="fas fa-download"></i>
+                    Manual Install
+                </a>
+            </div>
+            
+            <div class="download-card glass-card reveal">
+                <div class="download-icon">
+                    <i class="fab fa-opera" style="color: #FF1B2D;"></i>
+                </div>
+                <h3>Opera / Brave</h3>
+                <p>Compatible with all Chromium browsers</p>
+                <a href="#" class="btn btn-secondary" id="operaManualBtn">
+                    <i class="fas fa-download"></i>
+                    Manual Install
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation Guide Modal -->
+    <div class="modal" id="installModal">
+        <div class="modal-content">
+            <span class="modal-close" id="modalClose">&times;</span>
+            <h2 style="margin-bottom: 1rem;">Manual Installation Guide</h2>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Follow these steps to install WeXProfile manually</p>
+            
+            <div class="install-steps">
+                <div class="install-step">
+                    <div class="step-number">1</div>
+                    <div>
+                        <strong>Download the Extension</strong>
+                        <p style="color: var(--text-muted); margin-top: 0.5rem;">
+                            <a href="https://github.com/Wek1d/WeXProfile-Downloader/releases/latest/download/Source.code.zip" 
+                               class="btn btn-primary" 
+                               style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.9rem; margin-top: 0.5rem;"
+                               download>
+                                <i class="fas fa-download"></i>
+                                Download ZIP
+                            </a>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="install-step">
+                    <div class="step-number">2</div>
+                    <div>
+                        <strong>Extract the ZIP file</strong>
+                        <p style="color: var(--text-muted); margin-top: 0.5rem;">Unzip the downloaded file to a folder on your computer.</p>
+                    </div>
+                </div>
+                
+                <div class="install-step">
+                    <div class="step-number">3</div>
+                    <div>
+                        <strong>Open Extensions Page</strong>
+                        <p style="color: var(--text-muted); margin-top: 0.5rem;">
+                            Navigate to:<br>
+                            • Chrome: <code>chrome://extensions</code><br>
+                            • Edge: <code>edge://extensions</code><br>
+                            • Opera: <code>opera://extensions</code>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="install-step">
+                    <div class="step-number">4</div>
+                    <div>
+                        <strong>Enable Developer Mode</strong>
+                        <p style="color: var(--text-muted); margin-top: 0.5rem;">Toggle the "Developer mode" switch in the top right corner.</p>
+                    </div>
+                </div>
+                
+                <div class="install-step">
+                    <div class="step-number">5</div>
+                    <div>
+                        <strong>Load Unpacked Extension</strong>
+                        <p style="color: var(--text-muted); margin-top: 0.5rem;">Click "Load unpacked" and select the extracted folder.</p>
+                    </div>
+                </div>
+                
+                <div class="install-step">
+                    <div class="step-number">6</div>
+                    <div>
+                        <strong>Done!</strong>
+                        <p style="color: var(--text-muted); margin-top: 0.5rem;">WeXProfile is now installed and ready to use on Instagram!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="https://github.com/Wek1d/WeXProfile-Downloader">GitHub</a>
+            <a href="https://github.com/Wek1d/WeXProfile-Downloader/issues">Report Bug</a>
+            <a href="https://github.com/Wek1d/WeXProfile-Downloader/blob/main/LICENSE">License</a>
+            <a href="https://github.com/Wek1d/WeXProfile-Downloader/releases">Changelog</a>
+        </div>
+        
+        <div class="social-links">
+            <a href="https://github.com/Wek1d" target="_blank"><i class="fab fa-github"></i></a>
+            <a href="https://microsoftedge.microsoft.com/addons/detail/wexprofile-downloader/ijlpgfcingilmdaioiepclimhkccoaok" target="_blank"><i class="fab fa-edge"></i></a>
+        </div>
+        
+        <p style="color: var(--text-muted); margin-top: 2rem;">
+            Made with ❤️ by <a href="https://github.com/Wek1d" style="color: #f09433;">Wek1d</a>
+        </p>
+        <p style="color: var(--text-muted); margin-top: 0.5rem; font-size: 0.9rem;">
+            Not affiliated with Instagram or Meta Platforms, Inc.
+        </p>
+    </footer>
+
+    <script>
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Scroll Reveal Animation
+        const reveals = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        reveals.forEach(reveal => revealObserver.observe(reveal));
+
+        // Feature Cards Animation
+        const featureCards = document.querySelectorAll('.feature-card');
+        const cardObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 100);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        featureCards.forEach(card => cardObserver.observe(card));
+
+        // Download Cards Animation
+        const downloadCards = document.querySelectorAll('.download-card');
+        const downloadObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 150);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        downloadCards.forEach(card => downloadObserver.observe(card));
+
+        // Stats Counter Animation
+        const statItems = document.querySelectorAll('.stat-item');
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    const counter = entry.target.querySelector('.stat-number');
+                    const target = parseInt(counter.getAttribute('data-target'));
+                    
+                    if (target) {
+                        animateCounter(counter, target);
+                    }
+                }
+            });
+        }, { threshold: 0.5 });
+
+        statItems.forEach(item => statsObserver.observe(item));
+
+        function animateCounter(element, target) {
+            let current = 0;
+            const increment = target / 100;
+            const duration = 2000;
+            const stepTime = duration / 100;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current).toLocaleString();
+                }
+            }, stepTime);
+        }
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = mobileMenuBtn.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+
+        // Close mobile menu when clicking a link
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                const icon = mobileMenuBtn.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+
+        // Modal Functionality
+        const modal = document.getElementById('installModal');
+        const modalClose = document.getElementById('modalClose');
+        const manualDownloadBtn = document.getElementById('manualDownloadBtn');
+        const chromeManualBtn = document.getElementById('chromeManualBtn');
+        const operaManualBtn = document.getElementById('operaManualBtn');
+
+        function openModal() {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        manualDownloadBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal();
+        });
+
+        chromeManualBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal();
+        });
+
+        operaManualBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal();
+        });
+
+        modalClose.addEventListener('click', closeModal);
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Keyboard navigation for modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeModal();
+            }
+        });
+
+        // Parallax effect for hero section
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const heroContent = document.querySelector('.hero-content');
+            if (heroContent) {
+                heroContent.style.transform = `translateY(${scrolled * 0.3}px)`;
+                heroContent.style.opacity = 1 - (scrolled * 0.001);
+            }
+        });
+
+        // Add loading animation
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.5s ease';
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
