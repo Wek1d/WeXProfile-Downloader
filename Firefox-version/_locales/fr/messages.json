@@ -1,0 +1,236 @@
+{
+  "appName": {
+    "message": "WeXProfile Downloader"
+  },
+  "appDesc": {
+    "message": "Téléchargez les photos de profil Instagram, analysez les abonnés et détectez les désabonnés."
+  },
+  "contextMenuTitle": {
+    "message": "Afficher les Infos Profil avec WeXProfile"
+  },
+  "LoginUnfollow": {
+    "message": "Veuillez vous connecter pour l'opération de désabonnement"
+  },
+  "infoTitle": {
+    "message": "Information"
+  },
+  "profileReadyNotification": {
+    "message": "Les informations de profil sont prêtes ! Cliquez sur l'icône de l'extension pour les détails."
+  },
+  "errorTitle": {
+    "message": "Erreur"
+  },
+  "notInstagramPageError": {
+    "message": "Veuillez utiliser sur une page Instagram."
+  },
+  "profileFetchError": {
+    "message": "Les informations de profil n'ont pas pu être récupérées"
+  },
+  "notProfilePageError": {
+    "message": "Ce n'est pas une page de profil valide."
+  },
+  "openHdPhotoError": {
+    "message": "La photo HD n'a pas pu être ouverte"
+  },
+  "scanStartMessage": {
+    "message": "Démarrer l'analyse pour trouver qui ne vous suit pas."
+  },
+  "downloadPhotoError": {
+    "message": "La photo n'a pas pu être téléchargée"
+  },
+  "downloadJsonTitle": {
+    "message": "Télécharger en JSON"
+  },
+  "noCachedDataError": {
+    "message": "Aucune donnée trouvée dans le cache"
+  },
+  "popupFetchError": {
+    "message": "Les données n'ont pas pu être récupérées"
+  },
+  "unknownActionError": {
+    "message": "Action inconnue"
+  },
+  "postsLabel": {
+    "message": "Publications"
+  },
+  "followersLabel": {
+    "message": "Abonnés"
+  },
+  "followingLabel": {
+    "message": "Abonnements"
+  },
+  "openInNewTabBtn": {
+    "message": "Ouvrir dans un Nouvel Onglet"
+  },
+  "downloadBtn": {
+    "message": "Télécharger"
+  },
+  "defaultBio": {
+    "message": "Pas de biographie"
+  },
+  "privateLabel": {
+    "message": "Privé"
+  },
+  "copyUsernameTitle": {
+    "message": "Copier"
+  },
+  "copiedText": {
+    "message": "Copié !"
+  },
+  "changeThemeTitle": {
+    "message": "Thème"
+  },
+  "clearHistoryTitle": {
+    "message": "Effacer l'Historique"
+  },
+  "clearHistoryConfirm": {
+    "message": "Êtes-vous sûr de vouloir supprimer votre historique d'abonnés ?"
+  },
+  "historyCleared": {
+    "message": "Historique effacé"
+  },
+  "settingsTitle": {
+    "message": "Paramètres"
+  },
+  "fontFamilyLabel": {
+    "message": "Police"
+  },
+  "themeTemplateLabel": {
+    "message": "Thème de Couleur"
+  },
+  "imageLoadError": {
+    "message": "La photo de profil n'a pas pu être chargée"
+  },
+  "githubTitle": {
+    "message": "GitHub"
+  },
+  "updateAvailable": {
+    "message": "Une nouvelle mise à jour est disponible !"
+  },
+  "updateBtnText": {
+    "message": "Mettre à jour"
+  },
+  "buttonStyleLabel": {
+    "message": "Style de Bouton Classique"
+  },
+  "followerChangeLabel": {
+    "message": "Afficher le Changement d'Abonnés"
+  },
+  "languageLabel": {
+    "message": "Langue"
+  },
+  "scanningFollowers": {
+    "message": "Analyse des abonnés..."
+  },
+  "scanningFollowing": {
+    "message": "Analyse des abonnements..."
+  },
+  "scanComplete": {
+    "message": "Analyse terminée"
+  },
+  "unfollowersFound": {
+    "message": "personnes ne vous suivent pas"
+  },
+  "unfollowingProgress": {
+    "message": "Désabonnement en cours..."
+  },
+  "operationComplete": {
+    "message": "Opération terminée"
+  },
+  "startScanBtn": {
+    "message": "Démarrer l'Analyse"
+  },
+  "pauseScanBtn": {
+    "message": "Pause"
+  },
+  "resumeScanBtn": {
+    "message": "Reprendre"
+  },
+  "unfollowSelectedBtn": {
+    "message": "Se Désabonner des Sélections"
+  },
+  "scanStarting": {
+    "message": "Démarrage de l'analyse..."
+  },
+  "scanError": {
+    "message": "Une erreur est survenue pendant l'analyse"
+  },
+  "scanCompleteText": {
+    "message": "Analyse terminée. Abonnés : {followers}, Abonnements : {following}, Désabonnés : {unfollowers}"
+  },
+  "exportDataTitle": {
+    "message": "Exporter les Données"
+  },
+  "followerChartTitle": {
+    "message": "Graphique de Changement d'Abonnés"
+  },
+  "chartRangeDaily": {
+    "message": "Quotidien"
+  },
+  "chartRangeWeekly": {
+    "message": "Hebdomadaire"
+  },
+  "chartRangeMonthly": {
+    "message": "Mensuel"
+  },
+  "chartBtnTitle": {
+    "message": "Graphique de Changement d'Abonnés"
+  },
+  "noHistoryData": {
+    "message": "Pas d'historique d'abonnés"
+  },
+  "totalChangeLabel": {
+    "message": "Changement total"
+  },
+  "scanSettingsTitle": {
+    "message": "Paramètres d'Analyse"
+  },
+  "scanDelayLabel": {
+    "message": "Délai de boucle d'analyse (ms)"
+  },
+  "scanDelayAfterFiveLabel": {
+    "message": "Délai après 5 boucles (ms)"
+  },
+  "unfollowDelayLabel": {
+    "message": "Délai de désabonnement (ms)"
+  },
+  "unfollowDelayAfterFiveLabel": {
+    "message": "Délai après 5 désabonnements (ms)"
+  },
+  "scanSettingsWarning": {
+    "message": "Diminuer les valeurs augmente le risque de bannissement."
+  },
+  "saveBtn": {
+    "message": "Sauvegarder"
+  },
+  "closeBtn": {
+    "message": "Fermer"
+  },
+  "usernameLabel": {
+    "message": "Nom d'Utilisateur"
+  },
+  "fullNameLabel": {
+    "message": "Nom Complet"
+  },
+  "isPrivateLabel": {
+    "message": "Compte Privé"
+  },
+  "isVerifiedLabel": {
+    "message": "Compte Vérifié"
+  },
+  "bioLabel": {
+    "message": "Biographie"
+  },
+  "profileIdLabel": {
+    "message": "ID de Profil"
+  },
+  "dateLabel": {
+    "message": "Date"
+  },
+  "yesLabel": {
+    "message": "Oui"
+  },
+  "noLabel": {
+    "message": "Non"
+  }
+}

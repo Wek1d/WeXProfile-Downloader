@@ -1,0 +1,236 @@
+{
+  "appName": {
+    "message": "WeXProfile Downloader"
+  },
+  "appDesc": {
+    "message": "Descarga fotos de perfil de Instagram, analiza seguidores y detecta a los que no te siguen."
+  },
+  "contextMenuTitle": {
+    "message": "Mostrar Información de Perfil con WeXProfile"
+  },
+  "LoginUnfollow": {
+    "message": "Por favor, inicia sesión para el proceso de dejar de seguir"
+  },
+  "infoTitle": {
+    "message": "Información"
+  },
+  "profileReadyNotification": {
+    "message": "¡Información del perfil lista! Haz clic en el icono de la extensión para detalles."
+  },
+  "errorTitle": {
+    "message": "Error"
+  },
+  "notInstagramPageError": {
+    "message": "Por favor, úsalo en una página de Instagram."
+  },
+  "profileFetchError": {
+    "message": "No se pudo recuperar la información del perfil"
+  },
+  "notProfilePageError": {
+    "message": "Esta no es una página de perfil válida."
+  },
+  "openHdPhotoError": {
+    "message": "No se pudo abrir la foto HD"
+  },
+  "scanStartMessage": {
+    "message": "Inicia el escaneo para encontrar a quiénes no te están siguiendo."
+  },
+  "downloadPhotoError": {
+    "message": "No se pudo descargar la foto"
+  },
+  "downloadJsonTitle": {
+    "message": "Descargar como JSON"
+  },
+  "noCachedDataError": {
+    "message": "No se encontraron datos en la caché"
+  },
+  "popupFetchError": {
+    "message": "No se pudieron recuperar los datos"
+  },
+  "unknownActionError": {
+    "message": "Acción desconocida"
+  },
+  "postsLabel": {
+    "message": "Publicaciones"
+  },
+  "followersLabel": {
+    "message": "Seguidores"
+  },
+  "followingLabel": {
+    "message": "Siguiendo"
+  },
+  "openInNewTabBtn": {
+    "message": "Abrir en Nueva Pestaña"
+  },
+  "downloadBtn": {
+    "message": "Descargar"
+  },
+  "defaultBio": {
+    "message": "Sin biografía"
+  },
+  "privateLabel": {
+    "message": "Privado"
+  },
+  "copyUsernameTitle": {
+    "message": "Copiar"
+  },
+  "copiedText": {
+    "message": "¡Copiado!"
+  },
+  "changeThemeTitle": {
+    "message": "Tema"
+  },
+  "clearHistoryTitle": {
+    "message": "Borrar Historial"
+  },
+  "clearHistoryConfirm": {
+    "message": "¿Estás seguro de que quieres eliminar tu historial de seguidores?"
+  },
+  "historyCleared": {
+    "message": "Historial borrado"
+  },
+  "settingsTitle": {
+    "message": "Configuración"
+  },
+  "fontFamilyLabel": {
+    "message": "Fuente"
+  },
+  "themeTemplateLabel": {
+    "message": "Tema de Color"
+  },
+  "imageLoadError": {
+    "message": "No se pudo cargar la foto de perfil"
+  },
+  "githubTitle": {
+    "message": "GitHub"
+  },
+  "updateAvailable": {
+    "message": "¡Hay una nueva actualización disponible!"
+  },
+  "updateBtnText": {
+    "message": "Actualizar"
+  },
+  "buttonStyleLabel": {
+    "message": "Estilo de Botón Clásico"
+  },
+  "followerChangeLabel": {
+    "message": "Mostrar Cambio de Seguidores"
+  },
+  "languageLabel": {
+    "message": "Idioma"
+  },
+  "scanningFollowers": {
+    "message": "Escaneando seguidores..."
+  },
+  "scanningFollowing": {
+    "message": "Escaneando seguidos..."
+  },
+  "scanComplete": {
+    "message": "Escaneo completado"
+  },
+  "unfollowersFound": {
+    "message": "personas no te están siguiendo"
+  },
+  "unfollowingProgress": {
+    "message": "Dejando de seguir..."
+  },
+  "operationComplete": {
+    "message": "Operación completada"
+  },
+  "startScanBtn": {
+    "message": "Iniciar Escaneo"
+  },
+  "pauseScanBtn": {
+    "message": "Pausar"
+  },
+  "resumeScanBtn": {
+    "message": "Reanudar"
+  },
+  "unfollowSelectedBtn": {
+    "message": "Dejar de Seguir Seleccionados"
+  },
+  "scanStarting": {
+    "message": "Iniciando escaneo..."
+  },
+  "scanError": {
+    "message": "Ocurrió un error durante el escaneo"
+  },
+  "scanCompleteText": {
+    "message": "Escaneo completado. Seguidores: {followers}, Siguiendo: {following}, No seguidores: {unfollowers}"
+  },
+  "exportDataTitle": {
+    "message": "Exportar Datos"
+  },
+  "followerChartTitle": {
+    "message": "Gráfico de Cambio de Seguidores"
+  },
+  "chartRangeDaily": {
+    "message": "Diario"
+  },
+  "chartRangeWeekly": {
+    "message": "Semanal"
+  },
+  "chartRangeMonthly": {
+    "message": "Mensual"
+  },
+  "chartBtnTitle": {
+    "message": "Gráfico de Cambio de Seguidores"
+  },
+  "noHistoryData": {
+    "message": "No hay historial de seguidores"
+  },
+  "totalChangeLabel": {
+    "message": "Cambio total"
+  },
+  "scanSettingsTitle": {
+    "message": "Configuración de Escaneo"
+  },
+  "scanDelayLabel": {
+    "message": "Retraso de ciclo de escaneo (ms)"
+  },
+  "scanDelayAfterFiveLabel": {
+    "message": "Retraso después de 5 ciclos (ms)"
+  },
+  "unfollowDelayLabel": {
+    "message": "Retraso al dejar de seguir (ms)"
+  },
+  "unfollowDelayAfterFiveLabel": {
+    "message": "Retraso después de 5 unfollows (ms)"
+  },
+  "scanSettingsWarning": {
+    "message": "Disminuir los valores aumenta el riesgo de baneo."
+  },
+  "saveBtn": {
+    "message": "Guardar"
+  },
+  "closeBtn": {
+    "message": "Cerrar"
+  },
+  "usernameLabel": {
+    "message": "Nombre de Usuario"
+  },
+  "fullNameLabel": {
+    "message": "Nombre Completo"
+  },
+  "isPrivateLabel": {
+    "message": "Cuenta Privada"
+  },
+  "isVerifiedLabel": {
+    "message": "Cuenta Verificada"
+  },
+  "bioLabel": {
+    "message": "Biografía"
+  },
+  "profileIdLabel": {
+    "message": "ID de Perfil"
+  },
+  "dateLabel": {
+    "message": "Fecha"
+  },
+  "yesLabel": {
+    "message": "Sí"
+  },
+  "noLabel": {
+    "message": "No"
+  }
+}
