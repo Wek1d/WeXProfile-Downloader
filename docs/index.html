@@ -563,6 +563,17 @@
             opacity: 1;
             transform: translateY(0);
         }
+        /* Firefox Gradient */
+.firefox-gradient {
+    background: linear-gradient(90deg, #FF7139 0%, #FFB200 100%); /* Firefox'un kendi turuncu/sarı tonları */
+    border: none;
+    color: white;
+}
+
+.firefox-gradient:hover {
+    background: linear-gradient(90deg, #FF9159 0%, #FFD200 100%);
+    color: white;
+}
     </style>
 </head>
 <body>
@@ -591,10 +602,13 @@
         <div class="hero-content">
             <h1>Instagram Profile Downloader & Unfollower Tracker</h1>
             <p>Download HD Instagram profile pictures, track unfollowers, analyze follower changes, and more. Free Chrome & Edge extension for ultimate Instagram analytics.</p>
-            <div class="cta-buttons">
-                <a href="https://microsoftedge.microsoft.com/addons/detail/wexprofile-downloader/ijlpgfcingilmdaioiepclimhkccoaok" class="btn btn-primary" target="_blank">
+                        <div class="cta-buttons">
+                <a href="https://microsoftedge.microsoft.com/addons/detail/wexprofile-downloader/ijlpgfcingilmdaioiepclimhkccoaok" class="btn btn-primary primary-gradient" target="_blank">
                     <i class="fab fa-edge"></i>
                     Get for Microsoft Edge
+                </a>
+                <a href="https://addons.mozilla.org/addon/wexprofile-downloader/" class="btn btn-primary firefox-gradient" target="_blank">
+                    <i class="fab fa-firefox"></i> Get for Firefox
                 </a>
                 <a href="#" class="btn btn-secondary" id="manualDownloadBtn">
                     <i class="fas fa-download"></i>
@@ -620,7 +634,7 @@
                 <div class="stat-label">Languages</div>
             </div>
             <div class="stat-item reveal">
-                <div class="stat-number">4.9</div>
+                <div class="stat-number">5.0</div>
                 <div class="stat-label">User Rating</div>
             </div>
         </div>
@@ -675,7 +689,7 @@
         <h2 class="section-title">Get WeXProfile Now</h2>
         <p class="section-subtitle">Available on Microsoft Edge Add-ons Store and manual download</p>
         
-        <div class="download-options">
+                <div class="download-options">
             <div class="download-card glass-card reveal">
                 <div class="download-icon">
                     <i class="fab fa-edge" style="color: #0078D7;"></i>
@@ -688,6 +702,17 @@
                 </a>
             </div>
             
+            <div class="download-card glass-card reveal">
+                <div class="download-icon">
+                    <i class="fab fa-firefox" style="color: #FF7139;"></i>
+                </div>
+                <h3>Firefox</h3>
+                <p>Install directly from Mozilla Add-ons Store</p>
+                <a href="https://addons.mozilla.org/addon/wexprofile-downloader/" class="btn btn-primary" target="_blank">
+                    <i class="fas fa-external-link-alt"></i>
+                    Install Now
+                </a>
+            </div>
             <div class="download-card glass-card reveal">
                 <div class="download-icon">
                     <i class="fab fa-chrome" style="color: #4285F4;"></i>
