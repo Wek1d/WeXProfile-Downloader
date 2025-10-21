@@ -3,16 +3,16 @@
     "message": "WeXProfile Downloader"
   },
   "appDesc": {
-    "message": "Scarica le foto del profilo di Instagram, analizza i follower e individua chi non ti segue più."
+    "message": "Scarica foto del profilo Instagram, analizza i follower e rileva chi non ti segue."
   },
   "contextMenuTitle": {
     "message": "Mostra Informazioni Profilo con WeXProfile"
   },
   "LoginUnfollow": {
-    "message": "Effettua il login per l'operazione unfollower"
+    "message": "Per favore, accedi per il processo di unfollow"
   },
   "infoTitle": {
-    "message": "Informazioni"
+    "message": "Info"
   },
   "profileReadyNotification": {
     "message": "Informazioni del profilo pronte! Clicca sull'icona dell'estensione per i dettagli."
@@ -21,19 +21,19 @@
     "message": "Errore"
   },
   "notInstagramPageError": {
-    "message": "Utilizzare su una pagina Instagram."
+    "message": "Per favore, usa su una pagina Instagram."
   },
   "profileFetchError": {
     "message": "Impossibile recuperare le informazioni del profilo"
   },
   "notProfilePageError": {
-    "message": "Questa non è una pagina profilo valida."
+    "message": "Questa non è una pagina di profilo valida."
   },
   "openHdPhotoError": {
     "message": "Impossibile aprire la foto HD"
   },
   "scanStartMessage": {
-    "message": "Avvia la scansione per trovare chi non ti sta seguendo."
+    "message": "Avvia la scansione per scoprire chi non ti sta seguendo."
   },
   "downloadPhotoError": {
     "message": "Impossibile scaricare la foto"
@@ -60,7 +60,7 @@
     "message": "Seguiti"
   },
   "openInNewTabBtn": {
-    "message": "Apri in una Nuova Scheda"
+    "message": "Apri in Nuova Scheda"
   },
   "downloadBtn": {
     "message": "Scarica"
@@ -93,19 +93,19 @@
     "message": "Impostazioni"
   },
   "fontFamilyLabel": {
-    "message": "Carattere"
+    "message": "Famiglia Carattere"
   },
   "themeTemplateLabel": {
     "message": "Tema Colore"
   },
   "imageLoadError": {
-    "message": "Impossibile caricare la foto profilo"
+    "message": "Impossibile caricare la foto del profilo"
   },
   "githubTitle": {
     "message": "GitHub"
   },
   "updateAvailable": {
-    "message": "Un nuovo aggiornamento è disponibile!"
+    "message": "È disponibile un nuovo aggiornamento!"
   },
   "updateBtnText": {
     "message": "Aggiorna"
@@ -114,16 +114,16 @@
     "message": "Stile Pulsante Classico"
   },
   "followerChangeLabel": {
-    "message": "Mostra Variazione Follower"
+    "message": "Mostra Cambio Follower"
   },
   "languageLabel": {
     "message": "Lingua"
   },
   "scanningFollowers": {
-    "message": "Scansione dei follower..."
+    "message": "Scansione follower in corso..."
   },
   "scanningFollowing": {
-    "message": "Scansione dei seguiti..."
+    "message": "Scansione seguiti in corso..."
   },
   "scanComplete": {
     "message": "Scansione completata"
@@ -132,7 +132,7 @@
     "message": "persone non ti stanno seguendo"
   },
   "unfollowingProgress": {
-    "message": "Smetto di seguire..."
+    "message": "Non seguire più..."
   },
   "operationComplete": {
     "message": "Operazione completata"
@@ -141,13 +141,13 @@
     "message": "Avvia Scansione"
   },
   "pauseScanBtn": {
-    "message": "Metti in Pausa"
+    "message": "Pausa"
   },
   "resumeScanBtn": {
     "message": "Riprendi"
   },
   "unfollowSelectedBtn": {
-    "message": "Smetti di Seguire Selezionati"
+    "message": "Non Seguire Più Selezionati"
   },
   "scanStarting": {
     "message": "Avvio scansione..."
@@ -156,16 +156,16 @@
     "message": "Si è verificato un errore durante la scansione"
   },
   "scanCompleteText": {
-    "message": "Scansione completata. Follower: {followers}, Seguiti: {following}, Non follower: {unfollowers}"
+    "message": "Scansione completata. Follower: {followers}, Seguiti: {following}, Non Follower: {unfollowers}"
   },
   "exportDataTitle": {
     "message": "Esporta Dati"
   },
   "followerChartTitle": {
-    "message": "Grafico Variazione Follower"
+    "message": "Grafico Cambio Follower"
   },
   "chartRangeDaily": {
-    "message": "Giornaliera"
+    "message": "Giornaliero"
   },
   "chartRangeWeekly": {
     "message": "Settimanale"
@@ -174,13 +174,13 @@
     "message": "Mensile"
   },
   "chartBtnTitle": {
-    "message": "Grafico Variazione Follower"
+    "message": "Grafico Cambio Follower"
   },
   "noHistoryData": {
     "message": "Nessuna cronologia follower"
   },
   "totalChangeLabel": {
-    "message": "Variazione totale"
+    "message": "Cambio totale"
   },
   "scanSettingsTitle": {
     "message": "Impostazioni Scansione"
@@ -198,7 +198,7 @@
     "message": "Ritardo dopo 5 unfollow (ms)"
   },
   "scanSettingsWarning": {
-    "message": "Diminuire i valori aumenta il rischio di ban."
+    "message": "Abbassare i valori aumenta il rischio di un ban."
   },
   "saveBtn": {
     "message": "Salva"
@@ -232,5 +232,35 @@
   },
   "noLabel": {
     "message": "No"
+  },
+  "themeDefaultTitle": {
+    "message": "Predefinito"
+  },
+  "themeBlueTitle": {
+    "message": "Blu"
+  },
+  "themeGreenTitle": {
+    "message": "Verde"
+  },
+  "themePurpleTitle": {
+    "message": "Viola"
+  },
+  "themePinkTitle": {
+    "message": "Rosa"
+  },
+  "unfollowerTitle": {
+    "message": "WeXUnfollower"
+  },
+  "backBtnTitle": {
+    "message": "Torna Indietro"
+  },
+  "unfollowerBtnTitle": {
+    "message": "Strumento Unfollower"
+  },
+  "settingsBtnTitle": {
+    "message": "Impostazioni"
+  },
+  "fullNamePlaceholder": {
+    "message": "Nome Completo"
   }
 }

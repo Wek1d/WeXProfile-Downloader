@@ -1,21 +1,21 @@
 {
   "appName": {
-    "message": "WeXProfile Downloader"
+    "message": "WeXProfile İndirici"
   },
   "appDesc": {
-    "message": "Instagram profil fotoğraflarını indirin, takipçi analizi yapın ve takip etmeyenleri tespit edin."
+    "message": "Instagram profil fotoğraflarını indirin, takipçileri analiz edin ve takibi bırakanları tespit edin."
   },
   "contextMenuTitle": {
-    "message": "WeXProfile ile Profil Bilgilerini Göster"
+    "message": "WeXProfile ile Profil Bilgisini Göster"
   },
   "LoginUnfollow": {
-    "message": "Lütfen unfollower işlemi için giriş yapın"
+    "message": "Takibi bırakma işlemi için lütfen giriş yapın"
   },
   "infoTitle": {
     "message": "Bilgi"
   },
   "profileReadyNotification": {
-    "message": "Profil bilgileri hazır! Detaylar için eklenti ikonuna tıklayın."
+    "message": "Profil bilgileri hazır! Ayrıntılar için uzantı simgesine tıklayın."
   },
   "errorTitle": {
     "message": "Hata"
@@ -27,13 +27,13 @@
     "message": "Profil bilgileri alınamadı"
   },
   "notProfilePageError": {
-    "message": "Geçerli bir profil sayfası değil."
+    "message": "Bu geçerli bir profil sayfası değil."
   },
   "openHdPhotoError": {
     "message": "HD fotoğraf açılamadı"
   },
-    "scanStartMessage": {
-  "message": "Seni takip etmeyenleri bulmak için taramayı başlat."
+  "scanStartMessage": {
+    "message": "Sizi takip etmeyenleri bulmak için taramayı başlatın."
   },
   "downloadPhotoError": {
     "message": "Fotoğraf indirilemedi"
@@ -45,19 +45,19 @@
     "message": "Önbellekte veri bulunamadı"
   },
   "popupFetchError": {
-    "message": "Veri alınamadı"
+    "message": "Veriler alınamadı"
   },
   "unknownActionError": {
-    "message": "Bilinmeyen işlem"
+    "message": "Bilinmeyen eylem"
   },
   "postsLabel": {
-    "message": "Gönderi"
+    "message": "Gönderiler"
   },
   "followersLabel": {
-    "message": "Takipçi"
+    "message": "Takipçiler"
   },
   "followingLabel": {
-    "message": "Takip"
+    "message": "Takip Edilenler"
   },
   "openInNewTabBtn": {
     "message": "Yeni Sekmede Aç"
@@ -84,7 +84,7 @@
     "message": "Geçmişi Temizle"
   },
   "clearHistoryConfirm": {
-    "message": "Takipçi geçmişini silmek istediğinize emin misiniz?"
+    "message": "Takipçi geçmişinizi silmek istediğinizden emin misiniz?"
   },
   "historyCleared": {
     "message": "Geçmiş temizlendi"
@@ -93,7 +93,7 @@
     "message": "Ayarlar"
   },
   "fontFamilyLabel": {
-    "message": "Yazı Tipi"
+    "message": "Yazı Tipi Ailesi"
   },
   "themeTemplateLabel": {
     "message": "Renk Teması"
@@ -111,7 +111,7 @@
     "message": "Güncelle"
   },
   "buttonStyleLabel": {
-    "message": "Klasik Buton Stili"
+    "message": "Klasik Düğme Stili"
   },
   "followerChangeLabel": {
     "message": "Takipçi Değişimini Göster"
@@ -129,10 +129,10 @@
     "message": "Tarama tamamlandı"
   },
   "unfollowersFound": {
-    "message": "kişi seni takip etmiyor"
+    "message": "kişi sizi takip etmiyor"
   },
   "unfollowingProgress": {
-    "message": "Takipten çıkılıyor..."
+    "message": "Takipten çıkarılıyor..."
   },
   "operationComplete": {
     "message": "İşlem tamamlandı"
@@ -147,19 +147,19 @@
     "message": "Devam Et"
   },
   "unfollowSelectedBtn": {
-    "message": "Seçilenleri Bırak"
+    "message": "Seçilenleri Takipten Çıkar"
   },
   "scanStarting": {
     "message": "Tarama başlatılıyor..."
   },
   "scanError": {
-    "message": "Tarama sırasında hata oluştu"
+    "message": "Tarama sırasında bir hata oluştu"
   },
   "scanCompleteText": {
-    "message": "Tarama tamamlandı. Takipçi: {followers}, Takip: {following}, Takip etmeyen: {unfollowers}"
+    "message": "Tarama tamamlandı. Takipçiler: {followers}, Takip Edilenler: {following}, Takip Etmeyenler: {unfollowers}"
   },
   "exportDataTitle": {
-    "message": "Veri Dışa Aktar"
+    "message": "Verileri Dışa Aktar"
   },
   "followerChartTitle": {
     "message": "Takipçi Değişim Grafiği"
@@ -186,19 +186,19 @@
     "message": "Tarama Ayarları"
   },
   "scanDelayLabel": {
-    "message": "Arama döngüleri arası (ms)"
+    "message": "Tarama döngü gecikmesi (ms)"
   },
   "scanDelayAfterFiveLabel": {
-    "message": "5 döngüden sonra bekleme (ms)"
+    "message": "5 döngüden sonraki gecikme (ms)"
   },
   "unfollowDelayLabel": {
-    "message": "Unfollow arası (ms)"
+    "message": "Takipten çıkarma gecikmesi (ms)"
   },
   "unfollowDelayAfterFiveLabel": {
-    "message": "5 unfollowdan sonra bekleme (ms)"
+    "message": "5 takipten çıkarmadan sonraki gecikme (ms)"
   },
   "scanSettingsWarning": {
-    "message": "Değerleri düşürmek ban riskini artırır."
+    "message": "Değerleri düşürmek yasaklanma riskini artırır."
   },
   "saveBtn": {
     "message": "Kaydet"
@@ -216,13 +216,13 @@
     "message": "Gizli Hesap"
   },
   "isVerifiedLabel": {
-    "message": "Onaylı Hesap"
+    "message": "Doğrulanmış Hesap"
   },
   "bioLabel": {
     "message": "Biyografi"
   },
   "profileIdLabel": {
-    "message": "Profil ID"
+    "message": "Profil Kimliği"
   },
   "dateLabel": {
     "message": "Tarih"
@@ -232,5 +232,35 @@
   },
   "noLabel": {
     "message": "Hayır"
+  },
+  "themeDefaultTitle": {
+    "message": "Varsayılan"
+  },
+  "themeBlueTitle": {
+    "message": "Mavi"
+  },
+  "themeGreenTitle": {
+    "message": "Yeşil"
+  },
+  "themePurpleTitle": {
+    "message": "Mor"
+  },
+  "themePinkTitle": {
+    "message": "Pembe"
+  },
+  "unfollowerTitle": {
+    "message": "WeXUnfollower"
+  },
+  "backBtnTitle": {
+    "message": "Geri Dön"
+  },
+  "unfollowerBtnTitle": {
+    "message": "Takip Etmeyenler Aracı"
+  },
+  "settingsBtnTitle": {
+    "message": "Ayarlar"
+  },
+  "fullNamePlaceholder": {
+    "message": "Tam Ad"
   }
 }

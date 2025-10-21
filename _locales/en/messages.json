@@ -232,5 +232,35 @@
   },
   "noLabel": {
     "message": "No"
+  },
+  "themeDefaultTitle": {
+    "message": "Default"
+  },
+  "themeBlueTitle": {
+    "message": "Blue"
+  },
+  "themeGreenTitle": {
+    "message": "Green"
+  },
+  "themePurpleTitle": {
+    "message": "Purple"
+  },
+  "themePinkTitle": {
+    "message": "Pink"
+  },
+  "unfollowerTitle": {
+    "message": "WeXUnfollower"
+  },
+  "backBtnTitle": {
+    "message": "Go Back"
+  },
+  "unfollowerBtnTitle": {
+    "message": "Unfollower Tool"
+  },
+  "settingsBtnTitle": {
+    "message": "Settings"
+  },
+  "fullNamePlaceholder": {
+    "message": "Full Name"
   }
 }

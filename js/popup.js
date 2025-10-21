@@ -1,7 +1,6 @@
 // js/popup.js
 
 document.addEventListener('DOMContentLoaded', function() {
-  // --- Element Referansları ---
   const profileView = document.getElementById('profileView');
   const unfinderView = document.getElementById('unfinderView');
   const profilePic = document.getElementById('profilePic');
@@ -47,9 +46,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   let currentSettings = {};
   let unfollowerData = [];
-  let i18nMessages = {}; // Çeviri mesajlarını sakla
+  let i18nMessages = {}; 
   
-  // --- Fonksiyonlar ---
   
   function setVersionFromManifest() {
     if (versionEl) {
@@ -101,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
     root.style.setProperty('--primary-color-for-check', checkColor);
   }
 
-  // Çeviri fonksiyonu - mesajları önbelleğe al
+
   async function localizeHtml(lang = 'tr') {
     try {
         const url = chrome.runtime.getURL(`_locales/${lang}/messages.json`);
@@ -109,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!response.ok) throw new Error(`Dil dosyası yüklenemedi: ${response.statusText}`);
         i18nMessages = await response.json();
         
-        // HTML elementlerini çevir
+      
         document.querySelectorAll('[data-i18n]').forEach(el => {
             if (i18nMessages[el.dataset.i18n]) {
               const msg = i18nMessages[el.dataset.i18n].message;
@@ -131,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch(e) { console.error("Dil hatası:", e); }
   }
   
-  // Çeviri helper fonksiyonu
+  
   function t(key) {
     return i18nMessages[key]?.message || key;
   }
@@ -141,15 +139,17 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function displayProfileData(data) {
+    
     loader.style.display = 'block';
+    profilePic.classList.remove('loaded');
     profilePic.style.opacity = '0';
 
     usernameEl.innerHTML = `@${data.username}`;
     if (data.isVerified) usernameEl.innerHTML += ' <i class="fas fa-check-circle verified-badge"></i>';
     if (data.isPrivate) usernameEl.innerHTML += ` <span class="private-badge">${t('privateLabel')}</span>`;
 
-    fullNameEl.textContent = data.fullName;
-    let bio = data.biography_with_entities?.raw_text || data.biography || '';
+    fullNameEl.textContent = data.fullName || t('fullNamePlaceholder');
+    let bio = data.biography || '';
     if (!bio) bio = t('defaultBio');
     bioEl.textContent = bio;
     postsCountEl.textContent = formatNumber(data.posts);
@@ -163,11 +163,47 @@ document.addEventListener('DOMContentLoaded', function() {
       displayChange(followingChangeEl, data.followingChange);
     }
 
-    profilePic.src = data.profilePicUrlForPreview || '';
-    profilePic.onload = () => { profilePic.style.opacity = '1'; loader.style.display = 'none'; };
-    profilePic.onerror = () => { loader.style.display = 'none'; showError(t('imageLoadError')); }
-  }
-  
+    if (data.profilePicUrlForPreview) {
+        
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        
+        img.onload = () => {
+            
+            profilePic.src = data.profilePicUrlForPreview;
+            
+            
+            profilePic.style.opacity = '1';
+            profilePic.classList.add('loaded');
+            
+            
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 300);
+        };
+        
+        img.onerror = () => {
+            console.error("Profil resmi yüklenemedi");
+            profilePic.src = 'icon.png';
+            profilePic.style.opacity = '1';
+            profilePic.classList.add('loaded');
+            loader.style.display = 'none';
+        };
+        
+        
+        img.src = data.profilePicUrlForPreview;
+        
+        
+        if (img.complete) {
+            img.onload();
+        }
+    } else {
+        loader.style.display = 'none';
+        profilePic.src = 'icon.png';
+        profilePic.style.opacity = '1';
+        profilePic.classList.add('loaded');
+    }
+}
   function displayChange(element, change) {
     element.textContent = '';
     element.className = 'change-indicator';
@@ -220,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
     unfinderList.addEventListener('change', updateSelectedCount);
   }
 
-  // --- Olay Dinleyicileri ve Başlatma ---
+
   
   setVersionFromManifest();
 
@@ -228,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (response?.success) {
     applySettings(response.settings);
     localizeHtml(response.settings.language).then(() => {
-      // *** YENİ: Çeviri bittikten sonra unfinder başlangıç metnini güncelle ***
+
       unfinderStatusText.textContent = t('scanStartMessage');
     });
     if (response.updateInfo.hasUpdate) {
@@ -331,7 +367,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // --- Modal ve panel HTML'i ekle ---
+
   const modalHtml = `
     <div id="exportModal" class="wex-modal" style="display:none;">
       <div class="wex-modal-content">
@@ -372,16 +408,18 @@ document.addEventListener('DOMContentLoaded', function() {
   `;
   document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-  // Grafik butonu
+
   const graphBtn = document.createElement('button');
   graphBtn.id = 'chartBtn';
   graphBtn.className = 'btn-icon-footer';
   graphBtn.setAttribute('data-i18n-title', 'chartBtnTitle');
   graphBtn.title = t('chartBtnTitle');
+  graphBtn.setAttribute('data-i18n-title', 'chartBtnTitle');
   graphBtn.innerHTML = '<i class="fas fa-chart-line"></i>';
+  
   downloadJsonBtn.parentNode.insertBefore(graphBtn, downloadJsonBtn.nextSibling);
 
-  // Unfinder ayar paneli
+
   const unfinderHeaderActions = unfinderView.querySelector('.header-actions');
   const unfinderSettingsBtn = document.createElement('button');
   unfinderSettingsBtn.id = 'unfinderSettingsBtn';
@@ -607,7 +645,6 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => a.remove(), 500);
   });
 
-  // Unfinder ayarları
   function loadScanTimings() {
     chrome.storage.sync.get(['scanTimings'], (data) => {
       const timings = data.scanTimings || {

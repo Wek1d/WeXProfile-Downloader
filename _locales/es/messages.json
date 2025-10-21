@@ -1,6 +1,6 @@
 {
   "appName": {
-    "message": "WeXProfile Downloader"
+    "message": "WeXProfile Descargador"
   },
   "appDesc": {
     "message": "Descarga fotos de perfil de Instagram, analiza seguidores y detecta a los que no te siguen."
@@ -15,7 +15,7 @@
     "message": "Información"
   },
   "profileReadyNotification": {
-    "message": "¡Información del perfil lista! Haz clic en el icono de la extensión para detalles."
+    "message": "¡Información del perfil lista! Haz clic en el icono de la extensión para más detalles."
   },
   "errorTitle": {
     "message": "Error"
@@ -33,7 +33,7 @@
     "message": "No se pudo abrir la foto HD"
   },
   "scanStartMessage": {
-    "message": "Inicia el escaneo para encontrar a quiénes no te están siguiendo."
+    "message": "Inicia el escaneo para descubrir quién no te está siguiendo."
   },
   "downloadPhotoError": {
     "message": "No se pudo descargar la foto"
@@ -42,7 +42,7 @@
     "message": "Descargar como JSON"
   },
   "noCachedDataError": {
-    "message": "No se encontraron datos en la caché"
+    "message": "No se encontraron datos en caché"
   },
   "popupFetchError": {
     "message": "No se pudieron recuperar los datos"
@@ -93,7 +93,7 @@
     "message": "Configuración"
   },
   "fontFamilyLabel": {
-    "message": "Fuente"
+    "message": "Familia de Fuente"
   },
   "themeTemplateLabel": {
     "message": "Tema de Color"
@@ -126,7 +126,7 @@
     "message": "Escaneando seguidos..."
   },
   "scanComplete": {
-    "message": "Escaneo completado"
+    "message": "Escaneo completo"
   },
   "unfollowersFound": {
     "message": "personas no te están siguiendo"
@@ -135,7 +135,7 @@
     "message": "Dejando de seguir..."
   },
   "operationComplete": {
-    "message": "Operación completada"
+    "message": "Operación completa"
   },
   "startScanBtn": {
     "message": "Iniciar Escaneo"
@@ -156,7 +156,7 @@
     "message": "Ocurrió un error durante el escaneo"
   },
   "scanCompleteText": {
-    "message": "Escaneo completado. Seguidores: {followers}, Siguiendo: {following}, No seguidores: {unfollowers}"
+    "message": "Escaneo completo. Seguidores: {followers}, Siguiendo: {following}, No Seguidores: {unfollowers}"
   },
   "exportDataTitle": {
     "message": "Exportar Datos"
@@ -186,19 +186,19 @@
     "message": "Configuración de Escaneo"
   },
   "scanDelayLabel": {
-    "message": "Retraso de ciclo de escaneo (ms)"
+    "message": "Retardo de bucle de escaneo (ms)"
   },
   "scanDelayAfterFiveLabel": {
-    "message": "Retraso después de 5 ciclos (ms)"
+    "message": "Retardo después de 5 bucles (ms)"
   },
   "unfollowDelayLabel": {
-    "message": "Retraso al dejar de seguir (ms)"
+    "message": "Retardo para dejar de seguir (ms)"
   },
   "unfollowDelayAfterFiveLabel": {
-    "message": "Retraso después de 5 unfollows (ms)"
+    "message": "Retardo después de 5 acciones de dejar de seguir (ms)"
   },
   "scanSettingsWarning": {
-    "message": "Disminuir los valores aumenta el riesgo de baneo."
+    "message": "Bajar los valores aumenta el riesgo de un baneo."
   },
   "saveBtn": {
     "message": "Guardar"
@@ -232,5 +232,35 @@
   },
   "noLabel": {
     "message": "No"
+  },
+  "themeDefaultTitle": {
+    "message": "Predeterminado"
+  },
+  "themeBlueTitle": {
+    "message": "Azul"
+  },
+  "themeGreenTitle": {
+    "message": "Verde"
+  },
+  "themePurpleTitle": {
+    "message": "Púrpura"
+  },
+  "themePinkTitle": {
+    "message": "Rosa"
+  },
+  "unfollowerTitle": {
+    "message": "WeXUnfollower"
+  },
+  "backBtnTitle": {
+    "message": "Volver"
+  },
+  "unfollowerBtnTitle": {
+    "message": "Herramienta de No Seguidores"
+  },
+  "settingsBtnTitle": {
+    "message": "Configuración"
+  },
+  "fullNamePlaceholder": {
+    "message": "Nombre Completo"
   }
 }

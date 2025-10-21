@@ -3,16 +3,16 @@
     "message": "WeXProfile Downloader"
   },
   "appDesc": {
-    "message": "Instagram-Profilbilder herunterladen, Follower analysieren und Entfolger erkennen."
+    "message": "Laden Sie Instagram-Profilbilder herunter, analysieren Sie Follower und erkennen Sie Entfolger."
   },
   "contextMenuTitle": {
     "message": "Profilinformationen mit WeXProfile anzeigen"
   },
   "LoginUnfollow": {
-    "message": "Bitte melden Sie sich für den Entfolger-Vorgang an"
+    "message": "Bitte melden Sie sich für den Entfolgen-Prozess an"
   },
   "infoTitle": {
-    "message": "Information"
+    "message": "Info"
   },
   "profileReadyNotification": {
     "message": "Profilinformationen sind bereit! Klicken Sie auf das Erweiterungssymbol für Details."
@@ -57,7 +57,7 @@
     "message": "Follower"
   },
   "followingLabel": {
-    "message": "Folgt"
+    "message": "Gefolgt"
   },
   "openInNewTabBtn": {
     "message": "In neuem Tab öffnen"
@@ -93,7 +93,7 @@
     "message": "Einstellungen"
   },
   "fontFamilyLabel": {
-    "message": "Schriftart"
+    "message": "Schriftfamilie"
   },
   "themeTemplateLabel": {
     "message": "Farbthema"
@@ -108,7 +108,7 @@
     "message": "Ein neues Update ist verfügbar!"
   },
   "updateBtnText": {
-    "message": "Aktualisieren"
+    "message": "Update"
   },
   "buttonStyleLabel": {
     "message": "Klassischer Button-Stil"
@@ -147,7 +147,7 @@
     "message": "Fortsetzen"
   },
   "unfollowSelectedBtn": {
-    "message": "Ausgewählte entfolgen"
+    "message": "Ausgewählten entfolgen"
   },
   "scanStarting": {
     "message": "Scan wird gestartet..."
@@ -156,7 +156,7 @@
     "message": "Während des Scans ist ein Fehler aufgetreten"
   },
   "scanCompleteText": {
-    "message": "Scan abgeschlossen. Follower: {followers}, Folgt: {following}, Entfolger: {unfollowers}"
+    "message": "Scan abgeschlossen. Follower: {followers}, Gefolgt: {following}, Entfolger: {unfollowers}"
   },
   "exportDataTitle": {
     "message": "Daten exportieren"
@@ -232,5 +232,35 @@
   },
   "noLabel": {
     "message": "Nein"
+  },
+  "themeDefaultTitle": {
+    "message": "Standard"
+  },
+  "themeBlueTitle": {
+    "message": "Blau"
+  },
+  "themeGreenTitle": {
+    "message": "Grün"
+  },
+  "themePurpleTitle": {
+    "message": "Lila"
+  },
+  "themePinkTitle": {
+    "message": "Rosa"
+  },
+  "unfollowerTitle": {
+    "message": "WeXUnfollower"
+  },
+  "backBtnTitle": {
+    "message": "Zurück"
+  },
+  "unfollowerBtnTitle": {
+    "message": "Entfolgen-Tool"
+  },
+  "settingsBtnTitle": {
+    "message": "Einstellungen"
+  },
+  "fullNamePlaceholder": {
+    "message": "Vollständiger Name"
   }
 }

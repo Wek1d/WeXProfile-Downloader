@@ -119,9 +119,10 @@ function compareVersions(v1, v2) {
 }
 
 chrome.runtime.onInstalled.addListener(() => {
+  loadMessages('tr'); // Önce dil yüklensin
   chrome.contextMenus.create({
     id: "wexProfileDownload",
-    title: "WeXProfile ile Profil Bilgilerini Göster",
+    title: t("contextMenuTitle") || "Show Profile Info with WeXProfile",
     contexts: ["page"],
     documentUrlPatterns: ["*://*.instagram.com/*"]
   });
@@ -297,12 +298,12 @@ async function getInstagramUserInfo(username) {
   if (out.data && out.data.user) {
     const user = out.data.user;
     const profilePicDataURL = await fetchImageAsDataURL(user.profile_pic_url);
-    // Biyografi için hem biography_with_entities hem biography kontrolü
+// Biyografi için önce 'biography' (düz metin) sonra 'raw_text' kontrolü
     let biography = '';
-    if (user.biography_with_entities && user.biography_with_entities.raw_text) {
-      biography = user.biography_with_entities.raw_text;
-    } else if (user.biography) {
+    if (user.biography) { // ÖNCE buna bak
       biography = user.biography;
+    } else if (user.biography_with_entities && user.biography_with_entities.raw_text) { // O yoksa BUNA bak
+      biography = user.biography_with_entities.raw_text;
     }
     let userData = {
       id: user.id,
@@ -393,10 +394,10 @@ async function downloadJSON() {
         });
       } catch (error) {
         console.error("WeXProfile Hata: JSON indirilirken bir hata oluştu.", error);
-        sendNotification("Hata", "JSON verisi indirilemedi.");
+        sendNotification("errorTitle", "downloadPhotoError");
       }
-  } else {
-    sendNotification("Hata", "JSON indirilemedi: Önbellekte veri yok.");
+    } else {
+    sendNotification("errorTitle", "noCachedDataError");
   }
 }
 
@@ -504,8 +505,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       case 'resumeScan': if(currentScanner) currentScanner.resume(); break;
       case 'unfollowSelected': if(currentScanner && request.users) { currentScanner.unfollow(request.users); } break;
 
-      default:
-        sendResponse({ success: false, error: "Bilinmeyen eylem" });
+            default:
+        sendResponse({ success: false, error: t("unknownActionError") });
     }
   })();
   return true;

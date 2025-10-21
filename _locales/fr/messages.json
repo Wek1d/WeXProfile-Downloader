@@ -1,21 +1,21 @@
 {
   "appName": {
-    "message": "WeXProfile Downloader"
+    "message": "WeXProfile Téléchargeur"
   },
   "appDesc": {
-    "message": "Téléchargez les photos de profil Instagram, analysez les abonnés et détectez les désabonnés."
+    "message": "Téléchargez des photos de profil Instagram, analysez les abonnés et détectez les désabonnés."
   },
   "contextMenuTitle": {
-    "message": "Afficher les Infos Profil avec WeXProfile"
+    "message": "Afficher les Infos du Profil avec WeXProfile"
   },
   "LoginUnfollow": {
-    "message": "Veuillez vous connecter pour l'opération de désabonnement"
+    "message": "Veuillez vous connecter pour le processus de désabonnement"
   },
   "infoTitle": {
-    "message": "Information"
+    "message": "Info"
   },
   "profileReadyNotification": {
-    "message": "Les informations de profil sont prêtes ! Cliquez sur l'icône de l'extension pour les détails."
+    "message": "Informations de profil prêtes ! Cliquez sur l'icône de l'extension pour les détails."
   },
   "errorTitle": {
     "message": "Erreur"
@@ -27,19 +27,19 @@
     "message": "Les informations de profil n'ont pas pu être récupérées"
   },
   "notProfilePageError": {
-    "message": "Ce n'est pas une page de profil valide."
+    "message": "Ceci n'est pas une page de profil valide."
   },
   "openHdPhotoError": {
     "message": "La photo HD n'a pas pu être ouverte"
   },
   "scanStartMessage": {
-    "message": "Démarrer l'analyse pour trouver qui ne vous suit pas."
+    "message": "Démarrez l'analyse pour découvrir qui ne vous suit pas."
   },
   "downloadPhotoError": {
     "message": "La photo n'a pas pu être téléchargée"
   },
   "downloadJsonTitle": {
-    "message": "Télécharger en JSON"
+    "message": "Télécharger au format JSON"
   },
   "noCachedDataError": {
     "message": "Aucune donnée trouvée dans le cache"
@@ -93,7 +93,7 @@
     "message": "Paramètres"
   },
   "fontFamilyLabel": {
-    "message": "Police"
+    "message": "Famille de Polices"
   },
   "themeTemplateLabel": {
     "message": "Thème de Couleur"
@@ -120,13 +120,13 @@
     "message": "Langue"
   },
   "scanningFollowers": {
-    "message": "Analyse des abonnés..."
+    "message": "Scan des abonnés en cours..."
   },
   "scanningFollowing": {
-    "message": "Analyse des abonnements..."
+    "message": "Scan des abonnements en cours..."
   },
   "scanComplete": {
-    "message": "Analyse terminée"
+    "message": "Scan terminé"
   },
   "unfollowersFound": {
     "message": "personnes ne vous suivent pas"
@@ -138,7 +138,7 @@
     "message": "Opération terminée"
   },
   "startScanBtn": {
-    "message": "Démarrer l'Analyse"
+    "message": "Démarrer le Scan"
   },
   "pauseScanBtn": {
     "message": "Pause"
@@ -147,16 +147,16 @@
     "message": "Reprendre"
   },
   "unfollowSelectedBtn": {
-    "message": "Se Désabonner des Sélections"
+    "message": "Se Désabonner des Sélectionnés"
   },
   "scanStarting": {
-    "message": "Démarrage de l'analyse..."
+    "message": "Démarrage du scan..."
   },
   "scanError": {
-    "message": "Une erreur est survenue pendant l'analyse"
+    "message": "Une erreur est survenue pendant le scan"
   },
   "scanCompleteText": {
-    "message": "Analyse terminée. Abonnés : {followers}, Abonnements : {following}, Désabonnés : {unfollowers}"
+    "message": "Scan terminé. Abonnés : {followers}, Abonnements : {following}, Désabonnés : {unfollowers}"
   },
   "exportDataTitle": {
     "message": "Exporter les Données"
@@ -183,10 +183,10 @@
     "message": "Changement total"
   },
   "scanSettingsTitle": {
-    "message": "Paramètres d'Analyse"
+    "message": "Paramètres de Scan"
   },
   "scanDelayLabel": {
-    "message": "Délai de boucle d'analyse (ms)"
+    "message": "Délai de boucle de scan (ms)"
   },
   "scanDelayAfterFiveLabel": {
     "message": "Délai après 5 boucles (ms)"
@@ -198,10 +198,10 @@
     "message": "Délai après 5 désabonnements (ms)"
   },
   "scanSettingsWarning": {
-    "message": "Diminuer les valeurs augmente le risque de bannissement."
+    "message": "Baisser les valeurs augmente le risque de bannissement."
   },
   "saveBtn": {
-    "message": "Sauvegarder"
+    "message": "Enregistrer"
   },
   "closeBtn": {
     "message": "Fermer"
@@ -232,5 +232,35 @@
   },
   "noLabel": {
     "message": "Non"
+  },
+  "themeDefaultTitle": {
+    "message": "Par Défaut"
+  },
+  "themeBlueTitle": {
+    "message": "Bleu"
+  },
+  "themeGreenTitle": {
+    "message": "Vert"
+  },
+  "themePurpleTitle": {
+    "message": "Violet"
+  },
+  "themePinkTitle": {
+    "message": "Rose"
+  },
+  "unfollowerTitle": {
+    "message": "WeXUnfollower"
+  },
+  "backBtnTitle": {
+    "message": "Retourner"
+  },
+  "unfollowerBtnTitle": {
+    "message": "Outil de Désabonnement"
+  },
+  "settingsBtnTitle": {
+    "message": "Paramètres"
+  },
+  "fullNamePlaceholder": {
+    "message": "Nom Complet"
   }
 }

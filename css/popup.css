@@ -45,7 +45,7 @@ body {
   position: relative;
 }
 
-/* YAPI: Ekran geçişlerini ve ana layout'u yöneten yapı */
+
 .view {
   display: none;
   flex-direction: column;
@@ -89,15 +89,71 @@ body {
   display: flex;
   flex-direction: column;
 }
-.profile-pic-container { position: relative; width: 110px; height: 110px; margin: 0 auto 10px; border-radius: 50%; padding: 4px; background: var(--primary-gradient); flex-shrink: 0; }
-.profile-pic { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 4px solid var(--bg-color); }
-.profile-pic-container .loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90px; height: 90px; display: flex; justify-content: space-between; align-items: center; z-index: 2; pointer-events: none; animation: rotate360 1.2s linear infinite; }
-.loader div { width: 14px; height: 14px; background: #fff; border-radius: 50%; animation: bounce 0.6s infinite ease-in-out; }
-.loader div:nth-child(1) { animation-delay: -0.32s; }
-.loader div:nth-child(2) { animation-delay: -0.16s; }
-@keyframes rotate360 {
-  0% { transform: translate(-50%, -50%) rotate(0deg);}
-  100% { transform: translate(-50%, -50%) rotate(360deg);}
+.profile-pic-container { 
+    position: relative; 
+    width: 110px; 
+    height: 110px; 
+    margin: 0 auto 10px; 
+    border-radius: 50%; 
+    padding: 4px; 
+    background: var(--primary-gradient); 
+    flex-shrink: 0;  
+}
+
+.profile-pic { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    border-radius: 50%; 
+    border: 4px solid var(--bg-color);
+    opacity: 0; 
+    transition: opacity 0.3s ease;
+    background-color: var(--bg-color);
+    display: block;
+    position: relative;
+    z-index: 2; 
+}
+
+.profile-pic.loaded {
+    opacity: 1;
+}
+
+.profile-pic-container .loader { 
+    position: absolute; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    width: 50px; 
+    height: 50px; 
+    display: block;
+    z-index: 1; 
+    pointer-events: none;
+}
+
+.loader div { 
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 4px solid transparent;
+  border-top-color: #ffffff; 
+  border-radius: 50%;
+  animation: loaderSpin 1s linear infinite;
+  
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.7));
+}
+.loader div:nth-child(2) { 
+  border-top-color: transparent;
+  border-right-color: #ffffff; 
+  animation-delay: 0.3s;
+}
+.loader div:nth-child(3) { 
+  border-top-color: transparent;
+  border-bottom-color: #ffffff; 
+  animation-delay: 0.6s;
+}
+@keyframes loaderSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 .profile-info { text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
 #username { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 600; margin-bottom: 4px; cursor: pointer; }
@@ -112,17 +168,17 @@ body {
 .change-indicator.positive { color: var(--success-color); }
 .change-indicator.negative { color: var(--error-color); }
 
-/* DÜZELTME: Buton stilleri daha belirgin ve yönetilebilir hale getirildi */
+
 .actions { display: flex; gap: 12px; flex-shrink: 0; margin-bottom: 12px; }
 .btn { flex: 1; padding: 12px; border: none; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease; font-size: 14px; min-height: 44px; font-family: inherit; }
 .btn:disabled { cursor: not-allowed; opacity: 0.6; transform: none; box-shadow: none; }
 
-/* Modern Stil (Varsayılan) */
+
 [data-button-style="modern"] .btn { border-radius: 50px; }
 [data-button-style="modern"] .btn:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
 [data-button-style="modern"] .btn:active { transform: translateY(0); }
 
-/* Klasik Stil */
+
 [data-button-style="classic"] .btn { border-radius: 8px; padding: 10px; }
 [data-button-style="classic"] .btn:hover { filter: brightness(0.95); transform: translateY(-2px); }
 [data-button-style="classic"] .btn:active { filter: brightness(0.9); transform: translateY(0); }
@@ -139,7 +195,7 @@ body {
 .verified-badge { color: #0095f6; margin-left: 5px; }
 .private-badge { display: inline-block; background: var(--error-color); color: white; font-size: 10px; padding: 3px 7px; border-radius: 6px; margin-left: 8px; font-weight: 500; vertical-align: middle; }
 
-/* --- UNFINDER EKRANI CSS --- */
+
 .unfinder-status { 
   padding: 10px; 
   text-align: center; 
@@ -239,7 +295,7 @@ body {
   accent-color: var(--primary-color-for-check, #dc2743); 
 }
 
-/* Liste Scrollbar Stili */
+
 .unfinder-list::-webkit-scrollbar { 
   width: 6px; 
 }
@@ -251,7 +307,7 @@ body {
   border-radius: 10px; 
 }
 
-/* Ayarlar Pop-up Stilleri */
+
 .settings-popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: none; justify-content: center; align-items: center; z-index: 1000; animation: fadeInBackground 0.3s ease; }
 .settings-content { background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 25px; border-radius: 16px; width: 90%; max-width: 320px; box-shadow: var(--shadow); transform: scale(0.9); animation: scaleIn 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; }
 .settings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
@@ -283,7 +339,6 @@ input:checked + .slider:before { transform: translateX(22px); }
 .error-message i { font-size: 28px; margin-bottom: 12px; display: block; }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes bounce { 0%, 100%, 80% { transform: scale(0); } 40% { transform: scale(1); } }
 @keyframes fadeInBackground { from { background-color: rgba(0, 0, 0, 0); } to { background-color: rgba(0, 0, 0, 0.5); } }
 @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @keyframes unfollowed-success-pop {
@@ -297,7 +352,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   100% { transform: scale(1); }
 }
 
-/* --- UNFINDER EKRANI GÜZEL STİL --- */
+
 #unfinderView .header h1 {
   font-size: 22px;
   font-family: 'Montserrat', sans-serif;
@@ -443,7 +498,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   cursor: not-allowed;
 }
 
-/* Seçilenleri Bırak butonu sabit ve tam genişlikte */
+
 #unfinder-actions {
   position: sticky;
   bottom: 0;
@@ -480,13 +535,13 @@ input:checked + .slider:before { transform: translateX(22px); }
   cursor: not-allowed;
 }
 
-/* Modern toast notification */
+
 #wex-toast {
   pointer-events: none;
   user-select: none;
 }
 
-/* --- MODAL ve GRAFİK PANELİ --- */
+
 .wex-modal {
   position: fixed;
   z-index: 9999;
@@ -539,7 +594,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 .wex-chart-toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 #followerChart { width: 100%; background: var(--bg-color); border-radius: 8px; }
 
-/* --- UNFINDER TARAYICI AYAR PANELİ --- */
+
 .unfinder-settings-panel {
   position: absolute;
   top: 60px;
@@ -617,7 +672,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   padding: 8px 0;
 }
 
-/* Grafik paneli select kutusu için modern ve tematik stil */
+
 .wex-chart-range-select {
   font-size: 15px;
   font-weight: 600;
@@ -633,18 +688,4 @@ input:checked + .slider:before { transform: translateX(22px); }
 .wex-chart-range-select:focus {
   border-color: var(--primary-color-for-check, #dc2743);
   box-shadow: 0 0 0 2px var(--primary-color-for-check, #dc2743)22;
-}
-
-/* --- scanSettingsGroup eski stillerini kaldır (artık ayarlar popup'ında yok) --- */
-.settings-body .setting-group input[type="number"] {
-  /* kaldırıldı */
-}
-.settings-body .setting-group label[style*="margin-bottom:6px"] {
-  /* kaldırıldı */
-}
-.settings-body .setting-group > div > div {
-  /* kaldırıldı */
-}
-.settings-body .setting-group > div > div:last-child {
-  /* kaldırıldı */
 }
