@@ -33,11 +33,11 @@
 
 ## Overview
 
-
 https://github.com/user-attachments/assets/9229aecc-c273-49a7-b32a-b2373d78275c
 
-
 WeXProfile is a browser extension that brings powerful Instagram analytics and download tools directly to your browser. Whether you want to download HD profile pictures, track follower changes, or find unfollowers, WeXProfile handles it all with privacy and security in mind.
+
+**Now with enhanced localization support and improved safety features!** 🚀
 
 Built with Manifest V3, it works seamlessly on Microsoft Edge, Firefox, and Chromium-based browsers.
 
@@ -154,7 +154,7 @@ Want to add another language? Check out [CONTRIBUTING.md](CONTRIBUTING.md) for g
 
 ### Usage Recommendations
 - Unfollow no more than 50 users per day
-- Use the default delays to stay safe
+- Use the default delays to stay safe (now with improved randomization!)
 - Don't run continuous scans for extended periods
 - Take breaks between scans
 
@@ -162,6 +162,7 @@ Want to add another language? Check out [CONTRIBUTING.md](CONTRIBUTING.md) for g
 - Not affiliated with Instagram or Meta
 - Instagram may change their API without notice
 - Excessive unfollowing could trigger rate limits
+- **New in v3.2.6**: Enhanced safety delays for more human-like behavior
 - Use at your own risk and responsibility
 
 ---
@@ -249,22 +250,29 @@ git push origin feature/your-feature
 
 ## Changelog
 
+### Version 3.2.6
+- **Localization Stability**: Fixed i18n race conditions in popup and context menu
+- **Context Menu Fixes**: Right-click menu now properly displays translated text
+- **Safety Improvements**: Increased randomized delays for unfollower tool
+- **UI Enhancements**: Follower chart dropdown now matches extension theme
+- **Performance**: Direct profile photo downloads without unnecessary background data
+
+### Version 3.2.5
+- **Profile Picture Loading**: Fixed images appearing behind loader
+- **Biography Handling**: Improved data collection from Instagram's API
+- **Loader Animation**: More modern and visible design
+- **Image Optimization**: Better loading logic with error handling
+- **UI Fixes**: CSS z-index adjustments and responsive improvements
+
+### Version 3.2.4
+- **Küçük düzeltmeler ve iyileştirmeler** *(bu versiyonun notlarını yazmayı unutmuşum ama eminim çok önemli şeyler vardı! 😄)*
+
 ### Version 3.2.3
 - Added customizable scan/unfollow delays
 - Improved unfollower detection UI
 - Fixed profile picture loading
 - Enhanced dark mode
 - Added chart export
-
-### Version 3.2.0
-- Firefox support added
-- Better animations
-- UI improvements
-
-### Version 3.0.0
-- Complete rewrite with Manifest V3
-- Modern design with glassmorphism
-- Full multi-language support
 
 [View all releases](https://github.com/Wek1d/WeXProfile-Downloader/releases)
 
@@ -274,10 +282,11 @@ git push origin feature/your-feature
 
 Planned features:
 - Chrome Web Store listing
-- Instagram Stories downloader
+- Instagram Stories downloader(maybe)
 - Post analytics
 - Better unfollower filtering
 - Bulk profile export
+- **Even more language support** 🌍
 
 ---
 
@@ -287,7 +296,10 @@ Planned features:
 A: Yes. All processing happens locally on your device. No data is sent to external servers.
 
 **Q: Will it get my account banned?**  
-A: WeXProfile includes rate limiting and randomized delays. Follow safety recommendations and use responsibly.
+A: WeXProfile includes rate limiting and randomized delays. **Latest version (3.2.6) has even better safety features!** Follow safety recommendations and use responsibly.
+
+**Q: The extension shows untranslated text sometimes**  
+A: **Fixed in v3.2.6!** We resolved the localization race conditions - everything should now appear in your selected language.
 
 **Q: Can I use it on mobile?**  
 A: Not yet. It's designed for desktop browsers only.
