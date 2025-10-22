@@ -13,10 +13,25 @@ chrome.storage.sync.get(['language'], (data) => {
 });
 
 // Dil değiştiğinde güncelle
-chrome.storage.onChanged.addListener((changes, area) => {
+chrome.storage.onChanged.addListener(async (changes, area) => {
   if (area === 'sync' && changes.language) {
     currentLanguage = changes.language.newValue;
-    loadMessages(currentLanguage);
+    await loadMessages(currentLanguage);
+    
+    // Menüyü güncelle
+    try {
+      await chrome.contextMenus.update("wexProfileDownload", {
+        title: t("contextMenuTitle") || "Show Profile Info with WeXProfile"
+      });
+    } catch(e) {
+      // Menü yoksa yeniden oluştur
+      chrome.contextMenus.create({
+        id: "wexProfileDownload",
+        title: t("contextMenuTitle") || "Show Profile Info with WeXProfile",
+        contexts: ["page"],
+        documentUrlPatterns: ["*://*.instagram.com/*"]
+      });
+    }
   }
 });
 
@@ -118,29 +133,58 @@ function compareVersions(v1, v2) {
     return 0;
 }
 
-chrome.runtime.onInstalled.addListener(() => {
-  loadMessages('tr'); // Önce dil yüklensin
+chrome.runtime.onInstalled.addListener(async () => {
+  // ÖNCELİKLE dili yükle ve BEKLEYELİM
+  await loadMessages('en');
+  
+  // Şimdi menüyü oluştur - artık çeviriler hazır
   chrome.contextMenus.create({
     id: "wexProfileDownload",
     title: t("contextMenuTitle") || "Show Profile Info with WeXProfile",
     contexts: ["page"],
     documentUrlPatterns: ["*://*.instagram.com/*"]
   });
+  
+  // Diğer ayarlar
   chrome.storage.sync.set({
     darkMode: true,
     fontFamily: "'Poppins', sans-serif",
     themeTemplate: 'default',
     buttonStyle: 'modern',
     showFollowerChange: true,
-    language: 'tr'
+    language: 'en'
   });
   chrome.storage.local.set({ [PROFILE_HISTORY_KEY]: {} });
   checkUpdates();
 });
 
-chrome.contextMenus.onClicked.addListener((info, tab) => {
+
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId === "wexProfileDownload" && tab.url.includes("instagram.com")) {
-    handleProfileAnalysis(tab.url, tab.id, true);
+    // Bildirim göster: İndiriliyor...
+    sendNotification("infoTitle", "downloadingPhoto");
+    
+    try {
+      // Profil verisini çek
+      const profileData = await handleProfileAnalysis(tab.url, tab.id, false);
+      
+      // HD fotoğrafı indir (otomatik, sormadan)
+      const hdUrl = await getHdProfilePhotoUrl(profileData.id);
+      
+      await chrome.downloads.download({
+        url: hdUrl,
+        filename: `instagram_${profileData.username}_hd.jpg`,
+        conflictAction: 'uniquify',
+        saveAs: false  // ← BURASI ÖNEMLİ: false = otomatik indir, sormadan
+      });
+      
+      // Başarı bildirimi
+      sendNotification("infoTitle", "photoDownloaded");
+      
+    } catch (error) {
+      console.error("Sağ tık indirme hatası:", error);
+      sendNotification("errorTitle", "downloadPhotoError");
+    }
   }
 });
 
@@ -207,7 +251,7 @@ function getInstagramUsername(link) {
         resolve(pathSegments[0]);
         return;
       }
-      reject(new Error("Geçerli bir profil sayfası değil. Lütfen bir kullanıcı profilini ziyaret edin."));
+      reject(new Error(t("notProfilePageError") || "Bu geçerli bir profil sayfası değil.")); 
     } catch(e) {
       reject(new Error("Geçersiz URL formatı."));
     }

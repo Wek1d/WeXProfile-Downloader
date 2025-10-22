@@ -1,7 +1,7 @@
 // js/unfollower.js
 
 export class UnfollowerScanner {
-    constructor({ userId, csrfToken, onProgress, onResult, onComplete, onUnfollowProgress }) {
+    constructor({ userId, csrfToken, onProgress, onResult, onComplete, onUnfollowProgress, config }) {
         this.userId = userId;
         this.csrfToken = csrfToken;
         this.followers = [];
@@ -16,12 +16,13 @@ export class UnfollowerScanner {
         this.onComplete = onComplete || (() => {});
         this.onUnfollowProgress = onUnfollowProgress || (() => {});
 
-        // *** DÜZELTME: Anti-ban için bekleme süreleri artırıldı. ***
-        this.config = {
-            timeBetweenRequests: 1500,       // Temel bekleme 1.5 saniye
-            timeAfterFiveRequests: 10000,    // 5 istekten sonra 10 saniye bekle
-            timeBetweenUnfollows: 4000       // Takip bırakma arası 4 saniye
-        };
+        // Config parametresini al, yoksa varsayılanları kullan // sorun yoktu ama her ihtimale karsı sürelere attırdım:)
+        this.config = config || {  
+        timeBetweenRequests: 1800,
+        timeAfterFiveRequests: 12000,
+        timeBetweenUnfollows: 4000,
+        timeAfterFiveUnfollows: 180000
+    };
     }
 
     _sleep(ms) {

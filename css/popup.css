@@ -673,7 +673,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 }
 
 
-.wex-chart-range-select {
+#chartRangeSelect {
   font-size: 15px;
   font-weight: 600;
   border-radius: 8px;
@@ -685,7 +685,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
-.wex-chart-range-select:focus {
+#chartRangeSelect:focus {
   border-color: var(--primary-color-for-check, #dc2743);
   box-shadow: 0 0 0 2px var(--primary-color-for-check, #dc2743)22;
 }

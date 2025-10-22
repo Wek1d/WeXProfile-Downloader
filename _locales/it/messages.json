@@ -6,8 +6,14 @@
     "message": "Scarica foto del profilo Instagram, analizza i follower e rileva chi non ti segue."
   },
   "contextMenuTitle": {
-    "message": "Mostra Informazioni Profilo con WeXProfile"
-  },
+  "message": "Scarica Foto del Profilo (HD)"
+},
+"downloadingPhoto": {
+  "message": "Scaricamento foto del profilo..."
+},
+"photoDownloaded": {
+  "message": "Foto del profilo scaricata con successo!"
+},
   "LoginUnfollow": {
     "message": "Per favore, accedi per il processo di unfollow"
   },

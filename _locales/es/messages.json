@@ -6,8 +6,14 @@
     "message": "Descarga fotos de perfil de Instagram, analiza seguidores y detecta a los que no te siguen."
   },
   "contextMenuTitle": {
-    "message": "Mostrar Información de Perfil con WeXProfile"
-  },
+  "message": "Descargar Foto de Perfil (HD)"
+},
+"downloadingPhoto": {
+  "message": "Descargando foto de perfil..."
+},
+"photoDownloaded": {
+  "message": "¡Foto de perfil descargada con éxito!"
+},
   "LoginUnfollow": {
     "message": "Por favor, inicia sesión para el proceso de dejar de seguir"
   },

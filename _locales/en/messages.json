@@ -6,8 +6,14 @@
     "message": "Download Instagram profile photos, analyze followers, and detect unfollowers."
   },
   "contextMenuTitle": {
-    "message": "Show Profile Info with WeXProfile"
-  },
+  "message": "Download Profile Photo (HD)"
+},
+"downloadingPhoto": {
+  "message": "Downloading profile photo..."
+},
+"photoDownloaded": {
+  "message": "Profile photo downloaded successfully!"
+},
   "LoginUnfollow": {
     "message": "Please log in for the unfollower process"
   },

@@ -260,13 +260,27 @@ document.addEventListener('DOMContentLoaded', function() {
   
   setVersionFromManifest();
 
-  chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, (response) => {
+chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response) => {
   if (response?.success) {
+    // Önce dili yükle ve bekle
+    await localizeHtml(response.settings.language);
+    
+    // Şimdi ayarları uygula
     applySettings(response.settings);
-    localizeHtml(response.settings.language).then(() => {
+    
+    // Şimdi metni güncelle
+    unfinderStatusText.textContent = t('scanStartMessage');
+    
 
-      unfinderStatusText.textContent = t('scanStartMessage');
-    });
+   //kira fiyatlari yüzünden taşındı 
+  chrome.runtime.sendMessage({ action: 'getProfileData' }, (response) => {
+    if (chrome.runtime.lastError) showError(t('profileFetchError') + ": " + chrome.runtime.lastError.message);
+    else if (response?.success) displayProfileData(response.data);
+    else showError(response.error || t('profileFetchError'));
+  });
+
+
+
     if (response.updateInfo.hasUpdate) {
       latestVersionEl.textContent = response.updateInfo.latestVersion;
       updateNotification.style.display = 'flex';
@@ -274,11 +288,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-  chrome.runtime.sendMessage({ action: 'getProfileData' }, (response) => {
-    if (chrome.runtime.lastError) showError(t('profileFetchError') + ": " + chrome.runtime.lastError.message);
-    else if (response?.success) displayProfileData(response.data);
-    else showError(response.error || t('profileFetchError'));
-  });
+
 
   unfollowerBtn.addEventListener('click', () => switchView(unfinderView));
   backToProfileBtn.addEventListener('click', () => {

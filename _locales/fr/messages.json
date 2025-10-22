@@ -6,8 +6,14 @@
     "message": "Téléchargez des photos de profil Instagram, analysez les abonnés et détectez les désabonnés."
   },
   "contextMenuTitle": {
-    "message": "Afficher les Infos du Profil avec WeXProfile"
-  },
+  "message": "Télécharger la Photo de Profil (HD)"
+},
+"downloadingPhoto": {
+  "message": "Téléchargement de la photo de profil..."
+},
+"photoDownloaded": {
+  "message": "Photo de profil téléchargée avec succès!"
+},
   "LoginUnfollow": {
     "message": "Veuillez vous connecter pour le processus de désabonnement"
   },

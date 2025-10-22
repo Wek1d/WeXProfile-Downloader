@@ -6,8 +6,14 @@
     "message": "Instagram profil fotoğraflarını indirin, takipçileri analiz edin ve takibi bırakanları tespit edin."
   },
   "contextMenuTitle": {
-    "message": "WeXProfile ile Profil Bilgisini Göster"
-  },
+  "message": "Profil Fotoğrafını İndir (HD)"
+},
+"downloadingPhoto": {
+  "message": "Profil fotoğrafı indiriliyor..."
+},
+"photoDownloaded": {
+  "message": "Profil fotoğrafı başarıyla indirildi!"
+},
   "LoginUnfollow": {
     "message": "Takibi bırakma işlemi için lütfen giriş yapın"
   },

@@ -6,8 +6,14 @@
     "message": "Laden Sie Instagram-Profilbilder herunter, analysieren Sie Follower und erkennen Sie Entfolger."
   },
   "contextMenuTitle": {
-    "message": "Profilinformationen mit WeXProfile anzeigen"
-  },
+  "message": "Profilbild Herunterladen (HD)"
+},
+"downloadingPhoto": {
+  "message": "Profilbild wird heruntergeladen..."
+},
+"photoDownloaded": {
+  "message": "Profilbild erfolgreich heruntergeladen!"
+},
   "LoginUnfollow": {
     "message": "Bitte melden Sie sich für den Entfolgen-Prozess an"
   },
