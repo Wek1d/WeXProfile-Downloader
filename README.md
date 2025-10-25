@@ -5,7 +5,9 @@
 <h1 align="center">WeXProfile Downloader</h1>
 
 <p align="center">
-  A comprehensive Instagram toolkit for profile analysis, HD downloads, and unfollower detection
+  The ultimate <strong>browser extension</strong> for viewing, analyzing, and downloading high-resolution Instagram profile photos.
+  <br/>
+  Supports <strong>private accounts</strong>, <strong>unfollower detection</strong>, and <strong>one-click unfollow</strong> right from your browser.
 </p>
 
 <p align="center">
@@ -33,13 +35,11 @@
 
 ## Overview
 
-https://github.com/user-attachments/assets/9229aecc-c273-49a7-b32a-b2373d78275c
+WeXProfile is a powerful **browser extension** that brings advanced Instagram analytics and download tools directly into your browser.  
+It allows you to view and download HD profile photos, analyze user statistics, and even detect unfollowers with **one-click unfollow** support — all while keeping your data fully private.
 
-WeXProfile is a browser extension that brings powerful Instagram analytics and download tools directly to your browser. Whether you want to download HD profile pictures, track follower changes, or find unfollowers, WeXProfile handles it all with privacy and security in mind.
-
-**Now with enhanced localization support and improved safety features!** 🚀
-
-Built with Manifest V3, it works seamlessly on Microsoft Edge, Firefox, and Chromium-based browsers.
+**Now with faster performance, new localization support, and enhanced safety features!** 🚀  
+Compatible with Microsoft Edge, Firefox, and all Chromium-based browsers.
 
 ## Key Features
 
