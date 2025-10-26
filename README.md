@@ -34,7 +34,7 @@
 ---
 
 ## Overview
-
+https://github.com/user-attachments/assets/9229aecc-c273-49a7-b32a-b2373d78275c
 WeXProfile is a powerful **browser extension** that brings advanced Instagram analytics and download tools directly into your browser.  
 It allows you to view and download HD profile photos, analyze user statistics, and even detect unfollowers with **one-click unfollow** support — all while keeping your data fully private.
 
