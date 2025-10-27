@@ -1,6 +1,29 @@
 // js/popup.js
 
-document.addEventListener('DOMContentLoaded', function() {
+
+let i18nMessages = {}; 
+
+async function preloadLanguage() {
+  try {
+    const { language } = await chrome.storage.sync.get(['language']);
+    const lang = language || 'en';
+    const url = chrome.runtime.getURL(`_locales/${lang}/messages.json`);
+    const response = await fetch(url);
+    i18nMessages = await response.json();
+  } catch(e) {
+    console.error("Dil ön yükleme hatası:", e);
+  }
+}
+
+function t(key) {
+  return i18nMessages[key]?.message || key;
+}
+
+document.addEventListener('DOMContentLoaded', async function() {
+
+  // İLK İŞ: Dili yükle
+  await preloadLanguage();
+
   const profileView = document.getElementById('profileView');
   const unfinderView = document.getElementById('unfinderView');
   const profilePic = document.getElementById('profilePic');
@@ -47,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
   let currentSettings = {};
   let unfollowerData = [];
   let i18nMessages = {}; 
-  
+
   
   function setVersionFromManifest() {
     if (versionEl) {
@@ -273,6 +296,8 @@ chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response)
     
 
    //kira fiyatlari yüzünden taşındı 
+
+   usernameEl.textContent = `@${t('usernameLoadingPlaceholder')}`;
   chrome.runtime.sendMessage({ action: 'getProfileData' }, (response) => {
     if (chrome.runtime.lastError) showError(t('profileFetchError') + ": " + chrome.runtime.lastError.message);
     else if (response?.success) displayProfileData(response.data);

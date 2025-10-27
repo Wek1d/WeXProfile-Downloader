@@ -147,12 +147,19 @@ chrome.runtime.onInstalled.addListener(async () => {
   
   // Diğer ayarlar
   chrome.storage.sync.set({
-    darkMode: true,
-    fontFamily: "'Poppins', sans-serif",
-    themeTemplate: 'default',
-    buttonStyle: 'modern',
-    showFollowerChange: true,
-    language: 'en'
+  darkMode: true,
+  fontFamily: "'Poppins', sans-serif",
+  themeTemplate: 'default',
+  buttonStyle: 'modern',
+  showFollowerChange: true,
+  language: 'en',
+  // YENİ - Varsayılan tarama ayarları
+  scanTimings: {
+    scanDelay: 2100,
+    scanDelayAfterFive: 15000,
+    unfollowDelay: 4800,
+    unfollowDelayAfterFive: 200000
+  }
   });
   chrome.storage.local.set({ [PROFILE_HISTORY_KEY]: {} });
   checkUpdates();

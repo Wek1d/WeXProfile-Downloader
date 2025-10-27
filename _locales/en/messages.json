@@ -47,6 +47,9 @@
   "downloadJsonTitle": {
     "message": "Download as JSON"
   },
+  "usernameLoadingPlaceholder": {
+  "message": "Loading..."
+},
   "noCachedDataError": {
     "message": "No data found in cache"
   },

@@ -89,7 +89,7 @@ body {
   display: flex;
   flex-direction: column;
 }
-.profile-pic-container { 
+  .profile-pic-container { 
     position: relative; 
     width: 110px; 
     height: 110px; 
@@ -129,6 +129,8 @@ body {
     z-index: 1; 
     pointer-events: none;
 }
+
+
 
 .loader div { 
   position: absolute;

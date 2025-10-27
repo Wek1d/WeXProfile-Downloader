@@ -269,4 +269,8 @@
   "fullNamePlaceholder": {
     "message": "Nom Complet"
   }
+  ,
+"usernameLoadingPlaceholder": {
+  "message": "Chargement..."
+}
 }

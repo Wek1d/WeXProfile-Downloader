@@ -269,4 +269,8 @@
   "fullNamePlaceholder": {
     "message": "Vollständiger Name"
   }
+,
+"usernameLoadingPlaceholder": {
+  "message": "Wird geladen..."
+}
 }
