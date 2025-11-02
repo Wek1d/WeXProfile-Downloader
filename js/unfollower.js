@@ -1,4 +1,4 @@
-// js/unfollower.js
+
 
 export class UnfollowerScanner {
     constructor({ userId, csrfToken, onProgress, onResult, onComplete, onUnfollowProgress, config }) {
@@ -16,7 +16,7 @@ export class UnfollowerScanner {
         this.onComplete = onComplete || (() => {});
         this.onUnfollowProgress = onUnfollowProgress || (() => {});
 
-        // Config parametresini al, yoksa varsayılanları kullan // sorun yoktu ama her ihtimale karsı sürelere attırdım:)
+        
         this.config = config || {  
         timeBetweenRequests: 1800,
         timeAfterFiveRequests: 12000,
@@ -29,9 +29,9 @@ export class UnfollowerScanner {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    // *** YENİ: İnsan gibi davranmak için rastgele bekleme süresi üreten fonksiyon. ***
+    
     _getRandomizedDelay(baseTime) {
-        // baseTime'ın %70'i ile %130'u arasında rastgele bir süre döndürür.
+        
         const min = baseTime * 0.7;
         const max = baseTime * 1.3;
         return Math.floor(Math.random() * (max - min + 1) + min);
@@ -95,7 +95,7 @@ export class UnfollowerScanner {
                 endCursor = edge.page_info.end_cursor;
 
                 requestCount++;
-                // *** DÜZELTME: Her istekten sonra rastgele sürelerde bekleniyor. ***
+                
                 const sleepTime = requestCount % 5 === 0 
                     ? this._getRandomizedDelay(this.config.timeAfterFiveRequests) 
                     : this._getRandomizedDelay(this.config.timeBetweenRequests);
@@ -178,7 +178,7 @@ export class UnfollowerScanner {
             } catch (error) {
                 this.onUnfollowProgress({ success: false, user: user, message: error.message, progress: { current: i + 1, total: usersToUnfollow.length } });
             }
-            // *** DÜZELTME: Takip bırakma sonrası rastgele bekleme. ***
+            
             await this._sleep(this._getRandomizedDelay(this.config.timeBetweenUnfollows));
         }
     }

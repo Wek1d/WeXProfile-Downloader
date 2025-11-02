@@ -1,30 +1,30 @@
-// background.js
+
 
 import { UnfollowerScanner } from './unfollower.js';
 
-// Çeviri sistemi
+
 let currentLanguage = 'tr';
 let i18nCache = {};
 
-// Dili storage'dan yükle
+
 chrome.storage.sync.get(['language'], (data) => {
   currentLanguage = data.language || 'tr';
   loadMessages(currentLanguage);
 });
 
-// Dil değiştiğinde güncelle
+
 chrome.storage.onChanged.addListener(async (changes, area) => {
   if (area === 'sync' && changes.language) {
     currentLanguage = changes.language.newValue;
     await loadMessages(currentLanguage);
     
-    // Menüyü güncelle
+    
     try {
       await chrome.contextMenus.update("wexProfileDownload", {
         title: t("contextMenuTitle") || "Show Profile Info with WeXProfile"
       });
     } catch(e) {
-      // Menü yoksa yeniden oluştur
+      
       chrome.contextMenus.create({
         id: "wexProfileDownload",
         title: t("contextMenuTitle") || "Show Profile Info with WeXProfile",
@@ -35,7 +35,7 @@ chrome.storage.onChanged.addListener(async (changes, area) => {
   }
 });
 
-// Mesajları yükle
+
 async function loadMessages(lang) {
   try {
     const url = chrome.runtime.getURL(`_locales/${lang}/messages.json`);
@@ -46,7 +46,7 @@ async function loadMessages(lang) {
   }
 }
 
-// Çeviri fonksiyonu
+
 function t(key) {
   return i18nCache[key]?.message || key;
 }
@@ -134,10 +134,10 @@ function compareVersions(v1, v2) {
 }
 
 chrome.runtime.onInstalled.addListener(async () => {
-  // ÖNCELİKLE dili yükle ve BEKLEYELİM
+  
   await loadMessages('en');
   
-  // Şimdi menüyü oluştur - artık çeviriler hazır
+  
   chrome.contextMenus.create({
     id: "wexProfileDownload",
     title: t("contextMenuTitle") || "Show Profile Info with WeXProfile",
@@ -145,7 +145,7 @@ chrome.runtime.onInstalled.addListener(async () => {
     documentUrlPatterns: ["*://*.instagram.com/*"]
   });
   
-  // Diğer ayarlar
+  
   chrome.storage.sync.set({
   darkMode: true,
   fontFamily: "'Poppins', sans-serif",
@@ -153,7 +153,7 @@ chrome.runtime.onInstalled.addListener(async () => {
   buttonStyle: 'modern',
   showFollowerChange: true,
   language: 'en',
-  // YENİ - Varsayılan tarama ayarları
+  
   scanTimings: {
     scanDelay: 2100,
     scanDelayAfterFive: 15000,
@@ -168,24 +168,24 @@ chrome.runtime.onInstalled.addListener(async () => {
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId === "wexProfileDownload" && tab.url.includes("instagram.com")) {
-    // Bildirim göster: İndiriliyor...
+    
     sendNotification("infoTitle", "downloadingPhoto");
     
     try {
-      // Profil verisini çek
+      
       const profileData = await handleProfileAnalysis(tab.url, tab.id, false);
       
-      // HD fotoğrafı indir (otomatik, sormadan)
+      
       const hdUrl = await getHdProfilePhotoUrl(profileData.id);
       
       await chrome.downloads.download({
         url: hdUrl,
         filename: `instagram_${profileData.username}_hd.jpg`,
         conflictAction: 'uniquify',
-        saveAs: false  // ← BURASI ÖNEMLİ: false = otomatik indir, sormadan
+        saveAs: false  
       });
       
-      // Başarı bildirimi
+     
       sendNotification("infoTitle", "photoDownloaded");
       
     } catch (error) {
@@ -244,16 +244,16 @@ function getInstagramUsername(link) {
     try {
       const url = new URL(link);
       const pathSegments = url.pathname.split('/').filter(Boolean);
-      // Daha fazla forbidden segment ekle
+      
       const forbiddenSegments = [
         'p', 'reels', 'stories', 'tv', 'explore', 'direct', 'accounts', 'about', 'developer', 'directory', 'privacy', 'terms', 'api'
       ];
-      // Sadece bir segment ve forbidden değilse kullanıcı adı
+      
       if (pathSegments.length === 1 && !forbiddenSegments.includes(pathSegments[0])) {
         resolve(pathSegments[0]);
         return;
       }
-      // /username/ şeklinde ise de kabul et
+      
       if (pathSegments.length === 2 && !forbiddenSegments.includes(pathSegments[0]) && pathSegments[1] === '') {
         resolve(pathSegments[0]);
         return;
@@ -304,13 +304,13 @@ async function updateProfileHistoryAndGetDataWithChanges(newUserData) {
         newUserData.followerChange = newUserData.followers - lastEntry.followers;
         newUserData.followingChange = newUserData.following - lastEntry.following;
     }
-    // Yeni kaydı sona ekle
+   
     oldEntries.push({
         followers: newUserData.followers,
         following: newUserData.following,
         timestamp: Date.now()
     });
-    // Limit aşılırsa en eskiyi çıkar
+    
     if (oldEntries.length > HISTORY_LIMIT) {
         oldEntries = oldEntries.slice(-HISTORY_LIMIT);
     }
@@ -349,11 +349,11 @@ async function getInstagramUserInfo(username) {
   if (out.data && out.data.user) {
     const user = out.data.user;
     const profilePicDataURL = await fetchImageAsDataURL(user.profile_pic_url);
-// Biyografi için önce 'biography' (düz metin) sonra 'raw_text' kontrolü
+
     let biography = '';
-    if (user.biography) { // ÖNCE buna bak
+    if (user.biography) { 
       biography = user.biography;
-    } else if (user.biography_with_entities && user.biography_with_entities.raw_text) { // O yoksa BUNA bak
+    } else if (user.biography_with_entities && user.biography_with_entities.raw_text) { 
       biography = user.biography_with_entities.raw_text;
     }
     let userData = {
@@ -361,7 +361,7 @@ async function getInstagramUserInfo(username) {
       username: user.username,
       fullName: user.full_name,
       biography: biography,
-      biography_with_entities: user.biography_with_entities, // popup.js'de de kullanılabilir
+      biography_with_entities: user.biography_with_entities, 
       followers: user.edge_followed_by?.count || 0,
       following: user.edge_follow?.count || 0,
       posts: user.edge_owner_to_timeline_media?.count || 0,
@@ -518,9 +518,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           sendNotification("errorTitle", "LoginUnfollow");
           return;
         }
-        // Tarama hızına göre delay ayarları
+        
         let config;
-        // Use scanTimings from storage if available
+        
         if (!scanTimings) {
           const syncData = await chrome.storage.sync.get(['scanTimings']);
           scanTimings = syncData.scanTimings;
@@ -546,7 +546,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             },
             onComplete: (c) => chrome.runtime.sendMessage({ action: 'scanComplete', data: c }),
             onUnfollowProgress: (l) => chrome.runtime.sendMessage({ action: 'unfollowProgress', data: l }),
-            config // hız ayarı iletilecek
+            config 
         });
         currentScanner.scan();
         break;

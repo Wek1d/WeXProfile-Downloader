@@ -1,4 +1,4 @@
-// js/popup.js
+
 
 
 let i18nMessages = {}; 
@@ -21,7 +21,7 @@ function t(key) {
 
 document.addEventListener('DOMContentLoaded', async function() {
 
-  // İLK İŞ: Dili yükle
+  
   await preloadLanguage();
 
   const profileView = document.getElementById('profileView');
@@ -285,17 +285,17 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response) => {
   if (response?.success) {
-    // Önce dili yükle ve bekle
+    
     await localizeHtml(response.settings.language);
     
-    // Şimdi ayarları uygula
+    
     applySettings(response.settings);
     
-    // Şimdi metni güncelle
+   
     unfinderStatusText.textContent = t('scanStartMessage');
     
 
-   //kira fiyatlari yüzünden taşındı 
+ 
 
    usernameEl.textContent = `@${t('usernameLoadingPlaceholder')}`;
   chrome.runtime.sendMessage({ action: 'getProfileData' }, (response) => {
@@ -501,7 +501,7 @@ chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response)
   `;
   unfinderView.querySelector('.app-container').appendChild(unfinderSettingsPanel);
 
-  // Modal referansları
+  
   const exportModal = document.getElementById('exportModal');
   const chartPanel = document.getElementById('chartPanel');
   const chartCloseBtns = document.querySelectorAll('.wex-modal-close');

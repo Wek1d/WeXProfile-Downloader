@@ -1,0 +1,29 @@
+{
+  "name": "wexprofile-downloader",
+  "version": "3.2.8",
+  "description": "<p align=\"center\">\r   <img src=\"icon.png\" alt=\"WeXProfile Downloader Logo\" width=\"150\" />\r </p>",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "build": "node build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wek1d/WeXProfile-Downloader.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Wek1d/WeXProfile-Downloader/issues"
+  },
+  "homepage": "https://github.com/Wek1d/WeXProfile-Downloader#readme",
+  "devDependencies": {
+    "copyfiles": "^2.4.1",
+    "csso": "^5.0.5",
+    "esbuild": "^0.25.12"
+  }
+}

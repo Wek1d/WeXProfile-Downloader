@@ -251,6 +251,13 @@ git push origin feature/your-feature
 
 ## Changelog
 
+### Version 3.2.8 (Latest)
+- **Safety First**: Increased and randomized all unfollower delays (now 70-130% of base time) for safer, more human-like behavior.
+- **New Default Timings**: Updated default scan delays to new safety standards (e.g., scan delay 2100ms, after 5 requests 15000ms).
+- **i18n Race Condition Fix**: Solved async loading bugs. Translations (like error messages) now always load before the UI renders.
+- **Placeholder Fix**: `usernameLoadingPlaceholder` key added to all 6 language files, ensuring "Loading..." appears correctly.
+- **Technical**: Refactored `DOMContentLoaded` logic for proper i18n initialization.
+
 ### Version 3.2.6
 - **Localization Stability**: Fixed i18n race conditions in popup and context menu
 - **Context Menu Fixes**: Right-click menu now properly displays translated text

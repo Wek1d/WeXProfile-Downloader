@@ -1,4 +1,4 @@
-/* popup.css */
+
 
 :root {
   --primary-gradient: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
@@ -73,7 +73,7 @@ body {
 [data-theme="dark"] .theme-toggle .fa-sun { opacity: 1; transform: rotate(0deg); }
 .settings-btn i { color: var(--text-color); }
 
-/* DÜZELTME: Profil kabı, dikey boşluklar ve ölçekleme iyileştirildi */
+
 .profile-container { 
   flex-grow: 1; 
   background: var(--card-bg); 
