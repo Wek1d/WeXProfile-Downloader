@@ -1,3 +1,4 @@
 /node_modules
 /dist
 *.zip
+dist.7z

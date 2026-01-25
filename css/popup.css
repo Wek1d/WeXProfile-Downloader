@@ -210,20 +210,37 @@ body {
   font-size: 14px; 
   opacity: 0.8; 
 }
-.progress-bar-container { 
-  width: 100%; 
-  background-color: var(--border-color); 
-  border-radius: 8px; 
-  height: 8px; 
-  margin-top: 10px; 
-  overflow: hidden; 
-  display: none;
+.progress-bar-container {
+  background: rgba(255,255,255,0.08);
+  border-radius: 10px;
+  height: 10px;
 }
-.progress-bar { 
-  width: 0%; 
-  height: 100%; 
-  background: var(--primary-gradient); 
-  transition: width 0.3s ease;
+.progress-bar {
+  background: linear-gradient(
+    90deg,
+    #f09433,
+    #e6683c,
+    #dc2743,
+    #bc1888
+  );
+  box-shadow: 0 0 12px rgba(220,39,67,0.45);
+}
+.progress-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(255,255,255,0.25) 50%,
+    transparent 70%
+  );
+  animation: progressShine 1.8s infinite linear;
+}
+
+@keyframes progressShine {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
 }
 .unfinder-list { 
   flex-grow: 1; 
@@ -289,14 +306,52 @@ body {
   font-size: 13px; 
   margin-left: 4px;
 }
-.unfinder-item-checkbox { 
-  width: 20px; 
-  height: 20px; 
-  flex-shrink: 0; 
-  cursor: pointer; 
-  accent-color: var(--primary-color-for-check, #dc2743); 
+
+.unfinder-item-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 2px solid var(--border-color);
+  background: var(--bg-color);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+.unfinder-item-checkbox::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #fff 40%, transparent 40%);
+  clip-path: polygon(20% 55%, 40% 75%, 80% 30%, 72% 22%, 40% 60%, 28% 48%);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: all 0.2s ease;
 }
 
+.unfinder-item-checkbox:checked {
+  background: var(--primary-gradient);
+  border-color: transparent;
+  box-shadow: 0 0 0 4px var(--primary-color-for-check)33;
+}
+
+.unfinder-item-checkbox:checked::after {
+  opacity: 1;
+  transform: scale(1);
+}
+.unfinder-item-checkbox:hover {
+  box-shadow: 0 0 0 3px var(--primary-color-for-check)22;
+}
+
+.unfinder-item {
+  align-items: center;
+}
+
+.unfinder-item:has(.unfinder-item-checkbox:checked) {
+  border-color: var(--primary-color-for-check);
+  box-shadow: 0 0 0 2px var(--primary-color-for-check)22;
+}
 
 .unfinder-list::-webkit-scrollbar { 
   width: 6px; 
@@ -515,22 +570,22 @@ input:checked + .slider:before { transform: translateX(22px); }
   gap: 0;
 }
 #unfollowSelectedBtn {
-  width: 100%;
-  border-radius: 0 0 16px 16px;
-  font-size: 16px;
-  font-weight: 700;
-  min-height: 48px;
-  margin: 0;
-  letter-spacing: 0.5px;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  background: var(--danger-gradient);
-  color: #fff;
-  box-shadow: 0 2px 12px 0 rgba(220,39,67,0.10);
-  border: none;
-  transition: background 0.2s, box-shadow 0.2s;
+  min-height: 52px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 14px;
+  margin: 10px 12px 14px 12px;
 }
+#unfollowSelectedBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(220,39,67,0.25);
+}
+
+#unfollowSelectedBtn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 3px 10px rgba(220,39,67,0.18);
+}
+
 #unfollowSelectedBtn:disabled {
   opacity: 0.6;
   background: var(--danger-gradient);
@@ -673,7 +728,33 @@ input:checked + .slider:before { transform: translateX(22px); }
   font-size: 14px;
   padding: 8px 0;
 }
+.btn,
+#unfollowSelectedBtn {
+  position: relative;
+  overflow: hidden;
+}
 
+.btn::before,
+#unfollowSelectedBtn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 120%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.25),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.btn:hover::before,
+#unfollowSelectedBtn:hover::before {
+  left: 120%;
+}
 
 #chartRangeSelect {
   font-size: 15px;
