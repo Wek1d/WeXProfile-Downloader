@@ -225,18 +225,7 @@ body {
   );
   box-shadow: 0 0 12px rgba(220,39,67,0.45);
 }
-.progress-bar::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    110deg,
-    transparent 30%,
-    rgba(255,255,255,0.25) 50%,
-    transparent 70%
-  );
-  animation: progressShine 1.8s infinite linear;
-}
+
 
 @keyframes progressShine {
   from { transform: translateX(-100%); }
@@ -771,4 +760,8 @@ input:checked + .slider:before { transform: translateX(22px); }
 #chartRangeSelect:focus {
   border-color: var(--primary-color-for-check, #dc2743);
   box-shadow: 0 0 0 2px var(--primary-color-for-check, #dc2743)22;
+}
+#startScanBtn:active {
+  transform: scale(0.95);
+  opacity: 0.9;
 }
