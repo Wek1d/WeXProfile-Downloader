@@ -39,13 +39,13 @@ https://github.com/user-attachments/assets/9229aecc-c273-49a7-b32a-b2373d78275c
 WeXProfile is a powerful **browser extension** that brings advanced Instagram analytics and download tools directly into your browser.  
 It allows you to view and download HD profile photos, analyze user statistics, and even detect unfollowers with **one-click unfollow** support — all while keeping your data fully private.
 
-**Now with faster performance, new localization support, and enhanced safety features!** 🚀  
+**Now with scan result persistence, smarter HD photo fetching, and a cleaner unfollower UI!** 🚀  
 Compatible with Microsoft Edge, Firefox, and all Chromium-based browsers.
 
 ## Key Features
 
 ### Profile Analysis
-- **HD Profile Picture Downloads** - Get full resolution 1080x1080 profile photos
+- **HD Profile Picture Downloads** - Get full resolution profile photos with a smarter 3-step fallback system
 - **Complete Profile Metadata** - Username, bio, post count, followers, following
 - **Follower Tracking** - Monitor changes over time with interactive charts
 - **Account Details** - Verified status, private accounts, and more
@@ -53,7 +53,9 @@ Compatible with Microsoft Edge, Firefox, and all Chromium-based browsers.
 
 ### Unfollower Detection
 - **Smart Scanning** - Identify users who don't follow you back
+- **Scan Persistence** - Results are saved locally, so closing the popup doesn't wipe your scan
 - **Bulk Unfollow** - Remove multiple followers safely with rate limiting
+- **Select All** - Quickly select or deselect all results with one click
 - **Progress Tracking** - Real-time status updates during scanning
 - **Configurable Speeds** - Adjust delays to ensure account safety
 - **Control** - Pause, resume, or stop scans at any time
@@ -63,7 +65,7 @@ Compatible with Microsoft Edge, Firefox, and all Chromium-based browsers.
 - **9 Font Options** - Poppins, Montserrat, Roboto, Lato, Ubuntu, Open Sans, Nunito, Inter, Yu Gothic
 - **Button Styles** - Modern (rounded) or Classic (sharp)
 - **Dark/Light Mode** - Full theme support
-- **Live Updates** - See changes instantly
+- **Persistent Settings** - Settings no longer reset on browser updates or restarts
 
 ### Privacy & Security
 - **Zero Data Collection** - Everything stays on your device
@@ -118,8 +120,10 @@ Compatible with Microsoft Edge, Firefox, and all Chromium-based browsers.
 ### Find Unfollowers
 1. Click the Unfollower icon
 2. Click **Start Scan**
-3. Select users to remove
+3. Select users to remove (or use Select All)
 4. Click **Unfollow Selected**
+
+> **Note:** Results are automatically saved. If you close the popup mid-scan or after it finishes, your results will still be there when you reopen it.
 
 ---
 
@@ -155,7 +159,7 @@ Want to add another language? Check out [CONTRIBUTING.md](CONTRIBUTING.md) for g
 
 ### Usage Recommendations
 - Unfollow no more than 50 users per day
-- Use the default delays to stay safe (now with improved randomization!)
+- Use the default delays to stay safe
 - Don't run continuous scans for extended periods
 - Take breaks between scans
 
@@ -163,7 +167,6 @@ Want to add another language? Check out [CONTRIBUTING.md](CONTRIBUTING.md) for g
 - Not affiliated with Instagram or Meta
 - Instagram may change their API without notice
 - Excessive unfollowing could trigger rate limits
-- **New in v3.2.6**: Enhanced safety delays for more human-like behavior
 - Use at your own risk and responsibility
 
 ---
@@ -251,12 +254,32 @@ git push origin feature/your-feature
 
 ## Changelog
 
-### Version 3.2.8 (Latest)
-- **Safety First**: Increased and randomized all unfollower delays (now 70-130% of base time) for safer, more human-like behavior.
-- **New Default Timings**: Updated default scan delays to new safety standards (e.g., scan delay 2100ms, after 5 requests 15000ms).
-- **i18n Race Condition Fix**: Solved async loading bugs. Translations (like error messages) now always load before the UI renders.
-- **Placeholder Fix**: `usernameLoadingPlaceholder` key added to all 6 language files, ensuring "Loading..." appears correctly.
-- **Technical**: Refactored `DOMContentLoaded` logic for proper i18n initialization.
+### Version 3.3.3 (Latest)
+- **Fixed:** Settings (theme, language, font, etc.) were resetting after browser updates or restarts. Now only resets on a fresh install — updates preserve your preferences.
+- **Fixed:** Checkbox ticks in the unfollower list were being clipped and only half-visible. Rebuilt with a proper border-based checkmark that renders correctly at all sizes.
+- **Fixed:** Duplicate `i18nMessages` and `t()` declarations in popup.js that could cause translation inconsistencies in edge cases.
+- **Improved:** Scan results now persist in local storage. Closing and reopening the popup no longer wipes your unfollower list.
+- **Improved:** HD photo fetching now tries three sources in order — `hd_profile_pic_url_info`, `hd_profile_pic_versions` (largest available), and a CDN resolution upgrade attempt. Falls back gracefully if none work.
+- **Improved:** "Select All" in the unfollower list is now a modern pill/chip button instead of a plain checkbox. Clicking any row also toggles selection.
+- **Improved:** Copying a username now shows a small toast notification instead of silently copying.
+- **Fixed:** `popup.html` had a hardcoded version number (`v3.2.3`) that didn't match the actual build. Now reads from the manifest dynamically.
+
+### Version 3.3.2
+- UI Cleanup: Removed background shimmer from the unfollower tab for a cleaner look
+- UX Enhancement: Added a press effect to the Start Scan button
+- Link Update: GitHub icon now links directly to the Releases page
+- Version Sync: Version numbers aligned across manifest.json, package.json, and popup footer
+
+### Version 3.3.1
+- Updated Chart.js to latest version
+- New animations across the extension
+
+### Version 3.2.8
+- **Safety First**: Increased and randomized all unfollower delays (70-130% of base time) for safer, more human-like behavior
+- **New Default Timings**: Updated default scan delays (scan delay 2100ms, after 5 requests 15000ms)
+- **i18n Race Condition Fix**: Translations now always load before the UI renders
+- **Placeholder Fix**: `usernameLoadingPlaceholder` added to all 6 language files
+- **Technical**: Refactored `DOMContentLoaded` logic for proper i18n initialization
 
 ### Version 3.2.6
 - **Localization Stability**: Fixed i18n race conditions in popup and context menu
@@ -290,7 +313,7 @@ git push origin feature/your-feature
 
 Planned features:
 - Chrome Web Store listing
-- Instagram Stories downloader(maybe)
+- Instagram Stories downloader (maybe)
 - Post analytics
 - Better unfollower filtering
 - Bulk profile export
@@ -304,10 +327,13 @@ Planned features:
 A: Yes. All processing happens locally on your device. No data is sent to external servers.
 
 **Q: Will it get my account banned?**  
-A: WeXProfile includes rate limiting and randomized delays. **Latest version (3.2.6) has even better safety features!** Follow safety recommendations and use responsibly.
+A: WeXProfile includes rate limiting and randomized delays. Follow safety recommendations and use responsibly.
 
-**Q: The extension shows untranslated text sometimes**  
-A: **Fixed in v3.2.6!** We resolved the localization race conditions - everything should now appear in your selected language.
+**Q: My settings keep resetting after browser updates**  
+A: **Fixed in v3.3.3!** Settings now persist through browser and extension updates. Only a fresh install resets them.
+
+**Q: The unfollower results disappear when I close the popup**  
+A: **Fixed in v3.3.3!** Results are now saved locally and restored automatically when you reopen the popup.
 
 **Q: Can I use it on mobile?**  
 A: Not yet. It's designed for desktop browsers only.

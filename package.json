@@ -1,6 +1,6 @@
 {
   "name": "wexprofile-downloader",
-  "version": "3.3.2",
+  "version": "3.3.3",
   "description": "<p align=\"center\">\r   <img src=\"icon.png\" alt=\"WeXProfile Downloader Logo\" width=\"150\" />\r </p>",
   "main": "index.js",
   "directories": {
@@ -33,6 +33,7 @@
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.1.0",
+    "html-minifier-terser": "^7.2.0",
     "prettier": "^3.8.1",
     "zip-a-folder": "^4.0.4"
   }

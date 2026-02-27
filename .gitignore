@@ -2,3 +2,4 @@
 /dist
 *.zip
 dist.7z
+build-info.json

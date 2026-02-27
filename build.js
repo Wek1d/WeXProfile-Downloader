@@ -1,5 +1,6 @@
 import esbuild from "esbuild";
 import { minify } from "csso";
+import { minify as minifyHtml } from "html-minifier-terser";
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
@@ -60,16 +61,62 @@ for (const file of cssFiles) {
   fs.writeFileSync(path.join(distDir, "css", file), minified);
 }
 
-// === 6. _locales klasörünü komple kopyala ===
-fs.cpSync("_locales", `${distDir}/_locales`, { recursive: true });
+// === 6. _locales klasörünü minify ederek kopyala ===
+// Whitespace kaldırır, boyutu küçültür, JSON geçerliliğini de doğrular
+const walkAndMinifyJson = (srcDir, destDir) => {
+  fs.mkdirSync(destDir, { recursive: true });
+  for (const entry of fs.readdirSync(srcDir, { withFileTypes: true })) {
+    const srcPath = path.join(srcDir, entry.name);
+    const destPath = path.join(destDir, entry.name);
+    if (entry.isDirectory()) {
+      walkAndMinifyJson(srcPath, destPath);
+    } else if (entry.name.endsWith(".json")) {
+      const content = JSON.parse(fs.readFileSync(srcPath, "utf8"));
+      fs.writeFileSync(destPath, JSON.stringify(content));
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  }
+};
+walkAndMinifyJson("_locales", `${distDir}/_locales`);
 
-// === 7. HTML, manifest, icon vs. kök dosyaları kopyala ===
-const rootFiles = ["manifest.json", "popup.html", "icon.png"];
-for (const file of rootFiles) {
-  if (fs.existsSync(file)) fs.copyFileSync(file, path.join(distDir, file));
+// === 6b. _locales key kontrolü — EN'deki her key diğer dillerde de var mı? ===
+const baseLocale = JSON.parse(fs.readFileSync("_locales/en/messages.json", "utf8"));
+const baseKeys = Object.keys(baseLocale);
+const localeDirs = fs.readdirSync("_locales");
+let localeOk = true;
+for (const lang of localeDirs) {
+  const filePath = `_locales/${lang}/messages.json`;
+  if (!fs.existsSync(filePath)) continue;
+  const locale = JSON.parse(fs.readFileSync(filePath, "utf8"));
+  const missing = baseKeys.filter(k => !(k in locale));
+  if (missing.length > 0) {
+    console.warn(`⚠️  ${lang}/messages.json eksik key'ler (${missing.length}): ${missing.join(", ")}`);
+    localeOk = false;
+  }
 }
+if (localeOk) console.log("✅ Tüm dil dosyaları eksiksiz.");
 
-// === 8. Build-info.json oluştur (hata ayıklama için) ===
+// === 7. HTML minify edip kopyala ===
+const htmlContent = fs.readFileSync("popup.html", "utf8");
+const minifiedHtml = await minifyHtml(htmlContent, {
+  collapseWhitespace: true,
+  removeComments: true,
+  removeRedundantAttributes: true,
+  removeEmptyAttributes: true,
+  minifyCSS: false, // CSS ayrı dosyada zaten minify ediliyor
+  minifyJS: false,  // JS ayrı dosyada zaten minify ediliyor
+});
+fs.writeFileSync(path.join(distDir, "popup.html"), minifiedHtml);
+
+// === 7b. manifest.json ve icon'u kopyala (manifest whitespace'siz) ===
+fs.writeFileSync(
+  path.join(distDir, "manifest.json"),
+  JSON.stringify(manifestJson)
+);
+fs.copyFileSync("icon.png", path.join(distDir, "icon.png"));
+
+// === 8. Build-info.json oluştur (hata ayıklama için — ZIP'e GİRMEZ) ===
 const buildInfo = {
   version: manifestVersion,
   packageVersion: version,
@@ -77,34 +124,56 @@ const buildInfo = {
   gitCommit: gitCommit,
   nodeVersion: process.version
 };
-
 fs.writeFileSync(
   path.join(distDir, "build-info.json"),
   JSON.stringify(buildInfo, null, 2)
 );
 
-// === 9. ZIP oluştur ===
+// === 9. ZIP oluştur (build-info.json hariç) ===
 const createZip = () => {
   return new Promise((resolve, reject) => {
     const output = fs.createWriteStream("WeXProfile-Downloader.zip");
     const archive = archiver("zip", { zlib: { level: 9 } });
-    
+
     output.on("close", () => {
-      console.log(`📦 ZIP oluşturuldu: ${archive.pointer()} bytes`);
+      const bytes = archive.pointer();
+      const kb = (bytes / 1024).toFixed(1);
+      const mb = (bytes / 1024 / 1024).toFixed(2);
+      console.log(`📦 ZIP oluşturuldu: ${kb} KB (${mb} MB)`);
       console.log(`📦 İsim: WeXProfile-Downloader.zip`);
       resolve();
     });
-    
+
     archive.on("error", reject);
     archive.pipe(output);
-    archive.directory(distDir, false);
+
+    // build-info.json ZIP'e girmesin — sadece geliştirici için
+    archive.glob("**/*", {
+      cwd: distDir,
+      ignore: ["build-info.json"],
+    });
+
     archive.finalize();
   });
 };
 
 await createZip();
 
-console.log("✅ Build tamamlandı!");
-console.log("📁 Dist klasörü: ./dist");
-console.log("📦 ZIP dosyası: ./WeXProfile-Downloader.zip");
+// === 10. Boyut özeti ===
+const getDirSize = (dir) => {
+  let total = 0;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const p = path.join(dir, entry.name);
+    if (entry.isDirectory()) total += getDirSize(p);
+    else total += fs.statSync(p).size;
+  }
+  return total;
+};
+const distSize = getDirSize(distDir);
+const zipSize = fs.statSync("WeXProfile-Downloader.zip").size;
+
+console.log("\n✅ Build tamamlandı!");
+console.log(`📁 Dist klasörü: ${(distSize / 1024).toFixed(1)} KB`);
+console.log(`📦 ZIP dosyası:  ${(zipSize / 1024).toFixed(1)} KB`);
 console.log(`🏷️  Sürüm: ${manifestVersion}`);
+console.log(`🔨 Commit: ${gitCommit}`);

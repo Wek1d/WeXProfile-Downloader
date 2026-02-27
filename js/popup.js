@@ -1,28 +1,4 @@
-
-
-
-let i18nMessages = {}; 
-
-async function preloadLanguage() {
-  try {
-    const { language } = await chrome.storage.sync.get(['language']);
-    const lang = language || 'en';
-    const url = chrome.runtime.getURL(`_locales/${lang}/messages.json`);
-    const response = await fetch(url);
-    i18nMessages = await response.json();
-  } catch(e) {
-    console.error("Dil ön yükleme hatası:", e);
-  }
-}
-
-function t(key) {
-  return i18nMessages[key]?.message || key;
-}
-
 document.addEventListener('DOMContentLoaded', async function() {
-
-  
-  await preloadLanguage();
 
   const profileView = document.getElementById('profileView');
   const unfinderView = document.getElementById('unfinderView');
@@ -67,9 +43,9 @@ document.addEventListener('DOMContentLoaded', async function() {
   const buttonStyleToggle = document.getElementById('buttonStyleToggle');
   const followerChangeToggle = document.getElementById('followerChangeToggle');
 
+  let i18nMessages = {};
   let currentSettings = {};
   let unfollowerData = [];
-  let i18nMessages = {}; 
 
   
   function setVersionFromManifest() {
@@ -261,6 +237,28 @@ document.addEventListener('DOMContentLoaded', async function() {
   function renderUnfollowerList(users) {
     unfinderList.innerHTML = '';
     unfollowerData = users;
+
+    if (users.length > 0) {
+      const selectAllRow = document.createElement('div');
+      selectAllRow.className = 'unfinder-select-all-row';
+      selectAllRow.innerHTML = `
+        <button class="unfinder-select-all-chip" id="selectAllChip">
+          <span class="chip-icon"><i class="fas fa-check"></i></span>
+          <span class="chip-label">${t('selectAllLabel')}</span>
+        </button>
+        <span class="unfinder-count-badge">${users.length} ${t('unfollowersFound')}</span>
+      `;
+      unfinderList.appendChild(selectAllRow);
+
+      const chip = selectAllRow.querySelector('#selectAllChip');
+      chip.addEventListener('click', () => {
+        const allChecked = chip.classList.contains('all-selected');
+        unfinderList.querySelectorAll('.unfinder-item-checkbox').forEach(cb => { cb.checked = !allChecked; });
+        chip.classList.toggle('all-selected', !allChecked);
+        updateSelectedCount();
+      });
+    }
+
     users.forEach(user => {
         const item = document.createElement('div');
         item.className = 'unfinder-item';
@@ -269,10 +267,24 @@ document.addEventListener('DOMContentLoaded', async function() {
             <img src="${user.profile_pic_url || 'icon.png'}" class="unfinder-item-pic" onerror="this.src='icon.png'">
             <div class="unfinder-item-info">
                 <div class="username">${user.username} ${user.is_verified ? '<i class="fas fa-check-circle verified-badge"></i>' : ''}</div>
-                <div class="fullname">${user.full_name}</div>
+                <div class="fullname">${user.full_name || ''}</div>
             </div>
             <input type="checkbox" class="unfinder-item-checkbox">
         `;
+        item.addEventListener('click', (e) => {
+          if (e.target.type !== 'checkbox') {
+            const cb = item.querySelector('.unfinder-item-checkbox');
+            cb.checked = !cb.checked;
+            // Select-all chip durumunu güncelle
+            const chip = unfinderList.querySelector('#selectAllChip');
+            if (chip) {
+              const allCbs = unfinderList.querySelectorAll('.unfinder-item-checkbox');
+              const allChecked = [...allCbs].every(c => c.checked);
+              chip.classList.toggle('all-selected', allChecked);
+            }
+            updateSelectedCount();
+          }
+        });
         unfinderList.appendChild(item);
     });
     unfinderList.removeEventListener('change', updateSelectedCount);
@@ -362,8 +374,16 @@ chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response)
   });
 
   usernameEl.addEventListener('click', () => {
-    const usernameToCopy = usernameEl.textContent.split(' ')[0].replace('@','');
-    navigator.clipboard.writeText(usernameToCopy);
+    const usernameToCopy = usernameEl.textContent.split(' ')[0].replace('@','').trim();
+    navigator.clipboard.writeText(usernameToCopy).then(() => {
+      const prev = usernameEl.title;
+      usernameEl.title = t('copiedText');
+      const toast = document.createElement('div');
+      toast.textContent = t('copiedText');
+      toast.style.cssText = 'position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--primary-color-for-check,#dc2743);color:#fff;padding:6px 18px;border-radius:20px;font-size:13px;z-index:9999;pointer-events:none;opacity:1;transition:opacity 0.4s';
+      document.body.appendChild(toast);
+      setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 400); usernameEl.title = prev; }, 1200);
+    });
   });
 
   startScanBtn.addEventListener('click', () => {
@@ -784,6 +804,23 @@ chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response)
     unfollowSelectedBtn.style.display = 'flex';
     unfollowSelectedBtn.disabled = users.length === 0;
   }
+
+  // Kayıtlı tarama sonuçlarını yükle (popup kapanıp açılsa bile göster)
+  chrome.storage.local.get(['lastScanResult', 'lastScanSummary'], ({ lastScanResult, lastScanSummary }) => {
+    if (lastScanResult && lastScanResult.length > 0) {
+      renderUnfollowerList(lastScanResult);
+      updateSelectedCount();
+      startScanBtn.style.display = 'none';
+      unfollowSelectedBtn.style.display = 'flex';
+      unfollowSelectedBtn.disabled = lastScanResult.length === 0;
+      if (lastScanSummary) {
+        unfinderStatusText.textContent = t('scanCompleteText')
+          .replace('{followers}', lastScanSummary.followers)
+          .replace('{following}', lastScanSummary.following)
+          .replace('{unfollowers}', lastScanSummary.unfollowers);
+      }
+    }
+  });
 
   chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.action === 'scanProgress') {
