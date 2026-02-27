@@ -90,5 +90,6 @@
   "settingsBtnTitle": { "message": "Settings" },
   "fullNamePlaceholder": { "message": "Full Name" },
   "usernameLoadingPlaceholder": { "message": "Loading..." },
-  "selectAllLabel": { "message": "Select All" }
+  "selectAllLabel": { "message": "Select All" },
+  "rescanBtn": { "message": "Rescan" }
 }

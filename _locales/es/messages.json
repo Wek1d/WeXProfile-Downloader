@@ -90,5 +90,6 @@
   "settingsBtnTitle": { "message": "Ajustes" },
   "fullNamePlaceholder": { "message": "Nombre completo" },
   "usernameLoadingPlaceholder": { "message": "Cargando..." },
-  "selectAllLabel": { "message": "Seleccionar todo" }
+  "selectAllLabel": { "message": "Seleccionar todo" },
+  "rescanBtn": { "message": "Volver a Escanear" }
 }

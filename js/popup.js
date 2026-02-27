@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
   const profileView = document.getElementById('profileView');
   const unfinderView = document.getElementById('unfinderView');
+  const rescanBtn = document.getElementById('rescanBtn');
   const profilePic = document.getElementById('profilePic');
   const usernameEl = document.getElementById('username');
   const fullNameEl = document.getElementById('fullName');
@@ -42,6 +43,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   const languageSelect = document.getElementById('languageSelect');
   const buttonStyleToggle = document.getElementById('buttonStyleToggle');
   const followerChangeToggle = document.getElementById('followerChangeToggle');
+  
 
   let i18nMessages = {};
   let currentSettings = {};
@@ -396,7 +398,25 @@ chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response)
     unfinderStatusText.textContent = t('scanStarting');
     unfollowSelectedBtn.style.display = 'none';
   });
-  
+  rescanBtn.addEventListener('click', () => {
+  // Arayüzü sıfırla
+  unfinderList.innerHTML = '';
+  updateSelectedCount();
+  rescanBtn.style.display = 'none';
+
+  // Taramayı baştan tetikle
+  chrome.runtime.sendMessage({ action: 'startUnfollowScan' });
+  startScanBtn.style.display = 'none';
+  pauseScanBtn.style.display = 'flex';
+  resumeScanBtn.style.display = 'none';
+  unfinderProgressBarContainer.style.display = 'block';
+  unfinderProgressBar.style.width = '0%';
+  unfinderStatusText.textContent = t('scanStarting');
+  unfollowSelectedBtn.style.display = 'none';
+});
+
+
+
   pauseScanBtn.addEventListener('click', () => {
     chrome.runtime.sendMessage({ action: 'pauseScan' });
     pauseScanBtn.style.display = 'none';
@@ -793,6 +813,7 @@ chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response)
     pauseScanBtn.style.display = 'none';
     resumeScanBtn.style.display = 'none';
     startScanBtn.style.display = 'none';
+    rescanBtn.style.display = 'flex';
     unfollowSelectedBtn.style.display = 'flex';
     unfollowSelectedBtn.disabled = false;
   }
@@ -812,6 +833,7 @@ chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response)
       updateSelectedCount();
       startScanBtn.style.display = 'none';
       unfollowSelectedBtn.style.display = 'flex';
+      rescanBtn.style.display = 'flex';
       unfollowSelectedBtn.disabled = lastScanResult.length === 0;
       if (lastScanSummary) {
         unfinderStatusText.textContent = t('scanCompleteText')

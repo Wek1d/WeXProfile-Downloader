@@ -274,5 +274,6 @@
   },
   "selectAllLabel": {
     "message": "Select All"
-  }
+  },
+  "rescanBtn": { "message": "Yeniden Tara" }
 }

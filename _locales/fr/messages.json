@@ -90,5 +90,6 @@
   "settingsBtnTitle": { "message": "Paramètres" },
   "fullNamePlaceholder": { "message": "Nom complet" },
   "usernameLoadingPlaceholder": { "message": "Chargement..." },
-  "selectAllLabel": { "message": "Tout sélectionner" }
+  "selectAllLabel": { "message": "Tout sélectionner" },
+  "rescanBtn": { "message": "Réanalyser" }
 }
