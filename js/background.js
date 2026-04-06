@@ -132,7 +132,7 @@ function compareVersions(v1, v2) {
 }
 
 chrome.runtime.onInstalled.addListener(async (details) => {
-  // Context menu her zaman (re)oluşturulmalı
+  
   try { await chrome.contextMenus.remove("wexProfileDownload"); } catch(e) {}
   
   const lang = details.reason === 'install'
@@ -148,8 +148,6 @@ chrome.runtime.onInstalled.addListener(async (details) => {
     documentUrlPatterns: ["*://*.instagram.com/*"]
   });
 
-  // Ayarları SADECE ilk kurulumda sıfırla
-  // Güncelleme / tarayıcı yeniden başlatmada kullanıcı ayarları KORUNUR
   if (details.reason === 'install') {
     await chrome.storage.sync.set({
       darkMode: true,
@@ -167,7 +165,6 @@ chrome.runtime.onInstalled.addListener(async (details) => {
     });
     chrome.storage.local.set({ [PROFILE_HISTORY_KEY]: {} });
   } else if (details.reason === 'update') {
-    // Güncelleme sırasında eksik ayarları varsayılanlarla doldur (var olanları ezme)
     const existing = await chrome.storage.sync.get(null);
     const defaults = {
       darkMode: true,
@@ -417,12 +414,10 @@ async function getHdProfilePhotoUrl(instagramUserId) {
     const user = out.user;
     if (!user) throw new Error("Kullanıcı verisi yok");
 
-    // 1. Önce hd_profile_pic_url_info dene (en kaliteli — genelde 1080px)
     if (user.hd_profile_pic_url_info?.url) {
       return user.hd_profile_pic_url_info.url;
     }
 
-    // 2. hd_profile_pic_versions varsa en büyük boyutu al
     if (user.hd_profile_pic_versions?.length) {
       const sorted = [...user.hd_profile_pic_versions].sort(
         (a, b) => (b.width || 0) - (a.width || 0)
@@ -430,21 +425,17 @@ async function getHdProfilePhotoUrl(instagramUserId) {
       if (sorted[0]?.url) return sorted[0].url;
     }
 
-    // 3. profile_pic_url varsa — URL'deki boyut parametresini değiştirmeyi dene
-    // Instagram CDN URL'leri genelde /s150x150/ veya /s320x320/ içerir
-    // Bunu /s1080x1080/ ile değiştirince bazen çalışıyor, çalışmazsa orijinale fallback
+
     if (user.profile_pic_url) {
       const biggerUrl = user.profile_pic_url
         .replace(/\/s\d+x\d+\//, '/s1080x1080/')
-        .replace(/\/vp\/[^/]+\//, '/'); // vp cache bypass trick
+        .replace(/\/vp\/[^/]+\//, '/'); 
       
-      // Test et, erişilebilir mi
       try {
         const testResp = await fetch(biggerUrl, { method: 'HEAD', mode: 'cors' });
         if (testResp.ok) return biggerUrl;
       } catch (_) { /* ignore */ }
 
-      // Çalışmadıysa orijinal URL'yi döndür
       return user.profile_pic_url;
     }
 
@@ -572,7 +563,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         break;
       case 'startUnfollowScan':
         if (currentScanner?.isScanning) return;
-        // Yeni tarama başlayınca eski sonuçları temizle
         await chrome.storage.local.remove(['lastScanResult', 'lastScanSummary']);
         const userId = await getCookie('ds_user_id');
         const csrfToken = await getCookie('csrftoken');
@@ -604,7 +594,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
               for (const user of users) {
                 user.profile_pic_url = await fetchImageAsDataURL(user.profile_pic_url);
               }
-              // Sonuçları storage'a kaydet — popup kapansa bile kaybolmaz
               await chrome.storage.local.set({ lastScanResult: users });
               chrome.runtime.sendMessage({ action: 'scanResult', data: users });
             },

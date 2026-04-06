@@ -826,7 +826,7 @@ chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response)
     unfollowSelectedBtn.disabled = users.length === 0;
   }
 
-  // Kayıtlı tarama sonuçlarını yükle (popup kapanıp açılsa bile göster)
+
   chrome.storage.local.get(['lastScanResult', 'lastScanSummary'], ({ lastScanResult, lastScanSummary }) => {
     if (lastScanResult && lastScanResult.length > 0) {
       renderUnfollowerList(lastScanResult);
