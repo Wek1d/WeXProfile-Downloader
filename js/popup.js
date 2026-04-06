@@ -309,7 +309,22 @@ chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response)
     unfinderStatusText.textContent = t('scanStartMessage');
     
 
- 
+ chrome.storage.local.get(['lastScanResult', 'lastScanSummary'], ({ lastScanResult, lastScanSummary }) => {
+    if (lastScanResult && lastScanResult.length > 0) {
+      renderUnfollowerList(lastScanResult);
+      updateSelectedCount();
+      startScanBtn.style.display = 'none';
+      unfollowSelectedBtn.style.display = 'flex';
+      rescanBtn.style.display = 'flex';
+      unfollowSelectedBtn.disabled = lastScanResult.length === 0;
+      if (lastScanSummary) {
+        unfinderStatusText.textContent = t('scanCompleteText')
+          .replace('{followers}', lastScanSummary.followers)
+          .replace('{following}', lastScanSummary.following)
+          .replace('{unfollowers}', lastScanSummary.unfollowers);
+      }
+    }
+  });
 
    usernameEl.textContent = `@${t('usernameLoadingPlaceholder')}`;
   chrome.runtime.sendMessage({ action: 'getProfileData' }, (response) => {
@@ -326,6 +341,8 @@ chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response)
     }
   }
 });
+
+
 
 
 
@@ -827,22 +844,7 @@ chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response)
   }
 
 
-  chrome.storage.local.get(['lastScanResult', 'lastScanSummary'], ({ lastScanResult, lastScanSummary }) => {
-    if (lastScanResult && lastScanResult.length > 0) {
-      renderUnfollowerList(lastScanResult);
-      updateSelectedCount();
-      startScanBtn.style.display = 'none';
-      unfollowSelectedBtn.style.display = 'flex';
-      rescanBtn.style.display = 'flex';
-      unfollowSelectedBtn.disabled = lastScanResult.length === 0;
-      if (lastScanSummary) {
-        unfinderStatusText.textContent = t('scanCompleteText')
-          .replace('{followers}', lastScanSummary.followers)
-          .replace('{following}', lastScanSummary.following)
-          .replace('{unfollowers}', lastScanSummary.unfollowers);
-      }
-    }
-  });
+  
 
   chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.action === 'scanProgress') {
