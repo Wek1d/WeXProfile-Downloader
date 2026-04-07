@@ -184,7 +184,15 @@ body {
 [data-button-style="classic"] .btn:active { filter: brightness(0.9); transform: translateY(0); }
 
 .btn-primary { background: var(--secondary-gradient); color: white; }
-.btn-secondary { background: var(--card-bg); color: var(--text-color); border: 1px solid var(--border-color); }
+.btn-secondary {
+  background: var(--card-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  width: 95%;
+  box-sizing: border-box;
+  display: block;
+  margin: 0 auto;
+}
 .btn-danger { background: var(--danger-gradient); color: white; }
 
 .footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; opacity: 0.8; width: 100%; flex-shrink: 0; }
@@ -308,11 +316,9 @@ body {
   transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
-/* Tik işareti - border trick, her boyutta mükemmel görünür */
 .unfinder-item-checkbox::after {
   content: "";
   position: absolute;
-  /* Checkmark: sol alt köşeden başlayıp sağ üste uzanan L şekli */
   left: 4px;
   top: 9px;
   width: 5px;
@@ -326,7 +332,6 @@ body {
   transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Uzun kolu da ekle (iki parçalı L) */
 .unfinder-item-checkbox::before {
   content: "";
   position: absolute;
@@ -795,7 +800,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   transform: scale(0.95);
   opacity: 0.9;
 }
-/* === Select All Row (Unfollower) - Modern Chip === */
+
 .unfinder-select-all-row {
   display: flex;
   align-items: center;
@@ -805,7 +810,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   flex-shrink: 0;
 }
 
-/* Chip butonu - tümünü seç/kaldır */
+
 .unfinder-select-all-chip {
   display: flex;
   align-items: center;
@@ -834,7 +839,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   color: #fff;
   box-shadow: 0 0 0 3px var(--primary-color-for-check, #dc2743)33;
 }
-/* Chip içindeki küçük checkbox ikonu */
+
 .unfinder-select-all-chip .chip-icon {
   width: 18px;
   height: 18px;
@@ -863,10 +868,22 @@ input:checked + .slider:before { transform: translateX(22px); }
   letter-spacing: 0.2px;
 }
 
-/* Unfinder item tıklanabilir cursor */
+
 .unfinder-item {
   cursor: pointer;
 }
 .unfinder-item:hover {
   background: var(--hover-bg, rgba(0,0,0,0.04));
+}
+
+
+body, .app-container, .view {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+body::-webkit-scrollbar,
+.app-container::-webkit-scrollbar,
+.view::-webkit-scrollbar {
+  display: none;
 }
