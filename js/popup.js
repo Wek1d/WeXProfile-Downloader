@@ -273,6 +273,18 @@ document.addEventListener('DOMContentLoaded', async function() {
             </div>
             <input type="checkbox" class="unfinder-item-checkbox">
         `;
+        
+        const usernameDiv = item.querySelector('.username');
+        usernameDiv.style.cursor = 'pointer';
+        usernameDiv.title = `@${user.username} profilini aç`;
+        usernameDiv.addEventListener('click', (e) => {
+          e.stopPropagation();
+          chrome.tabs.create({ 
+            url: `https://www.instagram.com/${user.username}/`,
+            active: false
+          });
+        });
+
         item.addEventListener('click', (e) => {
           if (e.target.type !== 'checkbox') {
             const cb = item.querySelector('.unfinder-item-checkbox');
