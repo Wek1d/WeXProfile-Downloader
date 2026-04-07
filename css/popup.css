@@ -1,3 +1,15 @@
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+
+
+
 :root {
   --primary-gradient: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
   --secondary-gradient: linear-gradient(45deg, #405DE6, #5851DB);
@@ -874,16 +886,4 @@ input:checked + .slider:before { transform: translateX(22px); }
 }
 .unfinder-item:hover {
   background: var(--hover-bg, rgba(0,0,0,0.04));
-}
-
-
-body, .app-container, .view {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-body::-webkit-scrollbar,
-.app-container::-webkit-scrollbar,
-.view::-webkit-scrollbar {
-  display: none;
 }
