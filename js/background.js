@@ -61,12 +61,24 @@ const HISTORY_LIMIT = 500;
 const CACHE_TTL = 5 * 60 * 1000;
 
 const USER_AGENTS = [
-  "Mozilla/5.0 (Linux; Android 15; Pixel 8 Build/AP4A.250105.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/132.0.6834.163 Mobile Safari/537.36 Instagram 388.0.0.34.75 Android (35/15; 450dpi; 1080x2340; samsung; SM-A556E; a55x; s5e8845; es_ES; 760368464; IABMV/1)",
-  "Mozilla/5.0 (Linux; Android 14; SM-A245M Build/UP1A.231005.007; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/137.0.7151.115 Mobile Safari/537.36 Instagram 388.0.0.30.75 Android (34/14; 450dpi; 1080x2128; samsung; SM-A245M; a24; mt6789; pt_BR; 759386708) Android. phone.",
-  "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Instagram 300.0.0.0.0",
-  "Instagram 388.0.0.30.75 Android (33/13; 450dpi; 1080x2301; samsung; SM-A135M; a13; exynos850; pt_BR; 759386703)",
-  "Mozilla/5.0 (Linux; Android 14; CLK-LX2 Build/HONORCLK-L42; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/138.0.7204.143 Mobile Safari/537.36 Instagram 388.0.0.34.75 Android (34/14; 480dpi; 1080x2304; HONOR; CLK-LX2; HNCLK-Q; qcom; pt_BR; 760368464; IABMV/1) Android. mobile.",
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+  // Samsung A34 - Android 13, Chrome 144, IG 413 (Nisan 2026 gerçek UA)
+  "Mozilla/5.0 (Linux; Android 13; SM-A346M Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/144.0.7559.87 Mobile Safari/537.36 Instagram 413.0.0.41.84 Android (33/13; 401dpi; 1080x2340; samsung; SM-A346M; a34x; mt6877; pt_BR; 865356678; IABMV/1)",
+  
+  // Samsung S22 Ultra - Android 14, Chrome 142, IG 414
+  "Mozilla/5.0 (Linux; Android 14; SM-S908E Build/UP1A.231005.007; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/142.0.7444.174 Mobile Safari/537.36 Instagram 414.0.0.0.51 Android (34/14; 600dpi; 1440x3088; samsung; SM-S908E; b0q; qcom; pt_BR; 865002994; IABMV/1)",
+  
+  // Pixel 10 Pro XL - android 16, Chrome 143, IG 413 (Nisan 2026 gerçek UA)
+  "Mozilla/5.0 (Linux; Android 16; Pixel 10 Pro XL Build/BP4A.251205.006; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/143.0.7499.193 Mobile Safari/537.36 Instagram 413.0.0.41.84 Android (36/16; 390dpi; 1080x2404; Google/google; Pixel 10 Pro XL; mustang; mustang; en_US; 865356627; IABMV/1)",
+  
+  // iPhone 15 Pro - ios 18.1, IG 413 (Nisan 2026 gerçek UA)
+  "Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/22B83 Instagram 413.0.0.20.79 (iPhone15,4; iOS 18_1; es_LA; es; scale=3.00; 1179x2556; IABMV/1; 863488198) NW/1",
+  
+  // Windows Chrome 146 - benim tarayıcımın güncel UA'sı, API erişiminde sorun yaşanmazsa bu kalacak
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+
+  //İphone 15 pro max benim iOS cihazımın gerçek UA'sı, API erişiminde sorun yaşanmazsa bu kalacak
+  "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Mobile/15E148 Safari/604.1",
+  
 ];
 const GITHUB_REPO_URL = 'https://api.github.com/repos/Wek1d/WeXProfile-Downloader/releases/latest';
 
