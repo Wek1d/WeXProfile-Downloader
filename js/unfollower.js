@@ -1,5 +1,3 @@
-
-
 export class UnfollowerScanner {
     constructor({ userId, csrfToken, onProgress, onResult, onComplete, onUnfollowProgress, config }) {
         this.userId = userId;
@@ -16,33 +14,38 @@ export class UnfollowerScanner {
         this.onComplete = onComplete || (() => {});
         this.onUnfollowProgress = onUnfollowProgress || (() => {});
 
-        
+        // Varsayılan yapılandırma
         this.config = config || {  
-        timeBetweenRequests: 1800,
-        timeAfterFiveRequests: 12000,
-        timeBetweenUnfollows: 4000,
-        timeAfterFiveUnfollows: 180000
-    };
+            timeBetweenRequests: 1800,
+            timeAfterFiveRequests: 12000,
+            timeBetweenUnfollows: 4000,
+            timeAfterFiveUnfollows: 180000
+        };
     }
 
     _sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    
-    _getRandomizedDelay(baseTime) {
-        
-        const min = baseTime * 0.7;
-        const max = baseTime * 1.3;
-        return Math.floor(Math.random() * (max - min + 1) + min);
-    }
 
+    _getNaturalDelay(baseTime) {
+        let u = 0, v = 0;
+        while(u === 0) u = Math.random();
+        while(v === 0) v = Math.random();
+        const z = Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+        
+        let delay = baseTime + z * (baseTime * 0.15);
+        
+        delay = Math.max(baseTime * 0.6, Math.min(baseTime * 1.4, delay));
+        return Math.floor(delay);
+    }
 
     async _fetchUsers(type) {
         let users = [];
         let hasNextPage = true;
         let endCursor = null;
         let requestCount = 0;
+        const maxRetries = 3;
 
         const queryHashes = {
             followers: 'c76146de99bb02f6415203be841dd25a',
@@ -60,7 +63,7 @@ export class UnfollowerScanner {
                 id: this.userId,
                 include_reel: true,
                 fetch_mutual: false,
-                first: 50
+                first: 50  
             };
             if (endCursor) {
                 variables.after = endCursor;
@@ -68,43 +71,86 @@ export class UnfollowerScanner {
 
             const url = `https://www.instagram.com/graphql/query/?query_hash=${queryHash}&variables=${JSON.stringify(variables)}`;
 
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            let retryCount = 0;
+            let success = false;
+            let responseData;
 
-                const data = await response.json();
-                const edge = data.data.user[type === 'followers' ? 'edge_followed_by' : 'edge_follow'];
-                
-                users.push(...edge.edges.map(e => ({
-                    id: e.node.id,
-                    username: e.node.username,
-                    full_name: e.node.full_name,
-                    profile_pic_url: e.node.profile_pic_url,
-                    is_verified: e.node.is_verified,
-                })));
+            while (retryCount < maxRetries && !success && !this.stopScan) {
+                try {
+                    const response = await fetch(url, {
+                        headers: {
+                            'x-csrftoken': this.csrfToken,
+                            'x-instagram-ajax': '1',
+                            'x-requested-with': 'XMLHttpRequest',
+                        },
+                        credentials: 'include'
+                    });
 
-                const total = edge.count;
-                this.onProgress({
-                    type: type,
-                    scanned: users.length,
-                    total: total,
-                    percentage: Math.round((users.length / total) * 100)
-                });
+                    
+                    if (response.status === 429 || response.status >= 500) {
+                        retryCount++;
+                        if (retryCount < maxRetries) {
+                            
+                            const backoff = Math.pow(2, retryCount) * 1000;
+                            this.onProgress({
+                                type: 'warning',
+                                message: `Hız sınırı aşıldı, ${backoff/1000} saniye bekleniyor...`
+                            });
+                            await this._sleep(backoff);
+                            continue;
+                        } else {
+                            throw new Error(`HTTP ${response.status} - maksimum deneme sayısı aşıldı`);
+                        }
+                    }
 
-                hasNextPage = edge.page_info.has_next_page;
-                endCursor = edge.page_info.end_cursor;
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
 
-                requestCount++;
-                
-                const sleepTime = requestCount % 5 === 0 
-                    ? this._getRandomizedDelay(this.config.timeAfterFiveRequests) 
-                    : this._getRandomizedDelay(this.config.timeBetweenRequests);
-                await this._sleep(sleepTime);
-
-            } catch (error) {
-                this.onProgress({ type: 'error', message: `Tarama sırasında hata (${type}): ${error.message}` });
-                hasNextPage = false;
+                    responseData = await response.json();
+                    success = true;
+                } catch (error) {
+                    retryCount++;
+                    if (retryCount >= maxRetries) {
+                        this.onProgress({ type: 'error', message: `Tarama hatası (${type}): ${error.message}` });
+                        hasNextPage = false;
+                        break;
+                    }
+                    await this._sleep(2000 * retryCount);
+                }
             }
+
+            if (!success || this.stopScan) break;
+
+            const edge = responseData.data.user[type === 'followers' ? 'edge_followed_by' : 'edge_follow'];
+            
+            users.push(...edge.edges.map(e => ({
+                id: e.node.id,
+                username: e.node.username,
+                full_name: e.node.full_name,
+                profile_pic_url: e.node.profile_pic_url,
+                is_verified: e.node.is_verified,
+            })));
+
+            const total = edge.count;
+            this.onProgress({
+                type: type,
+                scanned: users.length,
+                total: total,
+                percentage: Math.round((users.length / total) * 100)
+            });
+
+            hasNextPage = edge.page_info.has_next_page;
+            endCursor = edge.page_info.end_cursor;
+
+            requestCount++;
+            
+            const baseDelay = (requestCount % 5 === 0) 
+                ? this.config.timeAfterFiveRequests 
+                : this.config.timeBetweenRequests;
+            
+            const sleepTime = this._getNaturalDelay(baseDelay);
+            await this._sleep(sleepTime);
         }
         return users;
     }
@@ -144,8 +190,8 @@ export class UnfollowerScanner {
 
     async unfollow(usersToUnfollow) {
         if (!this.csrfToken) {
-             this.onUnfollowProgress({ success: false, message: 'CSRF token bulunamadı.' });
-             return;
+            this.onUnfollowProgress({ success: false, message: 'CSRF token bulunamadı.' });
+            return;
         }
         
         for (let i = 0; i < usersToUnfollow.length; i++) {
@@ -179,7 +225,10 @@ export class UnfollowerScanner {
                 this.onUnfollowProgress({ success: false, user: user, message: error.message, progress: { current: i + 1, total: usersToUnfollow.length } });
             }
             
-            await this._sleep(this._getRandomizedDelay(this.config.timeBetweenUnfollows));
+            const baseDelay = ((i + 1) % 5 === 0) 
+                ? this.config.timeAfterFiveUnfollows 
+                : this.config.timeBetweenUnfollows;
+            await this._sleep(this._getNaturalDelay(baseDelay));
         }
     }
 }
