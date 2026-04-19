@@ -557,7 +557,7 @@ async function standaloneUnfollow(users, csrfToken) {
       const success = responseData?.status === 'ok';
 
       if (success) {
-        // Kalıcı olarak unfollow edildi bilgisini kaydet
+        
         const { unfollowedIds = [] } = await chrome.storage.local.get('unfollowedIds');
         if (!unfollowedIds.includes(user.id)) unfollowedIds.push(user.id);
         await chrome.storage.local.set({ unfollowedIds });
@@ -566,7 +566,7 @@ async function standaloneUnfollow(users, csrfToken) {
       chrome.runtime.sendMessage({
         action: 'unfollowProgress',
         data: { success, user, progress: { current: i + 1, total: users.length } }
-      }).catch(() => {}); // popup kapalıysa hata vermesin
+      }).catch(() => {}); 
     } catch (error) {
       chrome.runtime.sendMessage({
         action: 'unfollowProgress',
@@ -687,7 +687,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.users && request.users.length > 0) {
           const csrfForUnfollow = await getCookie('csrftoken');
           if (!csrfForUnfollow) { sendNotification("errorTitle", "LoginUnfollow"); break; }
-          // Scanner varsa onu kullan, yoksa standalone unfollow yap
+          
           if (currentScanner && currentScanner.csrfToken) {
             currentScanner.unfollow(request.users);
           } else {

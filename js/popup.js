@@ -335,7 +335,7 @@ chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response)
           .replace('{following}', lastScanSummary.following)
           .replace('{unfollowers}', lastScanSummary.unfollowers);
       }
-      // Unfollow edilmiş hesapları yeşil yap ve seçilemez kıl
+      
       if (unfollowedIds && unfollowedIds.length > 0) {
         unfollowedIds.forEach(id => {
           const item = unfinderList.querySelector(`.unfinder-item[data-user-id="${id}"]`);
@@ -361,7 +361,7 @@ chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response)
 
     if (response.updateInfo.hasUpdate) {
       const latestVer = response.updateInfo.latestVersion;
-      // Kullanıcı bu versiyonu zaten dismiss ettiyse gösterme
+      
       chrome.storage.local.get(['dismissedUpdateVersion'], ({ dismissedUpdateVersion }) => {
         if (dismissedUpdateVersion === latestVer) return;
         latestVersionEl.textContent = latestVer;
@@ -371,10 +371,10 @@ chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response)
   }
 });
 
-// Güncelleme bildirimini kapat (bu sürüm için)
+
 updateNotification.addEventListener('click', (e) => {
-  if (e.target.id === 'updateBtn') return; // Güncelle butonuna tıklandıysa kapat
-  // X ikonuna veya bildirime tıklandıysa dismiss et
+  if (e.target.id === 'updateBtn') return; 
+  
 });
 
 const updateDismissBtn = document.createElement('button');
