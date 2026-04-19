@@ -66,10 +66,12 @@ body {
   display: flex;
 }
 
-.update-notification { display: none; justify-content: space-between; align-items: center; background-color: var(--update-color); color: white; padding: 10px 15px; border-radius: 8px; margin-bottom: 12px; animation: fadeIn 0.5s ease-out; flex-shrink: 0; }
-.update-notification p { font-size: 14px; }
-#updateBtn { background: white; color: var(--update-color); border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: transform 0.2s; }
+.update-notification { display: none; justify-content: space-between; align-items: center; background-color: var(--update-color); color: white; padding: 10px 15px; border-radius: 8px; margin-bottom: 12px; animation: fadeIn 0.5s ease-out; flex-shrink: 0; gap: 8px; }
+.update-notification p { font-size: 14px; flex: 1; }
+#updateBtn { background: white; color: var(--update-color); border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: transform 0.2s; flex-shrink: 0; }
 #updateBtn:hover { transform: scale(1.05); }
+.update-dismiss-btn { background: transparent; border: none; color: white; font-size: 18px; line-height: 1; cursor: pointer; opacity: 0.7; padding: 0 2px; transition: opacity 0.2s, transform 0.2s; flex-shrink: 0; }
+.update-dismiss-btn:hover { opacity: 1; transform: scale(1.2); }
 
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-shrink: 0; }
 .header h1 { font-family: 'Montserrat', sans-serif; font-size: 22px; font-weight: 700; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }

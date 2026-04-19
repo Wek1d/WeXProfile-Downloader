@@ -526,6 +526,60 @@ function sendNotification(titleKey, messageKey) {
   });
 }
 
+async function standaloneUnfollow(users, csrfToken) {
+  const syncData = await chrome.storage.sync.get(['scanTimings']);
+  const timings = syncData.scanTimings || {};
+  const delayBetween = timings.unfollowDelay || 4000;
+  const delayAfterFive = timings.unfollowDelayAfterFive || 180000;
+
+  function getNaturalDelay(base) {
+    let u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    const d = base + z * (base * 0.15);
+    return Math.floor(Math.max(base * 0.6, Math.min(base * 1.4, d)));
+  }
+
+  for (let i = 0; i < users.length; i++) {
+    const user = users[i];
+    try {
+      const response = await fetch(`https://www.instagram.com/web/friendships/${user.id}/unfollow/`, {
+        method: 'POST',
+        headers: {
+          'x-csrftoken': csrfToken,
+          'x-instagram-ajax': '1',
+          'x-requested-with': 'XMLHttpRequest'
+        },
+        credentials: 'include'
+      });
+      const responseData = response.ok ? await response.json() : null;
+      const success = responseData?.status === 'ok';
+
+      if (success) {
+        // Kalıcı olarak unfollow edildi bilgisini kaydet
+        const { unfollowedIds = [] } = await chrome.storage.local.get('unfollowedIds');
+        if (!unfollowedIds.includes(user.id)) unfollowedIds.push(user.id);
+        await chrome.storage.local.set({ unfollowedIds });
+      }
+
+      chrome.runtime.sendMessage({
+        action: 'unfollowProgress',
+        data: { success, user, progress: { current: i + 1, total: users.length } }
+      }).catch(() => {}); // popup kapalıysa hata vermesin
+    } catch (error) {
+      chrome.runtime.sendMessage({
+        action: 'unfollowProgress',
+        data: { success: false, user, message: error.message, progress: { current: i + 1, total: users.length } }
+      }).catch(() => {});
+    }
+
+    const base = ((i + 1) % 5 === 0) ? delayAfterFive : delayBetween;
+    await new Promise(r => setTimeout(r, getNaturalDelay(base)));
+  }
+}
+
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   (async () => {
     switch (request.action) {
@@ -575,7 +629,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         break;
       case 'startUnfollowScan':
         if (currentScanner?.isScanning) return;
-        await chrome.storage.local.remove(['lastScanResult', 'lastScanSummary']);
+        await chrome.storage.local.remove(['lastScanResult', 'lastScanSummary', 'unfollowedIds']);
         const userId = await getCookie('ds_user_id');
         const csrfToken = await getCookie('csrftoken');
         if (!userId || !csrfToken) {
@@ -613,7 +667,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
               chrome.storage.local.set({ lastScanSummary: c.summary });
               chrome.runtime.sendMessage({ action: 'scanComplete', data: c });
             },
-            onUnfollowProgress: (l) => chrome.runtime.sendMessage({ action: 'unfollowProgress', data: l }),
+            onUnfollowProgress: async (l) => {
+              if (l.success && l.user) {
+                const { unfollowedIds = [] } = await chrome.storage.local.get('unfollowedIds');
+                if (!unfollowedIds.includes(l.user.id)) unfollowedIds.push(l.user.id);
+                await chrome.storage.local.set({ unfollowedIds });
+              }
+              chrome.runtime.sendMessage({ action: 'unfollowProgress', data: l }).catch(() => {});
+            },
             config 
         });
         currentScanner.scan();
@@ -622,7 +683,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       case 'stopScan': if(currentScanner) currentScanner.stop(); break;
       case 'pauseScan': if(currentScanner) currentScanner.pause(); break;
       case 'resumeScan': if(currentScanner) currentScanner.resume(); break;
-      case 'unfollowSelected': if(currentScanner && request.users) { currentScanner.unfollow(request.users); } break;
+      case 'unfollowSelected':
+        if (request.users && request.users.length > 0) {
+          const csrfForUnfollow = await getCookie('csrftoken');
+          if (!csrfForUnfollow) { sendNotification("errorTitle", "LoginUnfollow"); break; }
+          // Scanner varsa onu kullan, yoksa standalone unfollow yap
+          if (currentScanner && currentScanner.csrfToken) {
+            currentScanner.unfollow(request.users);
+          } else {
+            standaloneUnfollow(request.users, csrfForUnfollow);
+          }
+        }
+        break;
 
             default:
         sendResponse({ success: false, error: t("unknownActionError") });

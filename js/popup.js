@@ -321,7 +321,7 @@ chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response)
     unfinderStatusText.textContent = t('scanStartMessage');
     
 
- chrome.storage.local.get(['lastScanResult', 'lastScanSummary'], ({ lastScanResult, lastScanSummary }) => {
+ chrome.storage.local.get(['lastScanResult', 'lastScanSummary', 'unfollowedIds'], ({ lastScanResult, lastScanSummary, unfollowedIds }) => {
     if (lastScanResult && lastScanResult.length > 0) {
       renderUnfollowerList(lastScanResult);
       updateSelectedCount();
@@ -334,6 +334,18 @@ chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response)
           .replace('{followers}', lastScanSummary.followers)
           .replace('{following}', lastScanSummary.following)
           .replace('{unfollowers}', lastScanSummary.unfollowers);
+      }
+      // Unfollow edilmiş hesapları yeşil yap ve seçilemez kıl
+      if (unfollowedIds && unfollowedIds.length > 0) {
+        unfollowedIds.forEach(id => {
+          const item = unfinderList.querySelector(`.unfinder-item[data-user-id="${id}"]`);
+          if (item) {
+            item.classList.add('unfollowed-success');
+            const cb = item.querySelector('.unfinder-item-checkbox');
+            if (cb) { cb.checked = false; cb.disabled = true; }
+          }
+        });
+        updateSelectedCount();
       }
     }
   });
@@ -348,11 +360,34 @@ chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response)
 
 
     if (response.updateInfo.hasUpdate) {
-      latestVersionEl.textContent = response.updateInfo.latestVersion;
-      updateNotification.style.display = 'flex';
+      const latestVer = response.updateInfo.latestVersion;
+      // Kullanıcı bu versiyonu zaten dismiss ettiyse gösterme
+      chrome.storage.local.get(['dismissedUpdateVersion'], ({ dismissedUpdateVersion }) => {
+        if (dismissedUpdateVersion === latestVer) return;
+        latestVersionEl.textContent = latestVer;
+        updateNotification.style.display = 'flex';
+      });
     }
   }
 });
+
+// Güncelleme bildirimini kapat (bu sürüm için)
+updateNotification.addEventListener('click', (e) => {
+  if (e.target.id === 'updateBtn') return; // Güncelle butonuna tıklandıysa kapat
+  // X ikonuna veya bildirime tıklandıysa dismiss et
+});
+
+const updateDismissBtn = document.createElement('button');
+updateDismissBtn.className = 'update-dismiss-btn';
+updateDismissBtn.innerHTML = '&times;';
+updateDismissBtn.title = 'Kapat';
+updateDismissBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const ver = latestVersionEl.textContent;
+  chrome.storage.local.set({ dismissedUpdateVersion: ver });
+  updateNotification.style.display = 'none';
+});
+updateNotification.appendChild(updateDismissBtn);
 
 
 
@@ -877,9 +912,12 @@ chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response)
           item.classList.remove('unfollowed-success', 'unfollowed-fail');
           if (success) {
             item.classList.add('unfollowed-success');
+            const cb = item.querySelector('.unfinder-item-checkbox');
+            if (cb) { cb.checked = false; cb.disabled = true; }
           } else {
             item.classList.add('unfollowed-fail');
           }
+          updateSelectedCount();
         }
       }
     }
