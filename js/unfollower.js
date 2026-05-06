@@ -194,6 +194,9 @@ export class UnfollowerScanner {
             return;
         }
         
+
+        this.stopScan = false;
+        
         for (let i = 0; i < usersToUnfollow.length; i++) {
             if (this.stopScan) break;
             const user = usersToUnfollow[i];
