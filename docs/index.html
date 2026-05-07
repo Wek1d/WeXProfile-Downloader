@@ -1,1023 +1,1003 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Download HD Instagram profile pictures, track unfollowers, analyze follower changes. Free Chrome & Edge extension for Instagram analytics and profile viewing.">
-    <meta name="keywords" content="instagram downloader, instagram profile picture, instagram unfollower tracker, instagram analytics, instagram follower tracker, chrome extension, edge extension">
-    
-        <!-- Google Search Console integrasyonuu. -->
-    <meta name="google-site-verification" content="o2wgialEXRp-SBdoocH6kjeZtubICui9zZsKUy0LxaY" />
-    
-    <title>WeXProfile - Instagram Profile Downloader & Unfollower Tracker</title>
-    
-    <link rel="icon" type="image/png" href="icon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-            --bg-dark: #0a0a0a;
-            --bg-card: rgba(255, 255, 255, 0.03);
-            --text: #ffffff;
-            --text-muted: #a0a0a0;
-            --glass: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-dark);
-            color: var(--text);
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-
-        /* Glassmorphism Effects */
-        .glass-card {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 2rem;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .glass-card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-5px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Animated Background */
-        .bg-gradient {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle at 20% 50%, rgba(240, 148, 51, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(188, 24, 136, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 50% 20%, rgba(220, 39, 67, 0.1) 0%, transparent 50%);
-            animation: gradientShift 15s ease infinite;
-        }
-
-        @keyframes gradientShift {
-            0%, 100% { transform: scale(1) rotate(0deg); }
-            50% { transform: scale(1.1) rotate(5deg); }
-        }
-
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-            background: rgba(10, 10, 10, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--glass-border);
-            transition: all 0.3s ease;
-        }
-
-        nav.scrolled {
-            background: rgba(10, 10, 10, 0.95);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-size: 1.5rem;
-            font-weight: 900;
-            background: var(--primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .logo img {
-            width: 40px;
-            height: 40px;
-            filter: drop-shadow(0 0 10px rgba(240, 148, 51, 0.5));
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: var(--text);
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--primary);
-            transition: width 0.3s ease;
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 8rem 2rem 4rem;
-            position: relative;
-        }
-
-        .hero-content {
-            max-width: 900px;
-            animation: fadeInUp 1s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .hero h1 {
-            font-size: clamp(2.5rem, 6vw, 4.5rem);
-            font-weight: 900;
-            margin-bottom: 1.5rem;
-            background: var(--primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1.2;
-        }
-
-        .hero p {
-            font-size: clamp(1.1rem, 2vw, 1.4rem);
-            color: var(--text-muted);
-            margin-bottom: 3rem;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .cta-buttons {
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 1.2rem 2.5rem;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.8rem;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 10px 30px rgba(240, 148, 51, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(240, 148, 51, 0.5);
-        }
-
-        .btn-secondary {
-            background: var(--glass);
-            color: var(--text);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(10px);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-3px);
-        }
-
-        /* Features Section */
-        .features {
-            padding: 6rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: clamp(2rem, 4vw, 3rem);
-            font-weight: 900;
-            margin-bottom: 1rem;
-            background: var(--primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .section-subtitle {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 1.2rem;
-            margin-bottom: 4rem;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .feature-card {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.6s ease;
-        }
-
-        .feature-card.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .feature-icon {
-            font-size: 3rem;
-            background: var(--primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 1rem;
-        }
-
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            font-weight: 700;
-        }
-
-        .feature-card p {
-            color: var(--text-muted);
-            line-height: 1.8;
-        }
-
-        /* Installation Guide Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(10px);
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--glass);
-            backdrop-filter: blur(30px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 3rem;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            animation: scaleIn 0.3s ease;
-        }
-
-        @keyframes scaleIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .modal-close {
-            float: right;
-            font-size: 2rem;
-            cursor: pointer;
-            color: var(--text-muted);
-            transition: color 0.3s ease;
-        }
-
-        .modal-close:hover {
-            color: var(--text);
-        }
-
-        .install-steps {
-            margin-top: 2rem;
-        }
-
-        .install-step {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 10px;
-        }
-
-        .step-number {
-            background: var(--primary);
-            color: white;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-
-        /* Download Section */
-        .download-section {
-            padding: 6rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .download-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .download-card {
-            padding: 2rem;
-            opacity: 0;
-            transform: scale(0.9);
-            transition: all 0.5s ease;
-        }
-
-        .download-card.visible {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .download-icon {
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .download-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .download-card p {
-            color: var(--text-muted);
-            margin-bottom: 2rem;
-        }
-
-        /* Stats Section */
-        .stats {
-            padding: 4rem 2rem;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid var(--glass-border);
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .stats-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 3rem;
-            text-align: center;
-        }
-
-        .stat-item {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s ease;
-        }
-
-        .stat-item.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .stat-number {
-            font-size: 3rem;
-            font-weight: 900;
-            background: var(--primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-        }
-
-        /* Footer */
-        footer {
-            padding: 4rem 2rem 2rem;
-            background: rgba(0, 0, 0, 0.5);
-            text-align: center;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .footer-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .footer-links a:hover {
-            color: var(--text);
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .social-links a {
-            color: var(--text);
-            font-size: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .social-links a:hover {
-            transform: translateY(-3px);
-            color: #f09433;
-        }
-
-        /* Mobile Menu */
-        .mobile-menu-btn {
-            display: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text);
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                position: fixed;
-                top: 0;
-                right: -100%;
-                width: 70%;
-                height: 100vh;
-                background: rgba(10, 10, 10, 0.98);
-                flex-direction: column;
-                padding: 5rem 2rem;
-                transition: right 0.3s ease;
-            }
-
-            .nav-links.active {
-                right: 0;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .cta-buttons {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .btn {
-                justify-content: center;
-            }
-        }
-
-        /* Scroll Reveal Animation */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease;
-        }
-
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        /* Firefox Gradient */
-.firefox-gradient {
-    background: linear-gradient(90deg, #FF7139 0%, #FFB200 100%); /* Firefox'un kendi turuncu/sarı tonları */
-    border: none;
-    color: white;
-}
-
-.firefox-gradient:hover {
-    background: linear-gradient(90deg, #FF9159 0%, #FFD200 100%);
-    color: white;
-}
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Download HD Instagram profile pictures, track unfollowers, analyze follower changes. Free Chrome & Edge extension for Instagram analytics and profile viewing.">
+  <meta name="keywords" content="instagram downloader, instagram profile picture, instagram unfollower tracker, instagram analytics, instagram follower tracker, chrome extension, edge extension">
+  <meta name="google-site-verification" content="o2wgialEXRp-SBdoocH6kjeZtubICui9zZsKUy0LxaY" />
+  <title>WeXProfile — Instagram Profile Downloader & Unfollower Tracker</title>
+  <link rel="icon" type="image/png" href="icon.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --ig: linear-gradient(135deg, #f09433 0%, #e6683c 22%, #dc2743 45%, #cc2366 72%, #bc1888 100%);
+      --ig-1: #f09433;
+      --ig-2: #bc1888;
+      --ink: #0c0b0f;
+      --ink-2: #16141c;
+      --ink-3: #211e2b;
+      --surface: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.07);
+      --text: #f0eef8;
+      --muted: #7a778a;
+      --accent: #ff6b6b;
+      --ff-display: 'DM Serif Display', serif;
+      --ff-body: 'DM Sans', sans-serif;
+      --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--ff-body);
+      background: var(--ink);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NOISE TEXTURE ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.6;
+    }
+
+    /* ── AMBIENT GLOW ── */
+    .ambient {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: 0;
+      animation: drift 20s ease-in-out infinite alternate;
+    }
+    .ambient-1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(240,148,51,0.12) 0%, transparent 70%);
+      top: -200px; left: -100px;
+    }
+    .ambient-2 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(188,24,136,0.1) 0%, transparent 70%);
+      bottom: 0; right: -100px;
+      animation-delay: -10s;
+    }
+    @keyframes drift {
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(40px, 30px) scale(1.1); }
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 1000;
+      padding: 1.2rem 0;
+      transition: all 0.4s var(--ease-expo);
+    }
+    nav.scrolled {
+      background: rgba(12,11,15,0.92);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 0.75rem;
+      text-decoration: none;
+      font-family: var(--ff-display);
+      font-size: 1.4rem;
+      background: var(--ig);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .logo img { width: 34px; height: 34px; filter: drop-shadow(0 0 12px rgba(240,148,51,0.4)); }
+
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      background: var(--ig);
+      color: #fff !important;
+      padding: 0.55rem 1.3rem;
+      border-radius: 100px;
+      font-size: 0.88rem !important;
+      font-weight: 600 !important;
+      transition: opacity 0.2s, transform 0.2s !important;
+    }
+    .nav-cta:hover { opacity: 0.85; transform: translateY(-1px) !important; }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .hamburger span {
+      width: 24px; height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 7rem 2rem 4rem;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    /* Big decorative circle behind hero text */
+    .hero::after {
+      content: '';
+      position: absolute;
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.03);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      max-width: 820px;
+      text-align: center;
+      position: relative;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 0.4rem 1rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s var(--ease-expo) 0.1s forwards;
+    }
+    .badge .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--ig-1);
+      animation: pulse 2s ease infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .hero h1 {
+      font-family: var(--ff-display);
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.9s var(--ease-expo) 0.2s forwards;
+    }
+    .hero h1 em {
+      font-style: italic;
+      background: var(--ig);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 2.5rem;
+      font-weight: 300;
+      opacity: 0;
+      animation: fadeUp 0.9s var(--ease-expo) 0.3s forwards;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.9s var(--ease-expo) 0.4s forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.9rem 1.8rem;
+      border-radius: 100px;
+      font-family: var(--ff-body);
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s var(--ease-expo);
+      position: relative;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .btn-ig {
+      background: var(--ig);
+      color: #fff;
+      box-shadow: 0 8px 32px rgba(220,39,67,0.25);
+    }
+    .btn-ig:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(220,39,67,0.4); }
+
+    .btn-ff {
+      background: linear-gradient(90deg, #FF7139, #FFB200);
+      color: #fff;
+      box-shadow: 0 8px 32px rgba(255,113,57,0.25);
+    }
+    .btn-ff:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(255,113,57,0.4); }
+
+    .btn-ghost {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+    }
+    .btn-ghost:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.15);
+      transform: translateY(-2px);
+    }
+
+    .btn-sm { padding: 0.65rem 1.3rem; font-size: 0.875rem; }
+
+    /* ── TICKER / STATS BAR ── */
+    .stats-bar {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+      padding: 2.5rem 2rem;
+    }
+    .stats-grid {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      text-align: center;
+    }
+    .stat-block { opacity: 0; transform: translateY(16px); transition: all 0.6s var(--ease-expo); }
+    .stat-block.in { opacity: 1; transform: translateY(0); }
+
+    .stat-val {
+      font-family: var(--ff-display);
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      background: var(--ig);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+    .stat-label { color: var(--muted); font-size: 0.88rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+
+    /* ── FEATURES ── */
+    .section {
+      position: relative;
+      z-index: 1;
+      padding: 7rem 2rem;
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      background: var(--ig);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+    }
+
+    .section-heading {
+      font-family: var(--ff-display);
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.2rem;
+    }
+    .section-heading em {
+      font-style: italic;
+      background: var(--ig);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .section-sub {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 480px;
+      font-weight: 300;
+      margin-bottom: 4rem;
+    }
+
+    /* Feature grid — 3+3 layout with one wide card */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .feat {
+      background: var(--ink-2);
+      padding: 2.5rem 2rem;
+      transition: background 0.3s;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s var(--ease-expo), transform 0.6s var(--ease-expo), background 0.3s;
+    }
+    .feat.in { opacity: 1; transform: translateY(0); }
+
+    .feat::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--ig);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .feat:hover::before { opacity: 0.04; }
+    .feat:hover { background: var(--ink-3); }
+
+    .feat-icon {
+      font-size: 1.8rem;
+      background: var(--ig);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1.2rem;
+      display: block;
+      position: relative;
+    }
+    .feat h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.7rem;
+      position: relative;
+    }
+    .feat p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.7;
+      font-weight: 300;
+      position: relative;
+    }
+
+    /* ── DOWNLOAD SECTION ── */
+    .download-section {
+      position: relative;
+      z-index: 1;
+      padding: 7rem 2rem;
+    }
+    .download-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    .browser-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-top: 3rem;
+    }
+
+    .browser-card {
+      background: var(--ink-2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      transition: all 0.35s var(--ease-expo);
+      opacity: 0;
+      transform: scale(0.96) translateY(10px);
+    }
+    .browser-card.in { opacity: 1; transform: scale(1) translateY(0); }
+    .browser-card:hover {
+      border-color: rgba(255,255,255,0.14);
+      transform: translateY(-4px);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+    }
+
+    .browser-icon { font-size: 2.8rem; line-height: 1; }
+    .browser-card h3 { font-size: 1.2rem; font-weight: 700; }
+    .browser-card p { color: var(--muted); font-size: 0.88rem; flex: 1; font-weight: 300; }
+
+    .badge-store {
+      display: inline-block;
+      padding: 0.25rem 0.7rem;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .badge-live { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+    .badge-soon { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(12px);
+      z-index: 2000;
+      place-items: center;
+    }
+    .modal-overlay.open { display: grid; }
+
+    .modal-box {
+      background: var(--ink-2);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 3rem;
+      max-width: 560px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      animation: scaleIn 0.35s var(--ease-expo);
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+    @keyframes scaleIn {
+      from { opacity:0; transform: scale(0.92); }
+      to   { opacity:1; transform: scale(1); }
+    }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 0.5rem;
+    }
+    .modal-close-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: 1.5rem;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .modal-close-btn:hover { background: var(--surface); color: var(--text); }
+
+    .steps { display: flex; flex-direction: column; gap: 0.8rem; margin-top: 2rem; }
+    .step {
+      display: flex; gap: 1rem; align-items: flex-start;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.2rem;
+    }
+    .step-num {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--ig);
+      color: #fff;
+      display: grid; place-items: center;
+      font-weight: 700; font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .step-body strong { display: block; margin-bottom: 0.3rem; font-size: 0.95rem; }
+    .step-body p, .step-body code {
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+    .step-body code {
+      background: rgba(255,255,255,0.05);
+      padding: 0.1em 0.4em;
+      border-radius: 4px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 3rem 2rem;
+      background: rgba(0,0,0,0.3);
+    }
+    .footer-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      text-align: center;
+    }
+    .footer-links { display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center; }
+    .footer-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.88rem;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--text); }
+
+    .social-row { display: flex; gap: 1.2rem; }
+    .social-row a {
+      color: var(--muted);
+      font-size: 1.2rem;
+      transition: all 0.2s;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      display: grid; place-items: center;
+    }
+    .social-row a:hover { color: var(--text); border-color: rgba(255,255,255,0.2); background: var(--surface); }
+
+    .footer-copy { color: var(--muted); font-size: 0.82rem; }
+    .footer-copy a { color: var(--ig-1); text-decoration: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .features-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 660px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; flex-direction: column; gap: 1.5rem; padding: 2rem; }
+      .nav-links.open {
+        display: flex;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(12,11,15,0.98);
+        backdrop-filter: blur(24px);
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+        font-size: 1.3rem;
+      }
+      .hamburger { display: flex; z-index: 1000; }
+      .hero-actions { flex-direction: column; align-items: stretch; }
+      .hero-actions .btn { justify-content: center; }
+    }
+
+    /* ── SCROLL REVEAL UTIL ── */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s var(--ease-expo), transform 0.7s var(--ease-expo); }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+  </style>
 </head>
 <body>
-    <div class="bg-gradient"></div>
 
-    <!-- Navigation -->
-    <nav id="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <img src="icon.png" alt="WeXProfile Logo">
-                <span>WeXProfile</span>
-            </div>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="#features">Features</a></li>
-                <li><a href="#download">Download</a></li>
-                <li><a href="https://github.com/Wek1d/WeXProfile-Downloader">GitHub</a></li>
-            </ul>
-            <div class="mobile-menu-btn" id="mobileMenuBtn">
-                <i class="fas fa-bars"></i>
-            </div>
-        </div>
-    </nav>
+<!-- Ambient lighting -->
+<div class="ambient ambient-1"></div>
+<div class="ambient ambient-2"></div>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Instagram Profile Downloader & Unfollower Tracker</h1>
-            <p>Download HD Instagram profile pictures, track unfollowers, analyze follower changes, and more. Free Chrome & Edge extension for ultimate Instagram analytics.</p>
-                        <div class="cta-buttons">
-                <a href="https://microsoftedge.microsoft.com/addons/detail/wexprofile-downloader/ijlpgfcingilmdaioiepclimhkccoaok" class="btn btn-primary primary-gradient" target="_blank">
-                    <i class="fab fa-edge"></i>
-                    Get for Microsoft Edge
-                </a>
-                <a href="https://addons.mozilla.org/addon/wexprofile-downloader/" class="btn btn-primary firefox-gradient" target="_blank">
-                    <i class="fab fa-firefox"></i> Get for Firefox
-                </a>
-                <a href="#" class="btn btn-secondary" id="manualDownloadBtn">
-                    <i class="fas fa-download"></i>
-                    Manual Download
-                </a>
-            </div>
-        </div>
-    </section>
+<!-- ── NAV ── -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a class="logo" href="#">
+      <img src="icon.png" alt="WeXProfile">
+      WeXProfile
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#download">Download</a></li>
+      <li><a href="https://github.com/Wek1d/WeXProfile-Downloader" target="_blank">GitHub</a></li>
+      <li><a href="#download" class="nav-cta">Get Extension</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
 
-    <!-- Stats Section -->
-    <section class="stats">
-        <div class="stats-container">
-            <div class="stat-item reveal">
-                <div class="stat-number" data-target="10000">0</div>
-                <div class="stat-label">Active Users</div>
-            </div>
-            <div class="stat-item reveal">
-                <div class="stat-number" data-target="50000">0</div>
-                <div class="stat-label">Downloads</div>
-            </div>
-            <div class="stat-item reveal">
-                <div class="stat-number" data-target="6">0</div>
-                <div class="stat-label">Languages</div>
-            </div>
-            <div class="stat-item reveal">
-                <div class="stat-number">3.3.5</div>
-                <div class="stat-label">Release version</div>
-            </div>
-        </div>
-    </section>
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="badge">
+      <span class="dot"></span>
+      Free & Open Source · v3.3.6
+    </div>
+    <h1>Your Instagram,<br><em>fully unlocked.</em></h1>
+    <p class="hero-sub">Download HD profile pictures, detect unfollowers, and track follower analytics — all from your browser. Zero data sent anywhere.</p>
+    <div class="hero-actions">
+      <a href="https://microsoftedge.microsoft.com/addons/detail/wexprofile-downloader/ijlpgfcingilmdaioiepclimhkccoaok" class="btn btn-ig" target="_blank">
+        <i class="fab fa-edge"></i> Get for Edge
+      </a>
+      <a href="https://addons.mozilla.org/addon/wexprofile-downloader/" class="btn btn-ff" target="_blank">
+        <i class="fab fa-firefox"></i> Get for Firefox
+      </a>
+      <button class="btn btn-ghost" id="manualInstallBtn">
+        <i class="fas fa-download"></i> Manual Install
+      </button>
+    </div>
+  </div>
+</section>
 
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <h2 class="section-title">Powerful Instagram Tools</h2>
-        <p class="section-subtitle">Everything you need for Instagram profile analysis and management</p>
-        
-        <div class="features-grid">
-            <div class="feature-card glass-card reveal">
-                <div class="feature-icon"><i class="fas fa-image"></i></div>
-                <h3>HD Profile Pictures</h3>
-                <p>Download Instagram profile pictures in full 1080x1080 HD resolution with one click.</p>
-            </div>
-            
-            <div class="feature-card glass-card reveal">
-                <div class="feature-icon"><i class="fas fa-user-minus"></i></div>
-                <h3>Unfollower Detection</h3>
-                <p>Discover who doesn't follow you back and manage your following list efficiently.</p>
-            </div>
-            
-            <div class="feature-card glass-card reveal">
-                <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
-                <h3>Follower Analytics</h3>
-                <p>Track follower changes over time with beautiful charts and detailed statistics.</p>
-            </div>
-            
-            <div class="feature-card glass-card reveal">
-                <div class="feature-icon"><i class="fas fa-download"></i></div>
-                <h3>Data Export</h3>
-                <p>Export profile data in JSON, CSV, or TXT formats for your records.</p>
-            </div>
-            
-            <div class="feature-card glass-card reveal">
-                <div class="feature-icon"><i class="fas fa-palette"></i></div>
-                <h3>Full Customization</h3>
-                <p>Choose from 5 themes, 9 fonts, and dark/light modes to match your style.</p>
-            </div>
-            
-            <div class="feature-card glass-card reveal">
-                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
-                <h3>Privacy First</h3>
-                <p>Zero data collection. All processing happens locally on your device.</p>
-            </div>
-        </div>
-    </section>
+<!-- ── STATS BAR ── -->
+<div class="stats-bar">
+  <div class="stats-grid">
+    <div class="stat-block">
+      <div class="stat-val" id="stat-downloads">—</div>
+      <div class="stat-label">GitHub Downloads</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-val" id="stat-stars">—</div>
+      <div class="stat-label">GitHub Stars</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-val">6</div>
+      <div class="stat-label">Languages</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-val">3.3.6</div>
+      <div class="stat-label">Current Version</div>
+    </div>
+  </div>
+</div>
 
-    <!-- Download Section -->
-    <section class="download-section" id="download">
-        <h2 class="section-title">Get WeXProfile Now</h2>
-        <p class="section-subtitle">Available on Microsoft Edge Add-ons Store and manual download</p>
-        
-                <div class="download-options">
-            <div class="download-card glass-card reveal">
-                <div class="download-icon">
-                    <i class="fab fa-edge" style="color: #0078D7;"></i>
-                </div>
-                <h3>Microsoft Edge</h3>
-                <p>Install directly from Edge Add-ons Store</p>
-                <a href="https://microsoftedge.microsoft.com/addons/detail/wexprofile-downloader/ijlpgfcingilmdaioiepclimhkccoaok" class="btn btn-primary" target="_blank">
-                    <i class="fas fa-external-link-alt"></i>
-                    Install Now
-                </a>
-            </div>
-            
-            <div class="download-card glass-card reveal">
-                <div class="download-icon">
-                    <i class="fab fa-firefox" style="color: #FF7139;"></i>
-                </div>
-                <h3>Firefox</h3>
-                <p>Install directly from Mozilla Add-ons Store</p>
-                <a href="https://addons.mozilla.org/addon/wexprofile-downloader/" class="btn btn-primary" target="_blank">
-                    <i class="fas fa-external-link-alt"></i>
-                    Install Now
-                </a>
-            </div>
-            <div class="download-card glass-card reveal">
-                <div class="download-icon">
-                    <i class="fab fa-chrome" style="color: #4285F4;"></i>
-                </div>
-                <h3>Google Chrome</h3>
-                <p>Coming soon to Chrome Web Store</p>
-                <a href="#" class="btn btn-secondary" id="chromeManualBtn">
-                    <i class="fas fa-download"></i>
-                    Manual Install
-                </a>
-            </div>
-            
-            <div class="download-card glass-card reveal">
-                <div class="download-icon">
-                    <i class="fab fa-opera" style="color: #FF1B2D;"></i>
-                </div>
-                <h3>Opera / Brave</h3>
-                <p>Compatible with all Chromium browsers</p>
-                <a href="#" class="btn btn-secondary" id="operaManualBtn">
-                    <i class="fas fa-download"></i>
-                    Manual Install
-                </a>
-            </div>
-        </div>
-    </section>
+<!-- ── FEATURES ── -->
+<div class="section" id="features">
+  <span class="eyebrow reveal">What it does</span>
+  <h2 class="section-heading reveal">Built for <em>power users.</em></h2>
+  <p class="section-sub reveal">Every feature you need for Instagram analysis, designed to be fast, private, and effortless.</p>
 
-    <!-- Installation Guide Modal -->
-    <div class="modal" id="installModal">
-        <div class="modal-content">
-            <span class="modal-close" id="modalClose">&times;</span>
-            <h2 style="margin-bottom: 1rem;">Manual Installation Guide</h2>
-            <p style="color: var(--text-muted); margin-bottom: 2rem;">Follow these steps to install WeXProfile manually</p>
-            
-            <div class="install-steps">
-                <div class="install-step">
-                    <div class="step-number">1</div>
-                    <div>
-                        <strong>Download the Extension</strong>
-                        <p style="color: var(--text-muted); margin-top: 0.5rem;">
-                            <a href="https://github.com/Wek1d/WeXProfile-Downloader/releases/latest/download/WeXProfile-Downloader.zip" 
-                               class="btn btn-primary" 
-                               style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.9rem; margin-top: 0.5rem;"
-                               download>
-                                <i class="fas fa-download"></i>
-                                Download ZIP
-                            </a>
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="install-step">
-                    <div class="step-number">2</div>
-                    <div>
-                        <strong>Extract the ZIP file</strong>
-                        <p style="color: var(--text-muted); margin-top: 0.5rem;">Unzip the downloaded file to a folder on your computer.</p>
-                    </div>
-                </div>
-                
-                <div class="install-step">
-                    <div class="step-number">3</div>
-                    <div>
-                        <strong>Open Extensions Page</strong>
-                        <p style="color: var(--text-muted); margin-top: 0.5rem;">
-                            Navigate to:<br>
-                            • Chrome: <code>chrome://extensions</code><br>
-                            • Edge: <code>edge://extensions</code><br>
-                            • Opera: <code>opera://extensions</code>
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="install-step">
-                    <div class="step-number">4</div>
-                    <div>
-                        <strong>Enable Developer Mode</strong>
-                        <p style="color: var(--text-muted); margin-top: 0.5rem;">Toggle the "Developer mode" switch in the top right corner.</p>
-                    </div>
-                </div>
-                
-                <div class="install-step">
-                    <div class="step-number">5</div>
-                    <div>
-                        <strong>Load Unpacked Extension</strong>
-                        <p style="color: var(--text-muted); margin-top: 0.5rem;">Click "Load unpacked" and select the extracted folder.</p>
-                    </div>
-                </div>
-                
-                <div class="install-step">
-                    <div class="step-number">6</div>
-                    <div>
-                        <strong>Done!</strong>
-                        <p style="color: var(--text-muted); margin-top: 0.5rem;">WeXProfile is now installed and ready to use on Instagram!</p>
-                    </div>
-                </div>
-            </div>
+  <div class="features-grid">
+    <div class="feat">
+      <span class="feat-icon"><i class="fas fa-image"></i></span>
+      <h3>HD Profile Pictures</h3>
+      <p>Download any public Instagram profile picture in full 1080×1080 resolution with a single click.</p>
+    </div>
+    <div class="feat">
+      <span class="feat-icon"><i class="fas fa-user-minus"></i></span>
+      <h3>Unfollower Detection</h3>
+      <p>See exactly who stopped following you back and unfollow them in bulk — with smart rate limiting for account safety.</p>
+    </div>
+    <div class="feat">
+      <span class="feat-icon"><i class="fas fa-chart-line"></i></span>
+      <h3>Follower Analytics</h3>
+      <p>Track gains and losses over time with interactive charts. Spot trends before they happen.</p>
+    </div>
+    <div class="feat">
+      <span class="feat-icon"><i class="fas fa-file-export"></i></span>
+      <h3>Data Export</h3>
+      <p>Save your profile data as JSON, CSV or TXT for offline analysis or record keeping.</p>
+    </div>
+    <div class="feat">
+      <span class="feat-icon"><i class="fas fa-palette"></i></span>
+      <h3>Full Customization</h3>
+      <p>5 color themes, 9 font families, and dark/light mode. Make it yours.</p>
+    </div>
+    <div class="feat">
+      <span class="feat-icon"><i class="fas fa-lock"></i></span>
+      <h3>Privacy First</h3>
+      <p>Zero external servers. All processing happens locally in your browser. Your data stays yours.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── DOWNLOAD ── -->
+<div class="download-section" id="download">
+  <div class="download-inner">
+    <span class="eyebrow reveal">Get started</span>
+    <h2 class="section-heading reveal">Pick your <em>browser.</em></h2>
+    <p class="section-sub reveal">Works with Edge, Firefox, Chrome, Opera, Brave, and any Chromium-based browser.</p>
+
+    <div class="browser-cards">
+
+      <div class="browser-card">
+        <div class="browser-icon" style="color:#0078D7;"><i class="fab fa-edge"></i></div>
+        <div>
+          <span class="badge-store badge-live">Live on Store</span>
         </div>
+        <h3>Microsoft Edge</h3>
+        <p>Install directly from Edge Add-ons Store. Automatic updates included.</p>
+        <a href="https://microsoftedge.microsoft.com/addons/detail/wexprofile-downloader/ijlpgfcingilmdaioiepclimhkccoaok"
+           class="btn btn-ig btn-sm" target="_blank">
+          <i class="fas fa-external-link-alt"></i> Install Now
+        </a>
+      </div>
+
+      <div class="browser-card">
+        <div class="browser-icon" style="color:#FF7139;"><i class="fab fa-firefox-browser"></i></div>
+        <div>
+          <span class="badge-store badge-live">Live on Store</span>
+        </div>
+        <h3>Firefox</h3>
+        <p>Install directly from Mozilla Add-ons. Reviewed and approved by Mozilla.</p>
+        <a href="https://addons.mozilla.org/addon/wexprofile-downloader/"
+           class="btn btn-ff btn-sm" target="_blank">
+          <i class="fas fa-external-link-alt"></i> Install Now
+        </a>
+      </div>
+
+      <div class="browser-card">
+        <div class="browser-icon" style="color:#4285F4;"><i class="fab fa-chrome"></i></div>
+        <div>
+          <span class="badge-store badge-soon">Chrome Store — Soon</span>
+        </div>
+        <h3>Google Chrome</h3>
+        <p>Chrome Web Store submission in progress. Use manual install for now.</p>
+        <button class="btn btn-ghost btn-sm" id="chromeBtn">
+          <i class="fas fa-download"></i> Manual Install
+        </button>
+      </div>
+
+      <div class="browser-card">
+        <div class="browser-icon" style="color:#FF1B2D;"><i class="fab fa-opera"></i></div>
+        <div>
+          <span class="badge-store badge-soon">Chromium Compatible</span>
+        </div>
+        <h3>Opera · Brave · Arc</h3>
+        <p>All Chromium-based browsers are fully supported via manual install.</p>
+        <button class="btn btn-ghost btn-sm" id="operaBtn">
+          <i class="fas fa-download"></i> Manual Install
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL ── -->
+<div class="modal-overlay" id="modal" role="dialog" aria-modal="true" aria-label="Manual Installation Guide">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <h2 style="font-family:var(--ff-display); font-size:1.8rem; margin-bottom:0.2rem;">Manual Install</h2>
+        <p style="color:var(--muted); font-size:0.9rem;">Takes about 2 minutes</p>
+      </div>
+      <button class="modal-close-btn" id="modalClose" aria-label="Close">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-links">
-            <a href="https://github.com/Wek1d/WeXProfile-Downloader">GitHub</a>
-            <a href="https://github.com/Wek1d/WeXProfile-Downloader/issues">Report Bug</a>
-            <a href="/cdn-cgi/l/email-protection#eb928a998f8ad3dedad9ab8c868a8287c5888486">Contact (<span class="__cf_email__" data-cfemail="81f8e0f3e5e0b9b4b0b3c1e6ece0e8edafe2eeec">[email&#160;protected]</span>)</a>
-            <a href="https://github.com/Wek1d/WeXProfile-Downloader/blob/main/LICENSE">License</a>
-            <a href="https://github.com/Wek1d/WeXProfile-Downloader/releases">Changelog</a>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <strong>Download the ZIP</strong>
+          <p style="margin-bottom:0.7rem;">Get the latest release from GitHub.</p>
+          <a href="https://github.com/Wek1d/WeXProfile-Downloader/releases/latest/download/WeXProfile-Downloader.zip"
+             class="btn btn-ig btn-sm" download>
+            <i class="fas fa-download"></i> Download ZIP
+          </a>
         </div>
-        
-                <div class="social-links">
-            <a href="https://github.com/Wek1d" target="_blank"><i class="fab fa-github"></i></a>
-            <a href="https://addons.mozilla.org/addon/wexprofile-downloader/" target="_blank"><i class="fab fa-firefox"></i></a>
-            <a href="https://microsoftedge.microsoft.com/addons/detail/wexprofile-downloader/ijlpgfcingilmdaioiepclimhkccoaok" target="_blank"><i class="fab fa-edge"></i></a>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <strong>Extract the ZIP</strong>
+          <p>Unzip to any folder on your computer.</p>
         </div>
-        
-        <p style="color: var(--text-muted); margin-top: 2rem;">
-            Made with ❤️ by <a href="https://github.com/Wek1d" style="color: #f09433;">Wek1d</a>
-        </p>
-        <p style="color: var(--text-muted); margin-top: 0.5rem; font-size: 0.9rem;">
-            Not affiliated with Instagram or Meta Platforms, Inc.
-        </p>
-    </footer>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <strong>Open Extensions Page</strong>
+          <p>
+            Chrome: <code>chrome://extensions</code><br>
+            Edge: <code>edge://extensions</code><br>
+            Opera: <code>opera://extensions</code>
+          </p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <strong>Enable Developer Mode</strong>
+          <p>Toggle the "Developer mode" switch (top-right corner).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <strong>Load Unpacked</strong>
+          <p>Click "Load unpacked" and select the extracted folder.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <strong>Done! 🎉</strong>
+          <p>Open Instagram and click the WeXProfile icon to get started.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-        // Smooth Scroll
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-inner">
+    <a class="logo" href="#" style="font-size:1.2rem;">
+      <img src="icon.png" alt="WeXProfile" style="width:28px;height:28px;">
+      WeXProfile
+    </a>
+    <div class="footer-links">
+      <a href="https://github.com/Wek1d/WeXProfile-Downloader" target="_blank">GitHub</a>
+      <a href="https://github.com/Wek1d/WeXProfile-Downloader/issues" target="_blank">Report a Bug</a>
+      <a href="https://github.com/Wek1d/WeXProfile-Downloader/blob/main/LICENSE" target="_blank">License</a>
+      <a href="https://github.com/Wek1d/WeXProfile-Downloader/releases" target="_blank">Changelog</a>
+    </div>
+    <div class="social-row">
+      <a href="https://github.com/Wek1d" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+      <a href="https://addons.mozilla.org/addon/wexprofile-downloader/" target="_blank" aria-label="Firefox"><i class="fab fa-firefox-browser"></i></a>
+      <a href="https://microsoftedge.microsoft.com/addons/detail/wexprofile-downloader/ijlpgfcingilmdaioiepclimhkccoaok" target="_blank" aria-label="Edge"><i class="fab fa-edge"></i></a>
+    </div>
+    <p class="footer-copy">
+      Made with ❤️ by <a href="https://github.com/Wek1d" target="_blank">Wek1d</a> &nbsp;·&nbsp;
+      Not affiliated with Instagram or Meta Platforms, Inc.
+    </p>
+  </div>
+</footer>
+
+<script>
+  // ── NAV SCROLL ──
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive: true });
+
+  // ── HAMBURGER ──
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('open');
+    const spans = hamburger.querySelectorAll('span');
+    const isOpen = navLinks.classList.contains('open');
+    spans[0].style.transform = isOpen ? 'translateY(7px) rotate(45deg)' : '';
+    spans[1].style.opacity = isOpen ? '0' : '';
+    spans[2].style.transform = isOpen ? 'translateY(-7px) rotate(-45deg)' : '';
+  });
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    hamburger.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+  }));
+
+  // ── MODAL ──
+  const modal = document.getElementById('modal');
+  const openModal = () => { modal.classList.add('open'); document.body.style.overflow = 'hidden'; };
+  const closeModal = () => { modal.classList.remove('open'); document.body.style.overflow = ''; };
+
+  document.getElementById('manualInstallBtn').addEventListener('click', openModal);
+  document.getElementById('chromeBtn').addEventListener('click', openModal);
+  document.getElementById('operaBtn').addEventListener('click', openModal);
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  // ── INTERSECTION OBSERVER ──
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.stat-block, .feat, .browser-card, .reveal').forEach((el, i) => {
+    el.style.transitionDelay = (i % 4) * 0.08 + 's';
+    io.observe(el);
+  });
+
+  // ── COUNTER ANIMATION ──
+  function animateCount(el, target, suffix = '') {
+    const duration = 1800;
+    const start = performance.now();
+    const update = (now) => {
+      const p = Math.min((now - start) / duration, 1);
+      // ease out expo
+      const ease = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
+      const val = Math.floor(ease * target);
+      el.textContent = val.toLocaleString() + suffix;
+      if (p < 1) requestAnimationFrame(update);
+    };
+    requestAnimationFrame(update);
+  }
+
+  // ── GITHUB STATS (live) ──
+  async function fetchGitHubStats() {
+    try {
+      // Stars
+      const repoRes = await fetch('https://api.github.com/repos/Wek1d/WeXProfile-Downloader');
+      if (repoRes.ok) {
+        const repo = await repoRes.json();
+        const starsEl = document.getElementById('stat-stars');
+        if (repo.stargazers_count !== undefined) {
+          const starCount = repo.stargazers_count;
+          // Animate when visible
+          const starObserver = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+              if (e.isIntersecting) {
+                animateCount(starsEl, starCount);
+                starObserver.disconnect();
+              }
             });
-        });
+          }, { threshold: 0.5 });
+          starObserver.observe(starsEl);
+        }
+      }
+    } catch(e) {
+      document.getElementById('stat-stars').textContent = '★';
+    }
 
-        // Navbar Scroll Effect
-        window.addEventListener('scroll', () => {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
+    try {
+      // Downloads from all releases
+      const relRes = await fetch('https://api.github.com/repos/Wek1d/WeXProfile-Downloader/releases');
+      if (relRes.ok) {
+        const releases = await relRes.json();
+        let total = 0;
+        releases.forEach(r => r.assets.forEach(a => { total += a.download_count; }));
+        const dlEl = document.getElementById('stat-downloads');
+        const dlObserver = new IntersectionObserver(entries => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              animateCount(dlEl, total);
+              dlObserver.disconnect();
             }
-        });
-
-        // Scroll Reveal Animation
-        const reveals = document.querySelectorAll('.reveal');
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                }
-            });
-        }, { threshold: 0.1 });
-
-        reveals.forEach(reveal => revealObserver.observe(reveal));
-
-        // Feature Cards Animation
-        const featureCards = document.querySelectorAll('.feature-card');
-        const cardObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => {
-                        entry.target.classList.add('visible');
-                    }, index * 100);
-                }
-            });
-        }, { threshold: 0.1 });
-
-        featureCards.forEach(card => cardObserver.observe(card));
-
-        // Download Cards Animation
-        const downloadCards = document.querySelectorAll('.download-card');
-        const downloadObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => {
-                        entry.target.classList.add('visible');
-                    }, index * 150);
-                }
-            });
-        }, { threshold: 0.1 });
-
-        downloadCards.forEach(card => downloadObserver.observe(card));
-
-        // Stats Counter Animation
-        const statItems = document.querySelectorAll('.stat-item');
-        const statsObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    const counter = entry.target.querySelector('.stat-number');
-                    const target = parseInt(counter.getAttribute('data-target'));
-                    
-                    if (target) {
-                        animateCounter(counter, target);
-                    }
-                }
-            });
+          });
         }, { threshold: 0.5 });
+        dlObserver.observe(dlEl);
+      }
+    } catch(e) {
+      document.getElementById('stat-downloads').textContent = '—';
+    }
+  }
 
-        statItems.forEach(item => statsObserver.observe(item));
-
-        function animateCounter(element, target) {
-            let current = 0;
-            const increment = target / 100;
-            const duration = 2000;
-            const stepTime = duration / 100;
-
-            const timer = setInterval(() => {
-                current += increment;
-                if (current >= target) {
-                    element.textContent = target.toLocaleString();
-                    clearInterval(timer);
-                } else {
-                    element.textContent = Math.floor(current).toLocaleString();
-                }
-            }, stepTime);
-        }
-
-        // Mobile Menu Toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const navLinks = document.getElementById('navLinks');
-
-        mobileMenuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            const icon = mobileMenuBtn.querySelector('i');
-            icon.classList.toggle('fa-bars');
-            icon.classList.toggle('fa-times');
-        });
-
-        // Close mobile menu when clicking a link
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-                const icon = mobileMenuBtn.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            });
-        });
-
-        // Modal Functionality
-        const modal = document.getElementById('installModal');
-        const modalClose = document.getElementById('modalClose');
-        const manualDownloadBtn = document.getElementById('manualDownloadBtn');
-        const chromeManualBtn = document.getElementById('chromeManualBtn');
-        const operaManualBtn = document.getElementById('operaManualBtn');
-
-        function openModal() {
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal() {
-            modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-
-        manualDownloadBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            openModal();
-        });
-
-        chromeManualBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            openModal();
-        });
-
-        operaManualBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            openModal();
-        });
-
-        modalClose.addEventListener('click', closeModal);
-
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeModal();
-            }
-        });
-
-        // Keyboard navigation for modal
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && modal.classList.contains('active')) {
-                closeModal();
-            }
-        });
-
-        // Parallax effect for hero section
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const heroContent = document.querySelector('.hero-content');
-            if (heroContent) {
-                heroContent.style.transform = `translateY(${scrolled * 0.3}px)`;
-                heroContent.style.opacity = 1 - (scrolled * 0.001);
-            }
-        });
-
-        // Add loading animation
-        window.addEventListener('load', () => {
-            document.body.style.opacity = '0';
-            setTimeout(() => {
-                document.body.style.transition = 'opacity 0.5s ease';
-                document.body.style.opacity = '1';
-            }, 100);
-        });
-    </script>
+  fetchGitHubStats();
+</script>
 </body>
 </html>
