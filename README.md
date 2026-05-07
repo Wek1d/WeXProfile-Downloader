@@ -43,7 +43,7 @@ It allows you to view and download HD profile photos, analyze user statistics, a
 | Category | Details |
 | :--- | :--- |
 | **Total Downloads** | ![GitHub All Releases](https://img.shields.io/github/downloads/Wek1d/WeXProfile-Downloader/total?style=flat-square&color=blue) |
-| **Current Version** | v3.3.4 |
+| **Current Version** | v3.3.6 |
 | **License** | MIT |
 | **Main Tech** | Vanilla JavaScript / Manifest V3 |
 
@@ -98,7 +98,7 @@ It allows you to view and download HD profile photos, analyze user statistics, a
 
 ## Changelog
 
-### Version 3.3.4 (Latest)
+### Version 3.3.6 (Latest)
 - **New Feature:** Clicking a username in the unfollower list now opens their profile in a **background tab**, keeping the extension popup open for a smoother workflow.
 - **Improved UI:** Added a **frosted glass backdrop** to the scan settings panel and removed global scrollbars for a cleaner aesthetic.
 - **Improved UI:** The progress bar now dynamically follows the active color theme.
