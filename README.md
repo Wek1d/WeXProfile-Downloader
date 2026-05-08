@@ -23,8 +23,8 @@
   <a href="https://microsoftedge.microsoft.com/addons/detail/wexprofile-downloader/ijlpgfcingilmdaioiepclimhkccoaok">
     <img src="https://img.shields.io/badge/Edge-Available-0078D7?style=flat-square&logo=microsoft-edge" alt="Microsoft Edge"/>
   </a>
-  <a href="#manual-installation-chrome-opera-brave-edge">
-  <img src="https://img.shields.io/badge/Chrome-Pending_Review-FFA500?style=flat-square&logo=googlechrome&logoColor=white" alt="Chrome Web Store Pending"/>
+  <a href="https://chromewebstore.google.com/detail/wexprofile-downloader/ohbajlehmgjdhhfaejpeobfipomhjfoh">
+  <img src="https://img.shields.io/badge/Chrome-Available-4285F4?style=flat-square&logo=googlechrome&logoColor=white" alt="Chrome Web Store"/>
 </a>
   <a href="https://addons.mozilla.org/addon/wexprofile-downloader/">
     <img src="https://img.shields.io/badge/Firefox-Available-FF7139?style=flat-square&logo=firefox" alt="Firefox"/>
@@ -34,7 +34,6 @@
   </a>
 </p>
 
-> **⚠️ Note for Chrome Users:** The extension is currently undergoing an extended review process by the Chrome Web Store due to its advanced features. You can still easily install it via the **Manual Installation** steps below! 🚀
 ---
 
 ## Overview
@@ -77,12 +76,22 @@ It allows you to view and download HD profile photos, analyze user statistics, a
 
 ## Installation
 
-### Microsoft Edge (Recommended)
+### Microsoft Edge
 1. Visit the [Edge Add-ons Store](https://microsoftedge.microsoft.com/addons/detail/wexprofile-downloader/ijlpgfcingilmdaioiepclimhkccoaok)
 2. Click **Get**
 3. Install and navigate to Instagram
 
-### Manual Installation (Chrome, Opera, Brave, Edge)
+### Google Chrome
+1. Visit the [Chrome Web Store](https://chromewebstore.google.com/detail/wexprofile-downloader/ohbajlehmgjdhhfaejpeobfipomhjfoh)
+2. Click **Add to Chrome**
+3. Install and navigate to Instagram
+
+### Firefox
+1. Visit [Mozilla Add-ons](https://addons.mozilla.org/addon/wexprofile-downloader/)
+2. Click **Add to Firefox**
+3. Install and navigate to Instagram
+
+### Manual Installation (Opera, Brave, Arc, or any Chromium browser)
 1. Download the [latest release](https://github.com/Wek1d/WeXProfile-Downloader/releases/latest)
 2. Extract the ZIP file
 3. Open your browser's extensions page (`chrome://extensions`)

@@ -660,6 +660,9 @@
       <a href="https://microsoftedge.microsoft.com/addons/detail/wexprofile-downloader/ijlpgfcingilmdaioiepclimhkccoaok" class="btn btn-ig" target="_blank">
         <i class="fab fa-edge"></i> Get for Edge
       </a>
+      <a href="https://chromewebstore.google.com/detail/wexprofile-downloader/ohbajlehmgjdhhfaejpeobfipomhjfoh" class="btn" target="_blank" style="background:linear-gradient(135deg,#4285F4,#34A853,#FBBC05,#EA4335);color:#fff;box-shadow:0 8px 32px rgba(66,133,244,0.25);">
+        <i class="fab fa-chrome"></i> Get for Chrome
+      </a>
       <a href="https://addons.mozilla.org/addon/wexprofile-downloader/" class="btn btn-ff" target="_blank">
         <i class="fab fa-firefox"></i> Get for Firefox
       </a>
@@ -770,13 +773,14 @@
       <div class="browser-card">
         <div class="browser-icon" style="color:#4285F4;"><i class="fab fa-chrome"></i></div>
         <div>
-          <span class="badge-store badge-soon">Chrome Store — Soon</span>
+          <span class="badge-store badge-live">Live on Store</span>
         </div>
         <h3>Google Chrome</h3>
-        <p>Chrome Web Store submission in progress. Use manual install for now.</p>
-        <button class="btn btn-ghost btn-sm" id="chromeBtn">
-          <i class="fas fa-download"></i> Manual Install
-        </button>
+        <p>Install directly from the Chrome Web Store. Automatic updates included.</p>
+        <a href="https://chromewebstore.google.com/detail/wexprofile-downloader/ohbajlehmgjdhhfaejpeobfipomhjfoh"
+           class="btn btn-ghost btn-sm" target="_blank" style="background:linear-gradient(135deg,#4285F4,#34A853,#FBBC05,#EA4335);color:#fff;border:none;">
+          <i class="fas fa-external-link-alt"></i> Install Now
+        </a>
       </div>
 
       <div class="browser-card">
@@ -917,7 +921,6 @@
   const closeModal = () => { modal.classList.remove('open'); document.body.style.overflow = ''; };
 
   document.getElementById('manualInstallBtn').addEventListener('click', openModal);
-  document.getElementById('chromeBtn').addEventListener('click', openModal);
   document.getElementById('operaBtn').addEventListener('click', openModal);
   document.getElementById('modalClose').addEventListener('click', closeModal);
   modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
