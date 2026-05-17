@@ -420,56 +420,62 @@ async function fetchProfileData(url) {
 }
 
 async function getHdProfilePhotoUrl(instagramUserId) {
-  const url = `https://i.instagram.com/api/v1/users/${instagramUserId}/info/`;
+  
   try {
-    const out = await fetchWithUARetry(url);
-    const user = out.user;
-    if (!user) throw new Error("Kullanıcı verisi yok");
-
-    if (user.hd_profile_pic_url_info?.url) {
-      return user.hd_profile_pic_url_info.url;
+    const out = await fetchWithUARetry(`https://i.instagram.com/api/v1/users/${instagramUserId}/info/`);
+    const user = out?.user;
+    if (user) {
+      if (user.hd_profile_pic_url_info?.url) return user.hd_profile_pic_url_info.url;
+      if (user.hd_profile_pic_versions?.length) {
+        const sorted = [...user.hd_profile_pic_versions].sort((a, b) => (b.width || 0) - (a.width || 0));
+        if (sorted[0]?.url) return sorted[0].url;
+      }
+      if (user.profile_pic_url) return _upscaleInstagramUrl(user.profile_pic_url);
     }
+  } catch (_) { /* devam */ }
 
-    if (user.hd_profile_pic_versions?.length) {
-      const sorted = [...user.hd_profile_pic_versions].sort(
-        (a, b) => (b.width || 0) - (a.width || 0)
+  
+  try {
+    const { cachedProfile } = await chrome.storage.local.get('cachedProfile');
+    if (cachedProfile?.username) {
+      const out2 = await fetchWithUARetry(
+        `https://i.instagram.com/api/v1/users/web_profile_info/?username=${cachedProfile.username}`
       );
-      if (sorted[0]?.url) return sorted[0].url;
+      const user2 = out2?.data?.user;
+      if (user2?.profile_pic_url) return _upscaleInstagramUrl(user2.profile_pic_url);
     }
+  } catch (_) { /* devam */ }
 
-
-    if (user.profile_pic_url) {
-      const biggerUrl = user.profile_pic_url
-        .replace(/\/s\d+x\d+\//, '/s1080x1080/')
-        .replace(/\/vp\/[^/]+\//, '/'); 
-      
-      try {
-        const testResp = await fetch(biggerUrl, { method: 'HEAD', mode: 'cors' });
-        if (testResp.ok) return biggerUrl;
-      } catch (_) { /* ignore */ }
-
-      return user.profile_pic_url;
+  
+  const { cachedProfile } = await chrome.storage.local.get('cachedProfile');
+  if (cachedProfile?.profilePicUrlForPreview) {
+    
+    if (cachedProfile.profilePicUrlForPreview.startsWith('data:')) {
+      return cachedProfile.profilePicUrlForPreview;
     }
-
-    throw new Error("Hiçbir profil fotoğrafı URL'si bulunamadı.");
-  } catch (error) {
-    console.error("WeXProfile Hata: HD fotoğraf URL'si alınamadı.", error);
-    throw error;
+    return _upscaleInstagramUrl(cachedProfile.profilePicUrlForPreview);
   }
+
+  throw new Error("Hiçbir profil fotoğrafı URL'si bulunamadı.");
+}
+
+function _upscaleInstagramUrl(url) {
+  
+  return url
+    .replace(/\/s\d+x\d+\//, '/s1080x1080/')
+    .replace(/\/vp\/[^/]+\//, '/');
 }
 
 async function openHdProfilePhoto() {
   const { cachedProfile } = await chrome.storage.local.get('cachedProfile');
-  if (cachedProfile?.id) {
-    try {
-      const hdUrl = await getHdProfilePhotoUrl(cachedProfile.id);
-      chrome.tabs.create({ url: hdUrl });
-    } catch (error) {
-      console.error("HD fotoğraf açılırken hata:", error);
-      sendNotification("errorTitle", "openHdPhotoError");
-    }
-  } else {
-    sendNotification("errorTitle", "noCachedDataError");
+  if (!cachedProfile?.id) { sendNotification("errorTitle", "noCachedDataError"); return; }
+  try {
+    const hdUrl = await getHdProfilePhotoUrl(cachedProfile.id);
+    // data: URL'leri doğrudan sekme URL'si olarak kullanılabilir (Chrome/Edge destekler)
+    chrome.tabs.create({ url: hdUrl });
+  } catch (error) {
+    console.error("HD fotoğraf açılırken hata:", error);
+    sendNotification("errorTitle", "openHdPhotoError");
   }
 }
 
