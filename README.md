@@ -113,7 +113,12 @@ It allows you to view and download HD profile photos, analyze user statistics, a
 
 ## Changelog
 
-### Version 3.3.6 (Latest)
+### Version 3.3.7 (Latest)
+- **Stability Fix:** Fully optimized and stabilized the background communication layer after the recent Instagram API structural changes.
+- **Code Optimization:** Cleaned up redundant logic and refactored core loops, resulting in a significantly lighter extension footprint and faster execution.
+- **Performance Improvements:** Fixed intermittent lag and potential memory leaks during long-running unfollower scans.
+
+### Version 3.3.6 
 - **New Feature:** Clicking a username in the unfollower list now opens their profile in a **background tab**, keeping the extension popup open for a smoother workflow.
 - **Improved UI:** Added a **frosted glass backdrop** to the scan settings panel and removed global scrollbars for a cleaner aesthetic.
 - **Improved UI:** The progress bar now dynamically follows the active color theme.
