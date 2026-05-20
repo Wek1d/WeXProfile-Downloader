@@ -20,6 +20,9 @@
   <a href="https://github.com/Wek1d/WeXProfile-Downloader/releases">
     <img src="https://img.shields.io/github/downloads/Wek1d/WeXProfile-Downloader/total?style=flat-square&logo=github&color=blue" alt="Total Downloads"/>
   </a>
+  <a href="https://chromewebstore.google.com/detail/wexprofile-downloader/ohbajlehmgjdhhfaejpeobfipomhjfoh">
+    <img src="https://img.shields.io/chrome-web-store/users/ohbajlehmgjdhhfaejpeobfipomhjfoh?style=flat-square&color=blue&label=Chrome%20Users""/>
+  </a>
   <a href="https://microsoftedge.microsoft.com/addons/detail/wexprofile-downloader/ijlpgfcingilmdaioiepclimhkccoaok">
     <img src="https://img.shields.io/badge/Edge-Available-0078D7?style=flat-square&logo=microsoft-edge" alt="Microsoft Edge"/>
   </a>
