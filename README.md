@@ -49,7 +49,7 @@ It allows you to view and download HD profile photos, analyze user statistics, a
 | Category | Details |
 | :--- | :--- |
 | **Total Downloads** | ![GitHub All Releases](https://img.shields.io/github/downloads/Wek1d/WeXProfile-Downloader/total?style=flat-square&color=blue) |
-| **Current Version** | v3.3.6 |
+| **Current Version** | v3.3.7 |
 | **License** | MIT |
 | **Main Tech** | Vanilla JavaScript / Manifest V3 |
 
