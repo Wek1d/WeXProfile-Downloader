@@ -49,7 +49,7 @@ It allows you to view and download HD profile photos, analyze user statistics, a
 | Category | Details |
 | :--- | :--- |
 | **Total Downloads** | ![GitHub All Releases](https://img.shields.io/github/downloads/Wek1d/WeXProfile-Downloader/total?style=flat-square&color=blue) |
-| **Current Version** | v3.3.7 |
+| **Current Version** | v3.3.8 |
 | **License** | MIT |
 | **Main Tech** | Vanilla JavaScript / Manifest V3 |
 
@@ -64,6 +64,7 @@ It allows you to view and download HD profile photos, analyze user statistics, a
 ### Unfollower Detection
 - **Smart Scanning** - Identify users who don't follow you back
 - **Quick Profile View** - Click any username to open their profile in a background tab without closing the popup 🚀
+- **Context Menu Integration** - Right-click to quickly open profiles in a new tab without interrupting your workflow
 - **Scan Persistence** - Results are saved locally, so closing the popup doesn't wipe your scan
 - **Bulk Unfollow** - Remove multiple followers safely with rate limiting
 - **Customizable Speeds** - Adjust delays to ensure account safety
@@ -108,7 +109,7 @@ It allows you to view and download HD profile photos, analyze user statistics, a
 ### Find Unfollowers
 1. Click the Unfollower icon.
 2. Click **Start Scan**.
-3. **New:** Click a username to check their profile in a new background tab.
+3. **New:** Click a username or use the **right-click context menu** to open their profile in a new tab instantly.
 4. Select users to remove and click **Unfollow Selected**.
 
 ---
@@ -116,7 +117,14 @@ It allows you to view and download HD profile photos, analyze user statistics, a
 
 ## Changelog
 
-### Version 3.3.7 (Latest)
+### Version 3.3.8 (Latest)
+- **New Feature:** Added an "Open in new tab" option to the right-click context menu for smoother profile navigation.
+- **Improved Localization:** Added new translation keys for better multi-language support across the UI.
+- **Maintenance:** Updated underlying `npm` dependencies for improved security and background performance.
+- **Documentation:** Added a live Chrome Web Store downloads badge to the website and documentation.
+- **Fixed:** Resolved minor bugs related to current version display tracking.
+
+### Version 3.3.7
 - **Stability Fix:** Fully optimized and stabilized the background communication layer after the recent Instagram API structural changes.
 - **Code Optimization:** Cleaned up redundant logic and refactored core loops, resulting in a significantly lighter extension footprint and faster execution.
 - **Performance Improvements:** Fixed intermittent lag and potential memory leaks during long-running unfollower scans.
@@ -129,12 +137,6 @@ It allows you to view and download HD profile photos, analyze user statistics, a
 - **Fixed:** Rescan button appearance is now consistent across all themes.
 - **Fixed:** Scan results now render correctly even if the language hasn't finished loading.
 - **Technical:** Optimized Instagram API request patterns.
-
-### Version 3.3.3
-- **Fixed:** Settings (theme, language, etc.) now persist across browser updates.
-- **Fixed:** Rebuilt checkbox ticks to prevent clipping.
-- **Improved:** Scan results persist in local storage; closing the popup no longer wipes the list.
-- **Improved:** HD photo fetching with a 3-step fallback system.
 
 [View all releases](https://github.com/Wek1d/WeXProfile-Downloader/releases)
 
