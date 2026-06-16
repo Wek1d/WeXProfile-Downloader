@@ -15,14 +15,25 @@ chrome.storage.onChanged.addListener(async (changes, area) => {
     
     try {
       await chrome.contextMenus.update("wexProfileDownload", {
-        title: t("contextMenuTitle") || "Show Profile Info with WeXProfile"
+        title: t("contextMenuTitle") || "Download Profile Photo (HD)"
+      });
+      await chrome.contextMenus.update("wexProfileOpenHd", {
+        title: t("contextMenuOpenHdTitle") || "Open Profile Photo in New Tab (HD)"
       });
     } catch(e) {
-      chrome.contextMenus.create({
-        id: "wexProfileDownload",
-        title: t("contextMenuTitle") || "Show Profile Info with WeXProfile",
-        contexts: ["page"],
-        documentUrlPatterns: ["*://*.instagram.com/*"]
+      chrome.contextMenus.removeAll(() => {
+        chrome.contextMenus.create({
+          id: "wexProfileDownload",
+          title: t("contextMenuTitle") || "Download Profile Photo (HD)",
+          contexts: ["page"],
+          documentUrlPatterns: ["*://*.instagram.com/*"]
+        });
+        chrome.contextMenus.create({
+          id: "wexProfileOpenHd",
+          title: t("contextMenuOpenHdTitle") || "Open Profile Photo in New Tab (HD)",
+          contexts: ["page"],
+          documentUrlPatterns: ["*://*.instagram.com/*"]
+        });
       });
     }
   }
@@ -102,7 +113,14 @@ chrome.runtime.onInstalled.addListener(async (details) => {
   
   chrome.contextMenus.create({
     id: "wexProfileDownload",
-    title: t("contextMenuTitle") || "Show Profile Info with WeXProfile",
+    title: t("contextMenuTitle") || "Download Profile Photo (HD)",
+    contexts: ["page"],
+    documentUrlPatterns: ["*://*.instagram.com/*"]
+  });
+
+  chrome.contextMenus.create({
+    id: "wexProfileOpenHd",
+    title: t("contextMenuOpenHdTitle") || "Open Profile Photo in New Tab (HD)",
     contexts: ["page"],
     documentUrlPatterns: ["*://*.instagram.com/*"]
   });
@@ -152,22 +170,34 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 });
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-  if (info.menuItemId === "wexProfileDownload" && tab.url.includes("instagram.com")) {
+  if (!tab.url.includes("instagram.com")) return;
+
+  if (info.menuItemId === "wexProfileDownload") {
     sendNotification("infoTitle", "downloadingPhoto");
     try {
       const profileData = await handleProfileAnalysis(tab.url, tab.id, false);
       const hdUrl = await getHdProfilePhotoUrl(profileData.id);
-      
       await chrome.downloads.download({
         url: hdUrl,
         filename: `instagram_${profileData.username}_hd.jpg`,
         conflictAction: 'uniquify',
-        saveAs: false  
+        saveAs: false
       });
       sendNotification("infoTitle", "photoDownloaded");
     } catch (error) {
       console.error("Sağ tık indirme hatası:", error);
       sendNotification("errorTitle", "downloadPhotoError");
+    }
+  }
+
+  if (info.menuItemId === "wexProfileOpenHd") {
+    try {
+      const profileData = await handleProfileAnalysis(tab.url, tab.id, false);
+      const hdUrl = await getHdProfilePhotoUrl(profileData.id);
+      chrome.tabs.create({ url: hdUrl });
+    } catch (error) {
+      console.error("Sağ tık yeni sekme hatası:", error);
+      sendNotification("errorTitle", "openHdPhotoError");
     }
   }
 });

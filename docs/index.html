@@ -617,18 +617,18 @@
       .hero-actions .btn { justify-content: center; }
     }
 
-    /* ── SCROLL REVEAL UTIL ── */
+    
     .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s var(--ease-expo), transform 0.7s var(--ease-expo); }
     .reveal.in { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
 
-<!-- Ambient lighting -->
+
 <div class="ambient ambient-1"></div>
 <div class="ambient ambient-2"></div>
 
-<!-- ── NAV ── -->
+
 <nav id="nav">
   <div class="nav-inner">
     <a class="logo" href="#">
@@ -647,12 +647,12 @@
   </div>
 </nav>
 
-<!-- ── HERO ── -->
+
 <section class="hero">
   <div class="hero-inner">
     <div class="badge">
       <span class="dot"></span>
-      Free & Open Source · v3.3.7
+      Free & Open Source · v3.3.8
     </div>
     <h1>Your Instagram,<br><em>fully unlocked.</em></h1>
     <p class="hero-sub">Download HD profile pictures, detect unfollowers, and track follower analytics — all from your browser. Zero data sent anywhere.</p>
@@ -673,7 +673,7 @@
   </div>
 </section>
 
-<!-- ── STATS BAR ── -->
+
 <div class="stats-bar">
   <div class="stats-grid">
     <div class="stat-block">
@@ -695,7 +695,7 @@
   </div>
 </div>
 
-<!-- ── FEATURES ── -->
+
 <div class="section" id="features">
   <span class="eyebrow reveal">What it does</span>
   <h2 class="section-heading reveal">Built for <em>power users.</em></h2>
@@ -735,7 +735,7 @@
   </div>
 </div>
 
-<!-- ── DOWNLOAD ── -->
+
 <div class="download-section" id="download">
   <div class="download-inner">
     <span class="eyebrow reveal">Get started</span>
@@ -799,7 +799,7 @@
   </div>
 </div>
 
-<!-- ── MODAL ── -->
+
 <div class="modal-overlay" id="modal" role="dialog" aria-modal="true" aria-label="Manual Installation Guide">
   <div class="modal-box">
     <div class="modal-header">
@@ -867,7 +867,7 @@
   </div>
 </div>
 
-<!-- ── FOOTER ── -->
+
 <footer>
   <div class="footer-inner">
     <a class="logo" href="#" style="font-size:1.2rem;">
@@ -893,7 +893,7 @@
 </footer>
 
 <script>
-  // ── NAV SCROLL ──
+ 
   const nav = document.getElementById('nav');
   window.addEventListener('scroll', () => {
     nav.classList.toggle('scrolled', window.scrollY > 40);
@@ -915,7 +915,7 @@
     hamburger.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
   }));
 
-  // ── MODAL ──
+  
   const modal = document.getElementById('modal');
   const openModal = () => { modal.classList.add('open'); document.body.style.overflow = 'hidden'; };
   const closeModal = () => { modal.classList.remove('open'); document.body.style.overflow = ''; };
@@ -936,7 +936,7 @@
     io.observe(el);
   });
 
-  // ── COUNTER ANIMATION ──
+  
   function animateCount(el, target, suffix = '') {
     const duration = 1800;
     const start = performance.now();

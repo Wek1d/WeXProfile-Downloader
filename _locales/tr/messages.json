@@ -8,6 +8,9 @@
   "contextMenuTitle": {
     "message": "Profil Fotoğrafını İndir (HD)"
   },
+  "contextMenuOpenHdTitle": {
+    "message": "Profil Fotoğrafını Yeni Sekmede Aç (HD)"
+  },
   "downloadingPhoto": {
     "message": "Profil fotoğrafı indiriliyor..."
   },
