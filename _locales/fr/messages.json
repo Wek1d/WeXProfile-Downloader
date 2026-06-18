@@ -113,12 +113,6 @@
   "githubTitle": {
     "message": "GitHub"
   },
-  "updateAvailable": {
-    "message": "Une nouvelle mise à jour est disponible !"
-  },
-  "updateBtnText": {
-    "message": "Mettre à jour"
-  },
   "buttonStyleLabel": {
     "message": "Style de bouton classique"
   },
@@ -278,5 +272,7 @@
   "selectAllLabel": {
     "message": "Tout sélectionner"
   },
-  "rescanBtn": { "message": "Rescanner" }
+  "rescanBtn": {
+    "message": "Rescanner"
+  }
 }

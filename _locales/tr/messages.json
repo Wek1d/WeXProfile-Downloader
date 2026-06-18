@@ -113,12 +113,6 @@
   "githubTitle": {
     "message": "GitHub"
   },
-  "updateAvailable": {
-    "message": "Yeni bir güncelleme mevcut!"
-  },
-  "updateBtnText": {
-    "message": "Güncelle"
-  },
   "buttonStyleLabel": {
     "message": "Klasik Düğme Stili"
   },
@@ -278,5 +272,7 @@
   "selectAllLabel": {
     "message": "Hepsini Seç"
   },
-  "rescanBtn": { "message": "Yeniden Tara" }
+  "rescanBtn": {
+    "message": "Yeniden Tara"
+  }
 }

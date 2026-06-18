@@ -49,7 +49,7 @@ It allows you to view and download HD profile photos, analyze user statistics, a
 | Category | Details |
 | :--- | :--- |
 | **Total Downloads** | ![GitHub All Releases](https://img.shields.io/github/downloads/Wek1d/WeXProfile-Downloader/total?style=flat-square&color=blue) |
-| **Current Version** | v3.3.8 |
+| **Current Version** | v3.3.9 |
 | **License** | MIT |
 | **Main Tech** | Vanilla JavaScript / Manifest V3 |
 
@@ -117,7 +117,12 @@ It allows you to view and download HD profile photos, analyze user statistics, a
 
 ## Changelog
 
-### Version 3.3.8 (Latest)
+### Version 3.3.9 (Latest)
+- **Removed:** The automatic update-check feature (which pinged the GitHub API to compare versions) has been fully removed, along with the in-popup update banner. This was a leftover from manual-install days and is no longer needed since the extension is distributed through the Chrome Web Store and Edge Add-ons.
+- **Permissions Cleanup:** Removed the unused `declarativeNetRequest` and `declarativeNetRequestWithHostAccess` permissions, along with the `api.github.com` host permission, since neither was actually used by any feature. This addresses a Chrome Web Store policy flag regarding unused permissions.
+- **Smaller Footprint:** Slightly reduced background script size and simplified the settings message flow as a result of the above cleanup.
+
+### Version 3.3.8
 - **New Feature:** Added an "Open in new tab" option to the right-click context menu for smoother profile navigation.
 - **Improved Localization:** Added new translation keys for better multi-language support across the UI.
 - **Maintenance:** Updated underlying `npm` dependencies for improved security and background performance.
@@ -144,6 +149,7 @@ It allows you to view and download HD profile photos, analyze user statistics, a
 
 ## Safety & Privacy
 - **Zero Data Collection:** Everything stays on your device.
+- **Minimal Permissions:** Only requests permissions it actually uses; unused ones are removed promptly.
 - **Rate Limiting:** Built-in protection with randomized, human-like behavior.
 - **Open Source:** Full code transparency.
 

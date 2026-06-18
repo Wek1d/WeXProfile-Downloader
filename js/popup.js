@@ -19,9 +19,6 @@ document.addEventListener('DOMContentLoaded', async function() {
   const loader = document.querySelector('.loader');
   const profileContainer = document.querySelector('.profile-container');
   const githubBtn = document.getElementById('githubBtn');
-  const updateNotification = document.getElementById('updateNotification');
-  const latestVersionEl = document.getElementById('latestVersion');
-  const updateBtn = document.getElementById('updateBtn');
   const versionEl = document.querySelector('.version');
   const unfollowerBtn = document.getElementById('unfollowerBtn');
   const backToProfileBtn = document.getElementById('backToProfileBtn');
@@ -289,7 +286,7 @@ document.addEventListener('DOMContentLoaded', async function() {
           if (e.target.type !== 'checkbox') {
             const cb = item.querySelector('.unfinder-item-checkbox');
             cb.checked = !cb.checked;
-            // Select-all chip durumunu güncelle
+            
             const chip = unfinderList.querySelector('#selectAllChip');
             if (chip) {
               const allCbs = unfinderList.querySelectorAll('.unfinder-item-checkbox');
@@ -309,7 +306,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   
   setVersionFromManifest();
 
-chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response) => {
+chrome.runtime.sendMessage({ action: 'getSettings' }, async (response) => {
   if (response?.success) {
     
     await localizeHtml(response.settings.language);
@@ -356,38 +353,8 @@ chrome.runtime.sendMessage({ action: 'getSettingsAndUpdates' }, async (response)
     else if (response?.success) displayProfileData(response.data);
     else showError(response.error || t('profileFetchError'));
   });
-
-
-
-    if (response.updateInfo.hasUpdate) {
-      const latestVer = response.updateInfo.latestVersion;
-      
-      chrome.storage.local.get(['dismissedUpdateVersion'], ({ dismissedUpdateVersion }) => {
-        if (dismissedUpdateVersion === latestVer) return;
-        latestVersionEl.textContent = latestVer;
-        updateNotification.style.display = 'flex';
-      });
-    }
-  }
+}
 });
-
-
-updateNotification.addEventListener('click', (e) => {
-  if (e.target.id === 'updateBtn') return; 
-  
-});
-
-const updateDismissBtn = document.createElement('button');
-updateDismissBtn.className = 'update-dismiss-btn';
-updateDismissBtn.innerHTML = '&times;';
-updateDismissBtn.title = 'Kapat';
-updateDismissBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  const ver = latestVersionEl.textContent;
-  chrome.storage.local.set({ dismissedUpdateVersion: ver });
-  updateNotification.style.display = 'none';
-});
-updateNotification.appendChild(updateDismissBtn);
 
 
 
@@ -428,7 +395,6 @@ updateNotification.appendChild(updateDismissBtn);
   }));
 
   githubBtn.addEventListener('click', () => chrome.runtime.sendMessage({ action: 'openGithub' }));
-  updateBtn.addEventListener('click', () => chrome.runtime.sendMessage({ action: 'openGithub' }));
   openHdBtn.addEventListener('click', () => chrome.runtime.sendMessage({ action: 'openHdPhoto' }));
   downloadBtn.addEventListener('click', () => chrome.runtime.sendMessage({ action: 'downloadPhoto' }));
   downloadJsonBtn.addEventListener('click', openExportModal);
@@ -463,12 +429,12 @@ updateNotification.appendChild(updateDismissBtn);
     unfollowSelectedBtn.style.display = 'none';
   });
   rescanBtn.addEventListener('click', () => {
-  // Arayüzü sıfırla
+  
   unfinderList.innerHTML = '';
   updateSelectedCount();
   rescanBtn.style.display = 'none';
 
-  // Taramayı baştan tetikle
+  
   chrome.runtime.sendMessage({ action: 'startUnfollowScan' });
   startScanBtn.style.display = 'none';
   pauseScanBtn.style.display = 'flex';

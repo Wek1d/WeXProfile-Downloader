@@ -61,7 +61,6 @@ let scanTimings = null;
 const PROFILE_HISTORY_KEY = 'profileHistory';
 const HISTORY_LIMIT = 500;
 const CACHE_TTL = 5 * 60 * 1000;
-const GITHUB_REPO_URL = 'https://api.github.com/repos/Wek1d/WeXProfile-Downloader/releases/latest';
 
 async function getCookie(name) {
   try {
@@ -71,35 +70,6 @@ async function getCookie(name) {
     console.error("Cookie alınamadı:", e);
     return null;
   }
-}
-
-async function checkUpdates() {
-    try {
-        const response = await fetch(GITHUB_REPO_URL);
-        if (!response.ok) { return; }
-        const data = await response.json();
-        const latestVersion = data.tag_name.replace('v', '');
-        const currentVersion = chrome.runtime.getManifest().version;
-        if (compareVersions(latestVersion, currentVersion) > 0) {
-            chrome.storage.local.set({ hasUpdate: true, latestVersion: data.tag_name });
-        } else {
-            chrome.storage.local.set({ hasUpdate: false });
-        }
-    } catch (error) {
-        chrome.storage.local.set({ hasUpdate: false });
-    }
-}
-
-function compareVersions(v1, v2) {
-    const parts1 = v1.split('.').map(Number);
-    const parts2 = v2.split('.').map(Number);
-    for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
-        const p1 = parts1[i] || 0;
-        const p2 = parts2[i] || 0;
-        if (p1 > p2) return 1;
-        if (p1 < p2) return -1;
-    }
-    return 0;
 }
 
 chrome.runtime.onInstalled.addListener(async (details) => {
@@ -165,8 +135,6 @@ chrome.runtime.onInstalled.addListener(async (details) => {
       await chrome.storage.sync.set(merged);
     }
   }
-  
-  checkUpdates();
 });
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
@@ -322,7 +290,7 @@ async function updateProfileHistoryAndGetDataWithChanges(newUserData) {
     return newUserData;
 }
 
-// PhotoShow Blueprint: En yüksek çözünürlüklü resmi alan (width * height) hesabıyla seçen yardımcı fonksiyon
+
 function extractLargestImage(candidatesList) {
   if (!candidatesList || candidatesList.length === 0) return null;
   
@@ -333,18 +301,18 @@ function extractLargestImage(candidatesList) {
       width: parseInt(item.width || item.height || 1),
       height: parseInt(item.height || item.width || 1)
     }))
-    .sort((a, b) => (b.width * b.height) - (a.width * a.height)); // Alan hesabına göre büyükten küçüğe sırala
+    .sort((a, b) => (b.width * b.height) - (a.width * a.height)); 
     
   return sorted[0]?.url || null;
 }
 
 async function getInstagramUserInfo(username) {
-  // PhotoShow Blueprint: i.instagram.com yerine tamamen web tabanlı www.instagram.com kullanıyoruz!
+  
   const url = `https://www.instagram.com/api/v1/users/web_profile_info/?username=${username}`;
   
   const response = await fetch(url, {
     headers: {
-      'X-IG-App-ID': '936619743392459', // Orijinal Web App ID
+      'X-IG-App-ID': '936619743392459', 
       'X-Requested-With': 'XMLHttpRequest'
     }
   });
@@ -361,7 +329,7 @@ async function getInstagramUserInfo(username) {
 
     let biography = user.biography || user.biography_with_entities?.raw_text || '';
 
-    // HD Fotoğrafı önce alt fonksiyondan zorlayarak çekmeyi deneyeceğiz
+    
     let hdProfilePicUrl = user.profile_pic_url_hd || user.profile_pic_url;
     try {
       const fetchedHdUrl = await getHdProfilePhotoUrl(user.id);
@@ -405,12 +373,12 @@ async function getHdProfilePhotoUrl(instagramUserId) {
     console.error("Önbellek okunamadı:", e);
   }
 
-  // PhotoShow Blueprint: i.instagram.com'u tamamen çöpe attık. Web tabanlı endpoint'e gidiyoruz.
+  
   const url = `https://www.instagram.com/api/v1/users/${instagramUserId}/info/`;
   try {
     const response = await fetch(url, {
       headers: {
-        'X-IG-App-ID': '936619743392459', // Web App-ID ile tarayıcı oturumunu koruyoruz
+        'X-IG-App-ID': '936619743392459', 
         'X-Requested-With': 'XMLHttpRequest'
       }
     });
@@ -420,19 +388,19 @@ async function getHdProfilePhotoUrl(instagramUserId) {
     const user = out.user || out.data?.user;
     if (!user) throw new Error("Kullanıcı verisi yok");
 
-    // PhotoShow'un [].concat mantığıyla bütün aday listelerini tek çatı altında birleştiriyoruz
+   
     let photoCandidates = [];
     if (user.hd_profile_pic_url_info) photoCandidates.push(user.hd_profile_pic_url_info);
     if (user.hd_profile_pic_versions) photoCandidates = photoCandidates.concat(user.hd_profile_pic_versions);
     if (user.image_versions2?.candidates) photoCandidates = photoCandidates.concat(user.image_versions2.candidates);
 
-    // Alan sıralaması yapan akıllı ayıklayıcımızı çağırıyoruz
+    
     const bestHdUrl = extractLargestImage(photoCandidates);
     if (bestHdUrl) {
-      return bestHdUrl; // Regex ile kırpma ASLA yok, orijinal CDN imzası sapasağlam!
+      return bestHdUrl; 
     }
 
-    // Adaylar boşsa güvenli fallback'ler
+    
     return user.profile_pic_url_hd || user.hd_profile_pic_url_info?.url || user.profile_pic_url;
   } catch (error) {
     console.error("WeXProfile Hata: HD fotoğraf URL'si alınamadı.", error);
@@ -594,14 +562,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendNotification("infoTitle", "historyCleared");
         sendResponse({ success: true });
         break;
-      case 'getSettingsAndUpdates':
+      case 'getSettings':
         const settings = await chrome.storage.sync.get(['darkMode', 'fontFamily', 'themeTemplate', 'buttonStyle', 'showFollowerChange', 'language']);
-        const updateInfo = await chrome.storage.local.get(['hasUpdate', 'latestVersion']);
-        sendResponse({ success: true, settings, updateInfo });
+        sendResponse({ success: true, settings });
         break;
       case 'setSettings': await chrome.storage.sync.set(request.settings); sendResponse({ success: true }); break;
       case 'openGithub': chrome.tabs.create({ url: 'https://github.com/Wek1d/WeXProfile-Downloader' }); sendResponse({ success: true }); break;
-      case 'checkUpdatesNow': await checkUpdates(); sendResponse({ success: true }); break;
       case 'setScanTimings':
         scanTimings = request.timings;
         chrome.storage.sync.set({ scanTimings });
