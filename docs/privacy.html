@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy policy · WeXProfile</title>
+<meta name="description" content="What WeXProfile stores, what it sends, and where. Plain language.">
+<link rel="icon" type="image/png" href="icon.png">
+<style>
+:root{--paper:#eef0ec;--ink:#161a1f;--mute:#565d66;--rule:#c8cbc3;--cobalt:#2440c4;
+--serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+--sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+@media(prefers-color-scheme:dark){:root{--paper:#14171b;--ink:#e9ebe6;--mute:#9aa1a9;--rule:#2c3238;--cobalt:#8ea2ff}}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:1.0625rem/1.65 var(--sans)}
+a{color:var(--cobalt);text-underline-offset:.2em}
+a:focus-visible{outline:3px solid var(--cobalt);outline-offset:3px}
+.wrap{max-width:44rem;margin:0 auto;padding:0 1.5rem}
+header{padding:1.25rem 0;border-bottom:1px solid var(--rule)}
+header .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem 1.5rem}
+.brand{display:flex;align-items:center;gap:.6rem;font:700 1.15rem var(--serif);color:var(--ink);text-decoration:none}
+.brand img{width:28px;height:28px;border-radius:6px}
+h1,h2{font-family:var(--serif);line-height:1.2}
+h1{font-size:clamp(2rem,5vw,2.9rem);margin:3rem 0 .5rem;letter-spacing:-.01em}
+h2{font-size:1.45rem;margin:2.5rem 0 .6rem;padding-top:1.5rem;border-top:1px solid var(--rule)}
+p,li{max-width:64ch}
+.meta{color:var(--mute);margin-bottom:2rem}
+.short{border-left:4px solid var(--ink);padding:.2rem 0 .2rem 1.1rem;font-size:1.15rem;margin:1.5rem 0}
+table{width:100%;border-collapse:collapse;font-size:.96rem;margin:1rem 0}
+th,td{text-align:left;vertical-align:top;padding:.6rem .8rem .6rem 0;border-bottom:1px solid var(--rule)}
+th{font-weight:700;border-bottom:2px solid var(--ink)}
+td:first-child{font-family:var(--mono);font-size:.9rem;white-space:nowrap}
+.tw{overflow-x:auto}
+footer{border-top:2px solid var(--ink);margin-top:4rem;padding:1.5rem 0 3rem;color:var(--mute);font-size:.93rem}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="brand" href="./"><img src="icon.png" alt="" width="28" height="28">WeXProfile</a>
+    <a href="https://github.com/Wek1d/WeXProfile-Downloader">GitHub</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Privacy policy</h1>
+  <p class="meta">Applies to the WeXProfile Downloader browser extension. Last updated September 28, 2026 (extension v3.3.9).</p>
+
+  <p class="short">WeXProfile has no server and no analytics. It runs in your browser, talks to Instagram using the session you're already logged into, and keeps its data on your device.</p>
+
+  <h2>What it stores, and where</h2>
+  <p>The extension saves the following in your browser's local extension storage. It never leaves your device through us, and you can remove it by clearing the history in the popup or uninstalling the extension.</p>
+  <div class="tw"><table>
+    <tr><th>Data</th><th>Why</th></tr>
+    <tr><td>Settings</td><td>Language, theme, font and speed preferences.</td></tr>
+    <tr><td>Follower history</td><td>Follower and following counts of profiles you viewed, to draw the change chart.</td></tr>
+    <tr><td>Scan results</td><td>The unfollower list, so closing the popup doesn't lose it.</td></tr>
+  </table></div>
+
+  <h2>What it sends, and to whom</h2>
+  <p>Requests are made from your browser directly to Instagram (<code>instagram.com</code>) and its image servers (<code>cdninstagram.com</code>, <code>fbcdn.net</code>). They fetch profile data and pictures, run the follower scan, and perform unfollows you select. They use your existing Instagram login, so Instagram sees them as coming from you. Instagram's own privacy policy applies to that traffic.</p>
+  <p>We don't receive any of it. There is no WeXProfile server, account, or analytics service. We never see your password, and the extension never asks for it.</p>
+
+  <h2>Fonts and icons in the popup</h2>
+  <p>The popup currently loads its fonts from Google Fonts and its icons from cdnjs.cloudflare.com. Those services can see that a request came from your IP address, as with any web font. No Instagram or profile data is included. We plan to bundle these files into the extension so no third-party request remains. This page will be updated when that ships.</p>
+
+  <h2>Permissions</h2>
+  <div class="tw"><table>
+    <tr><th>Permission</th><th>Used for</th></tr>
+    <tr><td>cookies</td><td>Reading your Instagram CSRF token and user ID so requests work as you.</td></tr>
+    <tr><td>tabs</td><td>Detecting which Instagram profile is open, and opening profiles in new tabs.</td></tr>
+    <tr><td>contextMenus</td><td>The right-click "open profile" option.</td></tr>
+    <tr><td>storage</td><td>The local data listed above.</td></tr>
+    <tr><td>downloads</td><td>Saving profile pictures and exported files.</td></tr>
+    <tr><td>notifications</td><td>Telling you a download has finished.</td></tr>
+    <tr><td>instagram.com, cdninstagram.com, fbcdn.net</td><td>Reaching Instagram and its image servers, nothing else.</td></tr>
+  </table></div>
+
+  <h2>What we don't do</h2>
+  <p>We don't sell, share or transfer user data. We don't use it for advertising, profiling or credit decisions. We don't collect it in the first place.</p>
+
+  <h2>Your Instagram account</h2>
+  <p>Bulk unfollowing is an automated action on your account. Instagram may limit accounts that act too fast, so keep the speed settings conservative. WeXProfile is not affiliated with or endorsed by Instagram or Meta Platforms, Inc.</p>
+
+  <h2>Verify it</h2>
+  <p>The full source code is public under the MIT license at <a href="https://github.com/Wek1d/WeXProfile-Downloader">github.com/Wek1d/WeXProfile-Downloader</a>. If the code and this page ever disagree, please tell us.</p>
+
+  <h2>Changes and contact</h2>
+  <p>Changes to this policy are published on this page with a new date, and in the repository history. Questions or concerns: <a href="https://github.com/Wek1d/WeXProfile-Downloader/issues">open an issue on GitHub</a>.</p>
+</main>
+
+<footer>
+  <div class="wrap"><a href="./">Back to the extension</a></div>
+</footer>
+</body>
+</html>
