@@ -116,8 +116,15 @@ It allows you to view and download HD profile photos, analyze user statistics, a
 
 
 ## Changelog
+### Version 3.4.0 (Latest)
+- **Rate limit fix (issue #347):** Replaced the sequential per-user friendship check with Instagram's batch endpoint `POST /api/v1/friendships/show_many/`. Instead of one request per followed account (which got blocked after ~40 calls), the scanner now verifies 30 accounts per request — roughly 95% fewer network calls.
+- **Accurate detection:** Unfollower status is now read directly from Instagram's canonical `followed_by` field. This eliminates the false positives that appeared on large or private accounts, where the viewer wasn't guaranteed to appear in the top 12 of a user's following list.
+- **Faster scans:** 1,000 accounts verified in roughly 30 seconds. The full followers list is no longer paginated — follower count is fetched with a single lightweight request instead.
+- **Live streaming results:** Unfollowers appear on screen as each batch is verified, rather than waiting for the entire scan to finish.
+- **Notification restraint:** Notifications are no longer shown when the active tab isn't an Instagram page.
+- **Soft-block resilience:** HTTP 429 and 5xx responses now trigger exponential backoff (respecting `Retry-After` headers) instead of halting the scan.
 
-### Version 3.3.9 (Latest)
+### Version 3.3.9 
 - **Removed:** The automatic update-check feature (which pinged the GitHub API to compare versions) has been fully removed, along with the in-popup update banner. This was a leftover from manual-install days and is no longer needed since the extension is distributed through the Chrome Web Store and Edge Add-ons.
 - **Permissions Cleanup:** Removed the unused `declarativeNetRequest` and `declarativeNetRequestWithHostAccess` permissions, along with the `api.github.com` host permission, since neither was actually used by any feature. This addresses a Chrome Web Store policy flag regarding unused permissions.
 - **Smaller Footprint:** Slightly reduced background script size and simplified the settings message flow as a result of the above cleanup.
