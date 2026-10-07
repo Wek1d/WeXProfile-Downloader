@@ -1,278 +1,96 @@
 {
-  "appName": {
-    "message": "WeXProfile Downloader"
-  },
-  "appDesc": {
-    "message": "Download Instagram profile photos, analyze followers and detect unfollowers."
-  },
-  "contextMenuTitle": {
-    "message": "Download Profile Photo (HD)"
-  },
-  "contextMenuOpenHdTitle": {
-    "message": "Open Profile Photo in New Tab (HD)"
-  },
-  "downloadingPhoto": {
-    "message": "Downloading profile photo..."
-  },
-  "photoDownloaded": {
-    "message": "Profile photo downloaded successfully!"
-  },
-  "LoginUnfollow": {
-    "message": "Please log in to unfollow users"
-  },
-  "infoTitle": {
-    "message": "Info"
-  },
-  "profileReadyNotification": {
-    "message": "Profile info ready! Click the extension icon for details."
-  },
-  "errorTitle": {
-    "message": "Error"
-  },
-  "notInstagramPageError": {
-    "message": "Please use this on an Instagram page."
-  },
-  "profileFetchError": {
-    "message": "Could not retrieve profile info"
-  },
-  "notProfilePageError": {
-    "message": "This is not a valid profile page."
-  },
-  "openHdPhotoError": {
-    "message": "Could not open HD photo"
-  },
-  "scanStartMessage": {
-    "message": "Start a scan to find people who don't follow you back."
-  },
-  "downloadPhotoError": {
-    "message": "Could not download photo"
-  },
-  "downloadJsonTitle": {
-    "message": "Download as JSON"
-  },
-  "noCachedDataError": {
-    "message": "No cached data found"
-  },
-  "popupFetchError": {
-    "message": "Could not fetch data"
-  },
-  "unknownActionError": {
-    "message": "Unknown action"
-  },
-  "postsLabel": {
-    "message": "Posts"
-  },
-  "followersLabel": {
-    "message": "Followers"
-  },
-  "followingLabel": {
-    "message": "Following"
-  },
-  "openInNewTabBtn": {
-    "message": "Open in New Tab"
-  },
-  "downloadBtn": {
-    "message": "Download"
-  },
-  "defaultBio": {
-    "message": "No bio"
-  },
-  "privateLabel": {
-    "message": "Private"
-  },
-  "copyUsernameTitle": {
-    "message": "Copy"
-  },
-  "copiedText": {
-    "message": "Copied!"
-  },
-  "changeThemeTitle": {
-    "message": "Theme"
-  },
-  "clearHistoryTitle": {
-    "message": "Clear History"
-  },
-  "clearHistoryConfirm": {
-    "message": "Are you sure you want to delete your follower history?"
-  },
-  "historyCleared": {
-    "message": "History cleared"
-  },
-  "settingsTitle": {
-    "message": "Settings"
-  },
-  "fontFamilyLabel": {
-    "message": "Font Family"
-  },
-  "themeTemplateLabel": {
-    "message": "Color Theme"
-  },
-  "imageLoadError": {
-    "message": "Could not load profile photo"
-  },
-  "githubTitle": {
-    "message": "GitHub"
-  },
-  "buttonStyleLabel": {
-    "message": "Classic Button Style"
-  },
-  "followerChangeLabel": {
-    "message": "Show Follower Change"
-  },
-  "languageLabel": {
-    "message": "Language"
-  },
-  "scanningFollowers": {
-    "message": "Scanning followers..."
-  },
-  "scanningFollowing": {
-    "message": "Scanning following..."
-  },
-  "scanComplete": {
-    "message": "Scan complete"
-  },
-  "unfollowersFound": {
-    "message": "people don't follow you back"
-  },
-  "unfollowingProgress": {
-    "message": "Unfollowing..."
-  },
-  "operationComplete": {
-    "message": "Operation complete"
-  },
-  "startScanBtn": {
-    "message": "Start Scan"
-  },
-  "pauseScanBtn": {
-    "message": "Pause"
-  },
-  "resumeScanBtn": {
-    "message": "Resume"
-  },
-  "unfollowSelectedBtn": {
-    "message": "Unfollow Selected"
-  },
-  "scanStarting": {
-    "message": "Starting scan..."
-  },
-  "scanError": {
-    "message": "An error occurred during the scan"
-  },
-  "scanCompleteText": {
-    "message": "Scan complete. Followers: {followers}, Following: {following}, Non-followers: {unfollowers}"
-  },
-  "exportDataTitle": {
-    "message": "Export Data"
-  },
-  "followerChartTitle": {
-    "message": "Follower Change Chart"
-  },
-  "chartRangeDaily": {
-    "message": "Daily"
-  },
-  "chartRangeWeekly": {
-    "message": "Weekly"
-  },
-  "chartRangeMonthly": {
-    "message": "Monthly"
-  },
-  "chartBtnTitle": {
-    "message": "Follower Change Chart"
-  },
-  "noHistoryData": {
-    "message": "No follower history"
-  },
-  "totalChangeLabel": {
-    "message": "Total change"
-  },
-  "scanSettingsTitle": {
-    "message": "Scan Settings"
-  },
-  "scanDelayLabel": {
-    "message": "Scan loop delay (ms)"
-  },
-  "scanDelayAfterFiveLabel": {
-    "message": "Delay after 5 loops (ms)"
-  },
-  "unfollowDelayLabel": {
-    "message": "Unfollow delay (ms)"
-  },
-  "unfollowDelayAfterFiveLabel": {
-    "message": "Delay after 5 unfollows (ms)"
-  },
-  "scanSettingsWarning": {
-    "message": "Lowering values increases the risk of being banned."
-  },
-  "saveBtn": {
-    "message": "Save"
-  },
-  "closeBtn": {
-    "message": "Close"
-  },
-  "usernameLabel": {
-    "message": "Username"
-  },
-  "fullNameLabel": {
-    "message": "Full Name"
-  },
-  "isPrivateLabel": {
-    "message": "Private Account"
-  },
-  "isVerifiedLabel": {
-    "message": "Verified Account"
-  },
-  "bioLabel": {
-    "message": "Bio"
-  },
-  "profileIdLabel": {
-    "message": "Profile ID"
-  },
-  "dateLabel": {
-    "message": "Date"
-  },
-  "yesLabel": {
-    "message": "Yes"
-  },
-  "noLabel": {
-    "message": "No"
-  },
-  "themeDefaultTitle": {
-    "message": "Default"
-  },
-  "themeBlueTitle": {
-    "message": "Blue"
-  },
-  "themeGreenTitle": {
-    "message": "Green"
-  },
-  "themePurpleTitle": {
-    "message": "Purple"
-  },
-  "themePinkTitle": {
-    "message": "Pink"
-  },
-  "unfollowerTitle": {
-    "message": "WeXUnfollower"
-  },
-  "backBtnTitle": {
-    "message": "Go Back"
-  },
-  "unfollowerBtnTitle": {
-    "message": "Unfollower Tool"
-  },
-  "settingsBtnTitle": {
-    "message": "Settings"
-  },
-  "fullNamePlaceholder": {
-    "message": "Full Name"
-  },
-  "usernameLoadingPlaceholder": {
-    "message": "Loading..."
-  },
-  "selectAllLabel": {
-    "message": "Select All"
-  },
-  "rescanBtn": {
-    "message": "Rescan"
-  }
+  "appName": { "message": "WeXProfile Downloader" },
+  "appDesc": { "message": "Download Instagram profile photos, analyze followers, and detect unfollowers." },
+  "contextMenuTitle": { "message": "Download Profile Photo (HD)" },
+  "contextMenuOpenHdTitle": { "message": "Open Profile Photo in New Tab (HD)" },
+  "downloadingPhoto": { "message": "Downloading profile photo..." },
+  "photoDownloaded": { "message": "Profile photo downloaded successfully!" },
+  "LoginUnfollow": { "message": "Please log in to unfollow" },
+  "infoTitle": { "message": "Info" },
+  "profileReadyNotification": { "message": "Profile information is ready! Click the extension icon for details." },
+  "errorTitle": { "message": "Error" },
+  "notInstagramPageError": { "message": "Please use on an Instagram page." },
+  "profileFetchError": { "message": "Could not retrieve profile information" },
+  "notProfilePageError": { "message": "This is not a valid profile page." },
+  "openHdPhotoError": { "message": "Could not open HD photo" },
+  "scanStartMessage": { "message": "Start scanning to find people who don't follow you back." },
+  "downloadPhotoError": { "message": "Could not download photo" },
+  "downloadJsonTitle": { "message": "Download as JSON" },
+  "noCachedDataError": { "message": "No cached data found" },
+  "popupFetchError": { "message": "Could not retrieve data" },
+  "unknownActionError": { "message": "Unknown action" },
+  "postsLabel": { "message": "Posts" },
+  "followersLabel": { "message": "Followers" },
+  "followingLabel": { "message": "Following" },
+  "openInNewTabBtn": { "message": "Open in New Tab" },
+  "downloadBtn": { "message": "Download" },
+  "defaultBio": { "message": "No bio" },
+  "privateLabel": { "message": "Private" },
+  "copyUsernameTitle": { "message": "Copy" },
+  "copiedText": { "message": "Copied!" },
+  "changeThemeTitle": { "message": "Theme" },
+  "clearHistoryTitle": { "message": "Clear History" },
+  "clearHistoryConfirm": { "message": "Are you sure you want to delete your follower history?" },
+  "historyCleared": { "message": "History cleared" },
+  "settingsTitle": { "message": "Settings" },
+  "fontFamilyLabel": { "message": "Font Family" },
+  "themeTemplateLabel": { "message": "Color Theme" },
+  "imageLoadError": { "message": "Could not load profile photo" },
+  "githubTitle": { "message": "GitHub" },
+  "buttonStyleLabel": { "message": "Classic Button Style" },
+  "followerChangeLabel": { "message": "Show Follower Change" },
+  "languageLabel": { "message": "Language" },
+  "scanningFollowers": { "message": "Scanning followers..." },
+  "scanningFollowing": { "message": "Scanning following..." },
+  "scanComplete": { "message": "Scan complete" },
+  "unfollowersFound": { "message": "people don't follow you back" },
+  "unfollowingProgress": { "message": "Unfollowing..." },
+  "operationComplete": { "message": "Operation complete" },
+  "startScanBtn": { "message": "Start Scan" },
+  "pauseScanBtn": { "message": "Pause" },
+  "resumeScanBtn": { "message": "Resume" },
+  "unfollowSelectedBtn": { "message": "Unfollow Selected" },
+  "scanStarting": { "message": "Starting scan..." },
+  "scanError": { "message": "An error occurred during scanning" },
+  "scanCompleteText": { "message": "Scan complete. Followers: {followers}, Following: {following}, Not Following: {unfollowers}" },
+  "exportDataTitle": { "message": "Export Data" },
+  "followerChartTitle": { "message": "Follower Change Chart" },
+  "chartRangeDaily": { "message": "Daily" },
+  "chartRangeWeekly": { "message": "Weekly" },
+  "chartRangeMonthly": { "message": "Monthly" },
+  "chartBtnTitle": { "message": "Follower Change Chart" },
+  "noHistoryData": { "message": "No follower history" },
+  "totalChangeLabel": { "message": "Total change" },
+  "scanSettingsTitle": { "message": "Scan Settings" },
+  "scanDelayLabel": { "message": "Scan loop delay (ms)" },
+  "scanDelayAfterFiveLabel": { "message": "Delay after 5 loops (ms)" },
+  "unfollowDelayLabel": { "message": "Unfollow delay (ms)" },
+  "unfollowDelayAfterFiveLabel": { "message": "Delay after 5 unfollows (ms)" },
+  "scanSettingsWarning": { "message": "Lowering values increases the risk of being banned." },
+  "saveBtn": { "message": "Save" },
+  "closeBtn": { "message": "Close" },
+  "usernameLabel": { "message": "Username" },
+  "fullNameLabel": { "message": "Full Name" },
+  "isPrivateLabel": { "message": "Private Account" },
+  "isVerifiedLabel": { "message": "Verified Account" },
+  "bioLabel": { "message": "Bio" },
+  "profileIdLabel": { "message": "Profile ID" },
+  "dateLabel": { "message": "Date" },
+  "yesLabel": { "message": "Yes" },
+  "noLabel": { "message": "No" },
+  "themeDefaultTitle": { "message": "Default" },
+  "themeBlueTitle": { "message": "Blue" },
+  "themeGreenTitle": { "message": "Green" },
+  "themePurpleTitle": { "message": "Purple" },
+  "themePinkTitle": { "message": "Pink" },
+  "unfollowerTitle": { "message": "WeXUnfollower" },
+  "backBtnTitle": { "message": "Go Back" },
+  "unfollowerBtnTitle": { "message": "Unfollower Tool" },
+  "settingsBtnTitle": { "message": "Settings" },
+  "fullNamePlaceholder": { "message": "Full Name" },
+  "usernameLoadingPlaceholder": { "message": "Loading..." },
+  "selectAllLabel": { "message": "Select All" },
+  "rescanBtn": { "message": "Rescan" },
+  "verifyingLabel": { "message": "Verifying" },
+  "verifyStartMessage": { "message": "Verifying non-followers..." }
 }
