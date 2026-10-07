@@ -811,27 +811,38 @@ chrome.runtime.sendMessage({ action: 'getSettings' }, async (response) => {
   };
 
   function updateScanProgress(data) {
-    if (!data) return;
-    if (data.type === 'start') {
-      unfinderStatusText.textContent = t('scanStarting');
-      unfinderProgressBar.style.width = '0%';
-      unfinderProgressBarContainer.style.display = 'block';
-      pauseScanBtn.style.display = 'flex';
-      resumeScanBtn.style.display = 'none';
-      startScanBtn.style.display = 'none';
-    } else if (data.type === 'error') {
-      unfinderStatusText.textContent = data.message || t('scanError');
-      unfinderProgressBarContainer.style.display = 'none';
-      pauseScanBtn.style.display = 'none';
-      resumeScanBtn.style.display = 'none';
-      startScanBtn.style.display = 'flex';
-    } else if (data.type === 'followers' || data.type === 'following') {
-      const label = data.type === 'followers' ? t('followersLabel') : t('followingLabel');
-      unfinderStatusText.textContent = `${label} ${data.scanned}/${data.total} (${data.percentage}%)`;
-      unfinderProgressBar.style.width = `${data.percentage}%`;
-      unfinderProgressBarContainer.style.display = 'block';
-    }
+  if (!data) return;
+
+  if (data.type === 'start') {
+    unfinderStatusText.textContent = t('scanStarting');
+    unfinderProgressBar.style.width = '0%';
+    unfinderProgressBarContainer.style.display = 'block';
+    pauseScanBtn.style.display = 'flex';
+    resumeScanBtn.style.display = 'none';
+    startScanBtn.style.display = 'none';
+  } else if (data.type === 'error') {
+    unfinderStatusText.textContent = data.message || t('scanError');
+    unfinderProgressBarContainer.style.display = 'none';
+    pauseScanBtn.style.display = 'none';
+    resumeScanBtn.style.display = 'none';
+    startScanBtn.style.display = 'flex';
+  } else if (data.type === 'followers' || data.type === 'following') {
+    const label = data.type === 'followers' ? t('followersLabel') : t('followingLabel');
+    unfinderStatusText.textContent = `${label} ${data.scanned}/${data.total} (${data.percentage}%)`;
+    unfinderProgressBar.style.width = `${data.percentage}%`;
+    unfinderProgressBarContainer.style.display = 'block';
+  } else if (data.type === 'verify_start') {
+    unfinderStatusText.textContent = t('verifyStartMessage');
+    unfinderProgressBar.style.width = '0%';
+    unfinderProgressBarContainer.style.display = 'block';
+  } else if (data.type === 'verify') {
+    unfinderStatusText.textContent = `${t('verifyingLabel')} ${data.scanned}/${data.total} (${data.percentage}%)`;
+    unfinderProgressBar.style.width = `${data.percentage}%`;
+    unfinderProgressBarContainer.style.display = 'block';
+  } else if (data.type === 'warning') {
+    unfinderStatusText.textContent = data.message || unfinderStatusText.textContent;
   }
+}
 
   function handleScanComplete(data) {
     unfinderStatusText.textContent = t('scanCompleteText')

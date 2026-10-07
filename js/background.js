@@ -601,13 +601,26 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         currentScanner = new UnfollowerScanner({
             userId, csrfToken,
             onProgress: (p) => chrome.runtime.sendMessage({ action: 'scanProgress', data: p }),
-            onResult: async (users) => {
+            onResult: async (users, incremental = false) => {
+
               for (const user of users) {
-                user.profile_pic_url = await fetchImageAsDataURL(user.profile_pic_url);
-              }
-              await chrome.storage.local.set({ lastScanResult: users });
-              chrome.runtime.sendMessage({ action: 'scanResult', data: users });
-            },
+                if (user.profile_pic_url && !user.profile_pic_url.startsWith('data:')) {
+      user.profile_pic_url = await fetchImageAsDataURL(user.profile_pic_url);
+    }
+  }
+
+  if (incremental) {
+    const { lastScanResult = [] } = await chrome.storage.local.get('lastScanResult');
+    const existingIds = new Set(lastScanResult.map(u => u.id));
+    const newUsers = users.filter(u => !existingIds.has(u.id));
+    const merged = [...lastScanResult, ...newUsers];
+    await chrome.storage.local.set({ lastScanResult: merged });
+    chrome.runtime.sendMessage({ action: 'scanResult', data: merged });
+  } else {
+    await chrome.storage.local.set({ lastScanResult: users });
+    chrome.runtime.sendMessage({ action: 'scanResult', data: users });
+  }
+},
             onComplete: (c) => {
               chrome.storage.local.set({ lastScanSummary: c.summary });
               chrome.runtime.sendMessage({ action: 'scanComplete', data: c });

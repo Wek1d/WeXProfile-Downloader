@@ -2,7 +2,6 @@ export class UnfollowerScanner {
     constructor({ userId, csrfToken, onProgress, onResult, onComplete, onUnfollowProgress, config }) {
         this.userId = userId;
         this.csrfToken = csrfToken;
-        this.followers = [];
         this.following = [];
         this.unfollowers = [];
         this.isPaused = false;
@@ -14,8 +13,7 @@ export class UnfollowerScanner {
         this.onComplete = onComplete || (() => {});
         this.onUnfollowProgress = onUnfollowProgress || (() => {});
 
-        // Varsayılan yapılandırma
-        this.config = config || {  
+        this.config = config || {
             timeBetweenRequests: 1800,
             timeAfterFiveRequests: 12000,
             timeBetweenUnfollows: 4000,
@@ -27,19 +25,17 @@ export class UnfollowerScanner {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-
     _getNaturalDelay(baseTime) {
         let u = 0, v = 0;
-        while(u === 0) u = Math.random();
-        while(v === 0) v = Math.random();
-        const z = Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
-        
+        while (u === 0) u = Math.random();
+        while (v === 0) v = Math.random();
+        const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
         let delay = baseTime + z * (baseTime * 0.15);
-        
         delay = Math.max(baseTime * 0.6, Math.min(baseTime * 1.4, delay));
         return Math.floor(delay);
     }
 
+    
     async _fetchUsers(type) {
         let users = [];
         let hasNextPage = true;
@@ -63,11 +59,9 @@ export class UnfollowerScanner {
                 id: this.userId,
                 include_reel: true,
                 fetch_mutual: false,
-                first: 50  
+                first: 50
             };
-            if (endCursor) {
-                variables.after = endCursor;
-            }
+            if (endCursor) variables.after = endCursor;
 
             const url = `https://www.instagram.com/graphql/query/?query_hash=${queryHash}&variables=${JSON.stringify(variables)}`;
 
@@ -81,20 +75,18 @@ export class UnfollowerScanner {
                         headers: {
                             'x-csrftoken': this.csrfToken,
                             'x-instagram-ajax': '1',
-                            'x-requested-with': 'XMLHttpRequest',
+                            'x-requested-with': 'XMLHttpRequest'
                         },
                         credentials: 'include'
                     });
 
-                    
                     if (response.status === 429 || response.status >= 500) {
                         retryCount++;
                         if (retryCount < maxRetries) {
-                            
                             const backoff = Math.pow(2, retryCount) * 1000;
                             this.onProgress({
                                 type: 'warning',
-                                message: `Hız sınırı aşıldı, ${backoff/1000} saniye bekleniyor...`
+                                message: `Hız sınırı aşıldı, ${backoff / 1000} saniye bekleniyor...`
                             });
                             await this._sleep(backoff);
                             continue;
@@ -103,9 +95,7 @@ export class UnfollowerScanner {
                         }
                     }
 
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
-                    }
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
                     responseData = await response.json();
                     success = true;
@@ -123,13 +113,13 @@ export class UnfollowerScanner {
             if (!success || this.stopScan) break;
 
             const edge = responseData.data.user[type === 'followers' ? 'edge_followed_by' : 'edge_follow'];
-            
+
             users.push(...edge.edges.map(e => ({
                 id: e.node.id,
                 username: e.node.username,
                 full_name: e.node.full_name,
                 profile_pic_url: e.node.profile_pic_url,
-                is_verified: e.node.is_verified,
+                is_verified: e.node.is_verified
             })));
 
             const total = edge.count;
@@ -144,15 +134,126 @@ export class UnfollowerScanner {
             endCursor = edge.page_info.end_cursor;
 
             requestCount++;
-            
-            const baseDelay = (requestCount % 5 === 0) 
-                ? this.config.timeAfterFiveRequests 
+            const baseDelay = (requestCount % 5 === 0)
+                ? this.config.timeAfterFiveRequests
                 : this.config.timeBetweenRequests;
-            
-            const sleepTime = this._getNaturalDelay(baseDelay);
-            await this._sleep(sleepTime);
+
+            await this._sleep(this._getNaturalDelay(baseDelay));
         }
         return users;
+    }
+
+    
+    async _getFollowersCount() {
+        try {
+            const response = await fetch(
+                `https://www.instagram.com/api/v1/users/${this.userId}/info/`,
+                {
+                    headers: {
+                        'x-ig-app-id': '936619743392459',
+                        'x-requested-with': 'XMLHttpRequest'
+                    },
+                    credentials: 'include'
+                }
+            );
+            if (!response.ok) return null;
+            const data = await response.json();
+            return data.user?.follower_count ?? null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    
+    async _batchVerifyFriendships(candidates) {
+        const BATCH_SIZE = 30;
+        const found = [];
+        const total = candidates.length;
+
+        for (let i = 0; i < candidates.length; i += BATCH_SIZE) {
+            if (this.stopScan) break;
+
+            while (this.isPaused && !this.stopScan) {
+                await this._sleep(1000);
+            }
+            if (this.stopScan) break;
+
+            const batch = candidates.slice(i, i + BATCH_SIZE);
+            const userIds = batch.map(u => u.id).join(',');
+            let retries = 0;
+            let batchOk = false;
+
+            while (retries < 3 && !batchOk && !this.stopScan) {
+                try {
+                    const response = await fetch(
+                        'https://www.instagram.com/api/v1/friendships/show_many/',
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'x-csrftoken': this.csrfToken,
+                                'x-instagram-ajax': '1',
+                                'x-requested-with': 'XMLHttpRequest',
+                                'x-ig-app-id': '936619743392459'
+                            },
+                            credentials: 'include',
+                            body: `user_ids=${userIds}`
+                        }
+                    );
+
+                    if (response.status === 429 || response.status >= 500) {
+                        retries++;
+                        const retryAfter = response.headers.get('Retry-After');
+                        const waitMs = retryAfter
+                            ? parseInt(retryAfter) * 1000
+                            : Math.min(30000, Math.pow(2, retries) * 2000);
+                        this.onProgress({
+                            type: 'warning',
+                            message: `Hız sınırı, ${Math.round(waitMs / 1000)}s bekleniyor...`
+                        });
+                        await this._sleep(waitMs);
+                        continue;
+                    }
+
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                    const data = await response.json();
+                    const statuses = data.friendship_statuses || {};
+
+                    for (const user of batch) {
+                        const status = statuses[user.id];
+                        if (status && status.followed_by === false) {
+                            found.push(user);
+                            // Canlı akış: her yeni bulunan kullanıcıyı hemen gönder
+                            this.onResult([user], true);
+                        }
+                    }
+                    batchOk = true;
+                } catch (error) {
+                    retries++;
+                    if (retries >= 3) {
+                        this.onProgress({
+                            type: 'warning',
+                            message: `Batch doğrulama atlandı: ${error.message}`
+                        });
+                    } else {
+                        await this._sleep(2000 * retries);
+                    }
+                }
+            }
+
+            const processed = Math.min(i + BATCH_SIZE, total);
+            this.onProgress({
+                type: 'verify',
+                scanned: processed,
+                total: total,
+                percentage: total > 0 ? Math.round((processed / total) * 100) : 100
+            });
+
+            await this._sleep(this._getNaturalDelay(600));
+        }
+
+        return found;
     }
 
     async scan() {
@@ -161,22 +262,26 @@ export class UnfollowerScanner {
         this.isPaused = false;
         this.stopScan = false;
 
-        this.onProgress({ type: 'start', message: 'Tarama Başlatılıyor...' });
-        
+        this.onProgress({ type: 'start' });
+
+        // 1. Takip edilenleri çek
         this.following = await this._fetchUsers('following');
         if (this.stopScan) { this.isScanning = false; return; }
-        
-        this.followers = await this._fetchUsers('followers');
-        if (this.stopScan) { this.isScanning = false; return; }
-        
-        const followerIds = new Set(this.followers.map(u => u.id));
-        this.unfollowers = this.following.filter(u => !followerIds.has(u.id));
 
-        this.onResult(this.unfollowers);
-        this.onComplete({ 
-            success: true, 
+        
+        const followersCount = await this._getFollowersCount();
+
+       
+        this.onProgress({ type: 'verify_start' });
+        this.unfollowers = await this._batchVerifyFriendships(this.following);
+        if (this.stopScan) { this.isScanning = false; return; }
+
+        
+        this.onResult(this.unfollowers, false);
+        this.onComplete({
+            success: true,
             summary: {
-                followers: this.followers.length,
+                followers: followersCount ?? '—',
                 following: this.following.length,
                 unfollowers: this.unfollowers.length
             }
@@ -193,31 +298,35 @@ export class UnfollowerScanner {
             this.onUnfollowProgress({ success: false, message: 'CSRF token bulunamadı.' });
             return;
         }
-        
 
         this.stopScan = false;
-        
+
         for (let i = 0; i < usersToUnfollow.length; i++) {
             if (this.stopScan) break;
             const user = usersToUnfollow[i];
-            
-            const url = `https://www.instagram.com/web/friendships/${user.id}/unfollow/`;
-            
+
             try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                      'x-csrftoken': this.csrfToken,
-                      'x-instagram-ajax': '1',
-                      'x-requested-with': 'XMLHttpRequest'
-                    },
-                    credentials: 'include' 
-                });
-                
+                const response = await fetch(
+                    `https://www.instagram.com/web/friendships/${user.id}/unfollow/`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'x-csrftoken': this.csrfToken,
+                            'x-instagram-ajax': '1',
+                            'x-requested-with': 'XMLHttpRequest'
+                        },
+                        credentials: 'include'
+                    }
+                );
+
                 if (response.ok) {
                     const responseData = await response.json();
                     if (responseData.status === 'ok') {
-                        this.onUnfollowProgress({ success: true, user: user, progress: { current: i + 1, total: usersToUnfollow.length } });
+                        this.onUnfollowProgress({
+                            success: true,
+                            user: user,
+                            progress: { current: i + 1, total: usersToUnfollow.length }
+                        });
                     } else {
                         throw new Error(`API yanıtı başarısız: ${responseData.message || 'Bilinmeyen hata'}`);
                     }
@@ -225,11 +334,16 @@ export class UnfollowerScanner {
                     throw new Error(`HTTP ${response.status}`);
                 }
             } catch (error) {
-                this.onUnfollowProgress({ success: false, user: user, message: error.message, progress: { current: i + 1, total: usersToUnfollow.length } });
+                this.onUnfollowProgress({
+                    success: false,
+                    user: user,
+                    message: error.message,
+                    progress: { current: i + 1, total: usersToUnfollow.length }
+                });
             }
-            
-            const baseDelay = ((i + 1) % 5 === 0) 
-                ? this.config.timeAfterFiveUnfollows 
+
+            const baseDelay = ((i + 1) % 5 === 0)
+                ? this.config.timeAfterFiveUnfollows
                 : this.config.timeBetweenUnfollows;
             await this._sleep(this._getNaturalDelay(baseDelay));
         }

@@ -274,5 +274,11 @@
   },
   "rescanBtn": {
     "message": "Yeniden Tara"
-  }
+  },
+  "verifyingLabel": {
+  "message": "Doğrulanıyor"
+},
+"verifyStartMessage": {
+  "message": "Takip etmeyenler doğrulanıyor..."
+}
 }
