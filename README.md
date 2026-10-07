@@ -121,7 +121,6 @@ It allows you to view and download HD profile photos, analyze user statistics, a
 - **Accurate detection:** Unfollower status is now read directly from Instagram's canonical `followed_by` field. This eliminates the false positives that appeared on large or private accounts, where the viewer wasn't guaranteed to appear in the top 12 of a user's following list.
 - **Faster scans:** 1,000 accounts verified in roughly 30 seconds. The full followers list is no longer paginated — follower count is fetched with a single lightweight request instead.
 - **Live streaming results:** Unfollowers appear on screen as each batch is verified, rather than waiting for the entire scan to finish.
-- **Notification restraint:** Notifications are no longer shown when the active tab isn't an Instagram page.
 - **Soft-block resilience:** HTTP 429 and 5xx responses now trigger exponential backoff (respecting `Retry-After` headers) instead of halting the scan.
 
 ### Version 3.3.9 
