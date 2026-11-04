@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "WeXProfile Downloader",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "default_locale": "en",
   "description": "__MSG_appDesc__",
   "icons": {
@@ -21,10 +21,12 @@
     "notifications",
     "storage",
     "downloads",
-    "cookies"
+    "cookies",
+    "scripting"
   ],
   "host_permissions": [
     "https://*.instagram.com/*",
+    "https://instagram.com/*",
     "*://*.cdninstagram.com/*",
     "*://*.fbcdn.net/*"
   ],

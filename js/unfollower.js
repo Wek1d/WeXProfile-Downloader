@@ -1,7 +1,12 @@
 export class UnfollowerScanner {
-    constructor({ userId, csrfToken, onProgress, onResult, onComplete, onUnfollowProgress, config }) {
+    constructor({ userId, csrfToken, fetchFollowingPage, verifyFollowedBy, getProfileStats, unfollowUser, onProgress, onResult, onComplete, onUnfollowProgress, config }) {
         this.userId = userId;
         this.csrfToken = csrfToken;
+        this.fetchFollowingPage = fetchFollowingPage;
+        this.verifyFollowedBy = verifyFollowedBy;
+        this.getProfileStats = getProfileStats;
+        this.unfollowUser = unfollowUser;
+        this.skipped = [];
         this.following = [];
         this.unfollowers = [];
         this.isPaused = false;
@@ -21,8 +26,19 @@ export class UnfollowerScanner {
         };
     }
 
-    _sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+
+    async _sleep(ms) {
+        let remaining = ms;
+        while (remaining > 0) {
+            const chunk = Math.min(remaining, 20000);
+            await new Promise(resolve => setTimeout(resolve, chunk));
+            remaining -= chunk;
+            try {
+                if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getPlatformInfo) {
+                    await chrome.runtime.getPlatformInfo();
+                }
+            } catch (e) { /* yoksay */ }
+        }
     }
 
     _getNaturalDelay(baseTime) {
@@ -36,18 +52,18 @@ export class UnfollowerScanner {
     }
 
     
-    async _fetchUsers(type) {
+    async _fetchUsers(type, expectedTotal = 0) {
+        if (typeof this.fetchFollowingPage !== 'function') {
+            throw new Error('Takip listesi sağlayıcısı tanımlı değil.');
+        }
+
         let users = [];
+        const seenIds = new Set();
         let hasNextPage = true;
-        let endCursor = null;
+        let maxId = null;
         let requestCount = 0;
         const maxRetries = 3;
-
-        const queryHashes = {
-            followers: 'c76146de99bb02f6415203be841dd25a',
-            following: 'd04b0a864b4b54837c0d870b0e77e076'
-        };
-        const queryHash = queryHashes[type];
+        let total = expectedTotal > 0 ? expectedTotal : 0;
 
         while (hasNextPage && !this.stopScan) {
             if (this.isPaused) {
@@ -55,49 +71,25 @@ export class UnfollowerScanner {
                 continue;
             }
 
-            const variables = {
-                id: this.userId,
-                include_reel: true,
-                fetch_mutual: false,
-                first: 50
-            };
-            if (endCursor) variables.after = endCursor;
-
-            const url = `https://www.instagram.com/graphql/query/?query_hash=${queryHash}&variables=${JSON.stringify(variables)}`;
-
             let retryCount = 0;
             let success = false;
-            let responseData;
+            let result = null;
 
             while (retryCount < maxRetries && !success && !this.stopScan) {
                 try {
-                    const response = await fetch(url, {
-                        headers: {
-                            'x-csrftoken': this.csrfToken,
-                            'x-instagram-ajax': '1',
-                            'x-requested-with': 'XMLHttpRequest'
-                        },
-                        credentials: 'include'
-                    });
+                    result = await this.fetchFollowingPage(maxId);
 
-                    if (response.status === 429 || response.status >= 500) {
-                        retryCount++;
-                        if (retryCount < maxRetries) {
-                            const backoff = Math.pow(2, retryCount) * 1000;
-                            this.onProgress({
-                                type: 'warning',
-                                message: `Hız sınırı aşıldı, ${backoff / 1000} saniye bekleniyor...`
-                            });
-                            await this._sleep(backoff);
-                            continue;
-                        } else {
-                            throw new Error(`HTTP ${response.status} - maksimum deneme sayısı aşıldı`);
+                    if (!result || !result.ok) {
+                        const status = result ? result.status : null;
+                        if (status === 429 || (status && status >= 500)) {
+                            throw new Error(`HTTP ${status}`);
                         }
+                        const message = result && (result.message || result.error)
+                            ? (result.message || result.error)
+                            : 'bilinmeyen hata';
+                        throw new Error(String(message).slice(0, 200));
                     }
 
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-                    responseData = await response.json();
                     success = true;
                 } catch (error) {
                     retryCount++;
@@ -106,71 +98,126 @@ export class UnfollowerScanner {
                         hasNextPage = false;
                         break;
                     }
-                    await this._sleep(2000 * retryCount);
+                    const backoff = Math.pow(2, retryCount) * 1000;
+                    this.onProgress({
+                        type: 'warning',
+                        message: `Hız sınırı aşıldı, ${backoff / 1000} saniye bekleniyor...`
+                    });
+                    await this._sleep(backoff);
                 }
             }
 
             if (!success || this.stopScan) break;
 
-            const edge = responseData.data.user[type === 'followers' ? 'edge_followed_by' : 'edge_follow'];
+            const data = result.data || {};
+            const pageUsers = Array.isArray(data.users) ? data.users : [];
 
-            users.push(...edge.edges.map(e => ({
-                id: e.node.id,
-                username: e.node.username,
-                full_name: e.node.full_name,
-                profile_pic_url: e.node.profile_pic_url,
-                is_verified: e.node.is_verified
-            })));
+            for (const item of pageUsers) {
+                const rawId = item.pk || item.id || item.pk_id;
+                if (!rawId) continue;
+                const id = String(rawId);
+                if (seenIds.has(id)) continue;
+                seenIds.add(id);
+                users.push({
+                    id: id,
+                    username: item.username,
+                    full_name: item.full_name,
+                    profile_pic_url: item.profile_pic_url,
+                    is_verified: !!item.is_verified
+                });
+            }
 
-            const total = edge.count;
+            if (total <= 0) total = users.length;
+            if (users.length > total) total = users.length;
+
             this.onProgress({
                 type: type,
                 scanned: users.length,
                 total: total,
-                percentage: Math.round((users.length / total) * 100)
+                percentage: total > 0 ? Math.min(100, Math.round((users.length / total) * 100)) : 0
             });
 
-            hasNextPage = edge.page_info.has_next_page;
-            endCursor = edge.page_info.end_cursor;
+            const nextMaxId = data.next_max_id ? String(data.next_max_id) : null;
+            const apiHasMore = data.has_more === true;
+
+            if (!apiHasMore || !nextMaxId || nextMaxId === maxId) {
+                hasNextPage = false;
+            } else {
+                maxId = nextMaxId;
+            }
 
             requestCount++;
             const baseDelay = (requestCount % 5 === 0)
                 ? this.config.timeAfterFiveRequests
                 : this.config.timeBetweenRequests;
 
-            await this._sleep(this._getNaturalDelay(baseDelay));
+            if (hasNextPage && !this.stopScan) {
+                await this._sleep(this._getNaturalDelay(baseDelay));
+            }
         }
         return users;
     }
 
     
-    async _getFollowersCount() {
+    async _getProfileStats(userId) {
+        if (typeof this.getProfileStats !== 'function') return null;
         try {
-            const response = await fetch(
-                `https://www.instagram.com/api/v1/users/${this.userId}/info/`,
-                {
-                    headers: {
-                        'x-ig-app-id': '936619743392459',
-                        'x-requested-with': 'XMLHttpRequest'
-                    },
-                    credentials: 'include'
-                }
-            );
-            if (!response.ok) return null;
-            const data = await response.json();
-            return data.user?.follower_count ?? null;
-        } catch (e) {
+            return await this.getProfileStats(userId);
+        } catch (error) {
+            this.onProgress({
+                type: 'warning',
+                message: `Profil istatistikleri alınamadı: ${error.message}`
+            });
             return null;
         }
     }
 
-    
-    async _batchVerifyFriendships(candidates) {
-        const BATCH_SIZE = 30;
+
+    async _verifyFollowBack(user) {
+        if (typeof this.verifyFollowedBy !== 'function') {
+            throw new Error('Arkadaşlık doğrulama sağlayıcısı tanımlı değil.');
+        }
+
+        const maxRetries = 4;
+        for (let attempt = 1; attempt <= maxRetries && !this.stopScan; attempt++) {
+            try {
+                const status = await this.verifyFollowedBy(user.id);
+                if (!status || typeof status.followed_by !== 'boolean') {
+                    throw new Error('followed_by alanı yok');
+                }
+                this.consecutiveFailures = 0;
+                return status.followed_by;
+            } catch (error) {
+                const rateLimited = error.status === 429 || /HTTP 429/.test(error.message || '');
+                if (attempt >= maxRetries) {
+                    this.consecutiveFailures = (this.consecutiveFailures || 0) + 1;
+                    this.skipped.push(user);
+                    this.onProgress({
+                        type: 'warning',
+                        message: `Doğrulama atlandı (@${user.username || user.id}): ${error.message}`
+                    });
+                    return null;
+                }
+                
+                const wait = rateLimited ? 30000 * attempt : 2000 * attempt;
+                if (rateLimited) {
+                    this.onProgress({
+                        type: 'warning',
+                        message: `Hız sınırı (429), ${Math.round(wait / 1000)} sn bekleniyor...`
+                    });
+                }
+                await this._sleep(wait);
+            }
+        }
+        return null;
+    }
+
+        async _verifyFriendships(candidates) {
         const found = [];
         const total = candidates.length;
+        let requestCount = 0;
 
-        for (let i = 0; i < candidates.length; i += BATCH_SIZE) {
+        for (let i = 0; i < candidates.length; i++) {
             if (this.stopScan) break;
 
             while (this.isPaused && !this.stopScan) {
@@ -178,79 +225,40 @@ export class UnfollowerScanner {
             }
             if (this.stopScan) break;
 
-            const batch = candidates.slice(i, i + BATCH_SIZE);
-            const userIds = batch.map(u => u.id).join(',');
-            let retries = 0;
-            let batchOk = false;
+            const user = candidates[i];
+            const followedBy = await this._verifyFollowBack(user);
 
-            while (retries < 3 && !batchOk && !this.stopScan) {
-                try {
-                    const response = await fetch(
-                        'https://www.instagram.com/api/v1/friendships/show_many/',
-                        {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                                'x-csrftoken': this.csrfToken,
-                                'x-instagram-ajax': '1',
-                                'x-requested-with': 'XMLHttpRequest',
-                                'x-ig-app-id': '936619743392459'
-                            },
-                            credentials: 'include',
-                            body: `user_ids=${userIds}`
-                        }
-                    );
 
-                    if (response.status === 429 || response.status >= 500) {
-                        retries++;
-                        const retryAfter = response.headers.get('Retry-After');
-                        const waitMs = retryAfter
-                            ? parseInt(retryAfter) * 1000
-                            : Math.min(30000, Math.pow(2, retries) * 2000);
-                        this.onProgress({
-                            type: 'warning',
-                            message: `Hız sınırı, ${Math.round(waitMs / 1000)}s bekleniyor...`
-                        });
-                        await this._sleep(waitMs);
-                        continue;
-                    }
-
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-                    const data = await response.json();
-                    const statuses = data.friendship_statuses || {};
-
-                    for (const user of batch) {
-                        const status = statuses[user.id];
-                        if (status && status.followed_by === false) {
-                            found.push(user);
-                            // Canlı akış: her yeni bulunan kullanıcıyı hemen gönder
-                            this.onResult([user], true);
-                        }
-                    }
-                    batchOk = true;
-                } catch (error) {
-                    retries++;
-                    if (retries >= 3) {
-                        this.onProgress({
-                            type: 'warning',
-                            message: `Batch doğrulama atlandı: ${error.message}`
-                        });
-                    } else {
-                        await this._sleep(2000 * retries);
-                    }
-                }
+            if (followedBy === null && (this.consecutiveFailures || 0) >= 5) {
+                this.onProgress({
+                    type: 'error',
+                    message: 'Instagram isteklerinizi geçici olarak sınırlıyor. Taramayı durdurdum; birkaç saat sonra tekrar deneyin.'
+                });
+                this.stopScan = true;
+                break;
             }
 
-            const processed = Math.min(i + BATCH_SIZE, total);
+            if (followedBy === false) {
+                found.push(user);
+                
+                this.onResult([user], true);
+            }
+
             this.onProgress({
                 type: 'verify',
-                scanned: processed,
+                scanned: i + 1,
                 total: total,
-                percentage: total > 0 ? Math.round((processed / total) * 100) : 100
+                percentage: total > 0 ? Math.round(((i + 1) / total) * 100) : 100
             });
 
-            await this._sleep(this._getNaturalDelay(600));
+            requestCount++;
+            const baseDelay = (requestCount % 5 === 0)
+                ? this.config.timeAfterFiveRequests
+                : this.config.timeBetweenRequests;
+
+            if (i + 1 < candidates.length && !this.stopScan) {
+                await this._sleep(this._getNaturalDelay(baseDelay));
+            }
         }
 
         return found;
@@ -261,32 +269,43 @@ export class UnfollowerScanner {
         this.isScanning = true;
         this.isPaused = false;
         this.stopScan = false;
+        this.skipped = [];
+        this.consecutiveFailures = 0;
 
         this.onProgress({ type: 'start' });
 
-        // 1. Takip edilenleri çek
-        this.following = await this._fetchUsers('following');
-        if (this.stopScan) { this.isScanning = false; return; }
+        try {
+            
+            const profileStats = await this._getProfileStats(this.userId);
+            if (this.stopScan) return;
 
-        
-        const followersCount = await this._getFollowersCount();
+            
+            const expectedFollowing = profileStats && typeof profileStats.following === 'number'
+                ? profileStats.following
+                : 0;
+            this.following = await this._fetchUsers('following', expectedFollowing);
+            if (this.stopScan) return;
 
-       
-        this.onProgress({ type: 'verify_start' });
-        this.unfollowers = await this._batchVerifyFriendships(this.following);
-        if (this.stopScan) { this.isScanning = false; return; }
+            
+            this.onProgress({ type: 'verify_start' });
+            this.unfollowers = await this._verifyFriendships(this.following);
+            if (this.stopScan) return;
 
-        
-        this.onResult(this.unfollowers, false);
-        this.onComplete({
-            success: true,
-            summary: {
-                followers: followersCount ?? '—',
-                following: this.following.length,
-                unfollowers: this.unfollowers.length
-            }
-        });
-        this.isScanning = false;
+            this.onResult(this.unfollowers, false);
+            this.onComplete({
+                success: true,
+                summary: {
+                    followers: profileStats && profileStats.followers != null ? profileStats.followers : '—',
+                    following: this.following.length,
+                    unfollowers: this.unfollowers.length,
+                    skipped: this.skipped.length
+                }
+            });
+        } catch (error) {
+            this.onProgress({ type: 'error', message: error.message });
+        } finally {
+            this.isScanning = false;
+        }
     }
 
     pause() { this.isPaused = true; }
@@ -294,8 +313,8 @@ export class UnfollowerScanner {
     stop() { this.stopScan = true; }
 
     async unfollow(usersToUnfollow) {
-        if (!this.csrfToken) {
-            this.onUnfollowProgress({ success: false, message: 'CSRF token bulunamadı.' });
+        if (typeof this.unfollowUser !== 'function') {
+            this.onUnfollowProgress({ success: false, message: 'Takipten çıkarma sağlayıcısı tanımlı değil.' });
             return;
         }
 
@@ -304,48 +323,35 @@ export class UnfollowerScanner {
         for (let i = 0; i < usersToUnfollow.length; i++) {
             if (this.stopScan) break;
             const user = usersToUnfollow[i];
+            let blocked = false;
 
             try {
-                const response = await fetch(
-                    `https://www.instagram.com/web/friendships/${user.id}/unfollow/`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'x-csrftoken': this.csrfToken,
-                            'x-instagram-ajax': '1',
-                            'x-requested-with': 'XMLHttpRequest'
-                        },
-                        credentials: 'include'
-                    }
-                );
-
-                if (response.ok) {
-                    const responseData = await response.json();
-                    if (responseData.status === 'ok') {
-                        this.onUnfollowProgress({
-                            success: true,
-                            user: user,
-                            progress: { current: i + 1, total: usersToUnfollow.length }
-                        });
-                    } else {
-                        throw new Error(`API yanıtı başarısız: ${responseData.message || 'Bilinmeyen hata'}`);
-                    }
-                } else {
-                    throw new Error(`HTTP ${response.status}`);
-                }
+                await this.unfollowUser(user.id);
+                this.onUnfollowProgress({
+                    success: true,
+                    user: user,
+                    progress: { current: i + 1, total: usersToUnfollow.length }
+                });
             } catch (error) {
+                blocked = !!error.blocked;
                 this.onUnfollowProgress({
                     success: false,
                     user: user,
                     message: error.message,
+                    blocked: blocked,
                     progress: { current: i + 1, total: usersToUnfollow.length }
                 });
             }
 
-            const baseDelay = ((i + 1) % 5 === 0)
-                ? this.config.timeAfterFiveUnfollows
-                : this.config.timeBetweenUnfollows;
-            await this._sleep(this._getNaturalDelay(baseDelay));
+            
+            if (blocked) break;
+
+            if (i + 1 < usersToUnfollow.length) {
+                const baseDelay = ((i + 1) % 5 === 0)
+                    ? this.config.timeAfterFiveUnfollows
+                    : this.config.timeBetweenUnfollows;
+                await this._sleep(this._getNaturalDelay(baseDelay));
+            }
         }
     }
 }

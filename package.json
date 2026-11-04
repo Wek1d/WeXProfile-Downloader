@@ -1,6 +1,6 @@
 {
   "name": "wexprofile-downloader",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "description": "<p align=\"center\">\r   <img src=\"icon.png\" alt=\"WeXProfile Downloader Logo\" width=\"150\" />\r </p>",
   "main": "index.js",
   "directories": {
@@ -38,6 +38,6 @@
     "zip-a-folder": "^7.0.1"
   },
   "allowScripts": {
-    "esbuild@0.25.12": true
+    "esbuild": true
   }
 }

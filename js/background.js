@@ -62,6 +62,16 @@ const PROFILE_HISTORY_KEY = 'profileHistory';
 const HISTORY_LIMIT = 500;
 const CACHE_TTL = 5 * 60 * 1000;
 
+
+const IG_APP_ID = '936619743392459';
+const IG_ASBD_ID = '359341';
+const PROFILE_QUERY_DOC_ID = '40158838120366999';
+const PROFILE_QUERY_FRIENDLY_NAME = 'PolarisProfilePageContentQuery';
+const HOVER_CARD_QUERY_DOC_ID = '28949219061332276';
+const HOVER_CARD_QUERY_FRIENDLY_NAME = 'PolarisUserHoverCardContentV2Query';
+// Takip listesi API'si yakalanan isteklerde 12'lik sayfalar döndürüyor.
+const FOLLOWING_PAGE_SIZE = 12;
+
 async function getCookie(name) {
   try {
     const cookie = await chrome.cookies.get({ url: "https://www.instagram.com", name });
@@ -144,7 +154,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     sendNotification("infoTitle", "downloadingPhoto");
     try {
       const profileData = await handleProfileAnalysis(tab.url, tab.id, false);
-      const hdUrl = await getHdProfilePhotoUrl(profileData.id);
+      const hdUrl = await getHdProfilePhotoUrl(profileData.id, tab.id);
       await chrome.downloads.download({
         url: hdUrl,
         filename: `instagram_${profileData.username}_hd.jpg`,
@@ -161,7 +171,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId === "wexProfileOpenHd") {
     try {
       const profileData = await handleProfileAnalysis(tab.url, tab.id, false);
-      const hdUrl = await getHdProfilePhotoUrl(profileData.id);
+      const hdUrl = await getHdProfilePhotoUrl(profileData.id, tab.id);
       chrome.tabs.create({ url: hdUrl });
     } catch (error) {
       console.error("Sağ tık yeni sekme hatası:", error);
@@ -187,7 +197,7 @@ async function handleProfileAnalysis(url, tabId, isContextMenuClick) {
   }
   currentProfileFetchUrl = url;
 
-  currentProfileFetchPromise = fetchProfileData(url)
+  currentProfileFetchPromise = fetchProfileData(url, tabId)
     .then(async (data) => {
       await chrome.storage.local.set({
           cachedProfile: data,
@@ -306,102 +316,652 @@ function extractLargestImage(candidatesList) {
   return sorted[0]?.url || null;
 }
 
-async function getInstagramUserInfo(username) {
-  
-  const url = `https://www.instagram.com/api/v1/users/web_profile_info/?username=${username}`;
-  
-  const response = await fetch(url, {
+
+async function instagramProfileRequest(payload) {
+  const wantedUsername = String(payload.username || '').toLowerCase();
+
+  function getModule(name) {
+    try {
+      if (typeof window.require === 'function') {
+        return window.require(name);
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  const scriptTexts = [];
+  const scriptNodes = document.querySelectorAll('script[type="application/json"]');
+  for (let i = 0; i < scriptNodes.length; i++) {
+    try {
+      scriptTexts.push(scriptNodes[i].textContent || '');
+    } catch (e) {}
+  }
+
+  function findUserIdByUsername(root, wanted) {
+    const stack = [root];
+    let steps = 0;
+    while (stack.length > 0 && steps < 500000) {
+      steps++;
+      const node = stack.pop();
+      if (!node || typeof node !== 'object') continue;
+      if (!Array.isArray(node)) {
+        const uname = node.username;
+        if (typeof uname === 'string' && uname.toLowerCase() === wanted) {
+          const id = node.pk || node.id || node.pk_id;
+          if (id && String(id) !== '0') return String(id);
+        }
+      }
+      for (const key in node) {
+        const child = node[key];
+        if (child && typeof child === 'object') stack.push(child);
+      }
+    }
+    return null;
+  }
+
+  function extractProfileIdFromHtml(html) {
+    let match = html.match(/"page_logging"\s*:\s*\{[^{}]*"name"\s*:\s*"profilePage"[^{}]*"params"\s*:\s*\{[^{}]*"profile_id"\s*:\s*"(\d+)"/);
+    if (match) return match[1];
+    match = html.match(/"profile_id"\s*:\s*"(\d+)"/);
+    if (match) return match[1];
+    match = html.match(/"props"\s*:\s*\{\s*"id"\s*:\s*"(\d+)"/);
+    if (match) return match[1];
+    return null;
+  }
+
+  const hasCustomVariables = payload.variables && typeof payload.variables === 'object';
+  let profileId = payload.mode === 'id' && payload.profileId ? String(payload.profileId) : null;
+
+  // Hover kartı gibi hazır değişkenlerle çalışan sorgularda profil kimliği
+  // çözümlemesine gerek yoktur.
+  if (!hasCustomVariables) {
+  // 1) Sayfadaki ön yüklenmiş (SSR/Relay) veride kullanıcı adı eşleşmesi.
+  if (!profileId && wantedUsername) {
+    for (let i = 0; i < scriptTexts.length; i++) {
+      const text = scriptTexts[i];
+      if (text.toLowerCase().indexOf(wantedUsername) === -1) continue;
+      let parsed = null;
+      try { parsed = JSON.parse(text); } catch (e) { continue; }
+      profileId = findUserIdByUsername(parsed, wantedUsername);
+      if (profileId) break;
+    }
+  }
+
+
+  if (!profileId && wantedUsername) {
+    try {
+      const pageResponse = await fetch(location.origin + '/' + encodeURIComponent(wantedUsername) + '/', {
+        credentials: 'include',
+        headers: { 'accept': 'text/html,application/xhtml+xml' }
+      });
+      if (pageResponse.ok) {
+        profileId = extractProfileIdFromHtml(await pageResponse.text());
+      }
+    } catch (e) {}
+  }
+
+  // 3) Son çare: DOM'daki route verisindeki profile_id.
+  if (!profileId) {
+    for (let i = 0; i < scriptTexts.length && !profileId; i++) {
+      const match = scriptTexts[i].match(/"profile_id"\s*:\s*"(\d+)"/);
+      if (match) profileId = match[1];
+    }
+  }
+
+  if (!profileId) {
+    return { ok: false, error: 'profile_id_not_found' };
+  }
+  }
+
+  const dtsgInitial = getModule('DTSGInitialData') || {};
+  const dtsgInit = getModule('DTSGInitData') || {};
+  let fbDtsg = dtsgInitial.token || dtsgInit.token || dtsgInitial.async_get_token || dtsgInit.async_get_token || '';
+  fbDtsg = fbDtsg ? String(fbDtsg) : '';
+  if (!fbDtsg) {
+    for (let i = 0; i < scriptTexts.length && !fbDtsg; i++) {
+      const match = scriptTexts[i].match(/"DTSGInitialData"\s*,\s*\[\s*\]\s*,\s*(\{[\s\S]*?\})\s*,\s*\d+\s*\]/);
+      if (match) {
+        try { fbDtsg = String(JSON.parse(match[1]).token || ''); } catch (e) {}
+      }
+    }
+  }
+
+  let lsd = '';
+  const lsdData = getModule('LSD') || {};
+  if (lsdData && lsdData.token) lsd = String(lsdData.token);
+  if (!lsd) {
+    for (let i = 0; i < scriptTexts.length && !lsd; i++) {
+      const match = scriptTexts[i].match(/"LSD"\s*,\s*\[\s*\]\s*,\s*\{\s*"token"\s*:\s*"([^"]+)"/);
+      if (match) lsd = match[1];
+    }
+  }
+
+  let csrfToken = payload.csrfToken ? String(payload.csrfToken) : '';
+  if (!csrfToken) {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.indexOf('csrftoken=') === 0) {
+        csrfToken = decodeURIComponent(cookie.slice('csrftoken='.length));
+        break;
+      }
+    }
+  }
+
+  let av = '';
+  const relayDefaults = getModule('RelayAPIConfigDefaults') || {};
+  if (relayDefaults.actorID && String(relayDefaults.actorID) !== '0') {
+    av = String(relayDefaults.actorID);
+  }
+  if (!av) {
+    const currentUser = getModule('CurrentUserInitialData') || {};
+    if (currentUser.ACCOUNT_ID && String(currentUser.ACCOUNT_ID) !== '0') {
+      av = String(currentUser.ACCOUNT_ID);
+    }
+  }
+  if (!av) {
+    for (let i = 0; i < scriptTexts.length && !av; i++) {
+      const match = scriptTexts[i].match(/"actorID"\s*:\s*"(\d{5,})"/);
+      if (match) av = match[1];
+    }
+  }
+
+  if (!fbDtsg || !lsd || !csrfToken) {
+    return {
+      ok: false,
+      error: 'tokens_not_found',
+      detail: { fbDtsg: !!fbDtsg, lsd: !!lsd, csrfToken: !!csrfToken }
+    };
+  }
+
+  let siteData = getModule('SiteData') || {};
+  if (!siteData.server_revision) {
+    for (let i = 0; i < scriptTexts.length; i++) {
+      const match = scriptTexts[i].match(/"SiteData"\s*,\s*\[\s*\]\s*,\s*(\{[\s\S]*?\})\s*,\s*\d+\s*\]/);
+      if (!match) continue;
+      try {
+        siteData = JSON.parse(match[1]);
+        if (siteData.server_revision) break;
+      } catch (e) {}
+    }
+  }
+
+  const variables = hasCustomVariables ? payload.variables : {
+    enable_integrity_filters: true,
+    id: String(profileId),
+    __relay_internal__pv__PolarisCannesGuardianExperienceEnabledrelayprovider: true,
+    __relay_internal__pv__PolarisCASB976ProfileEnabledrelayprovider: false,
+    __relay_internal__pv__PolarisProfileInformTreatmentBannerEnabledrelayprovider: false,
+    __relay_internal__pv__PolarisWebSchoolsEnabledrelayprovider: false,
+    __relay_internal__pv__PolarisProfileRingsGradientEnabledrelayprovider: true,
+    __relay_internal__pv__PolarisRepostsConsumptionEnabledrelayprovider: true,
+    __relay_internal__pv__PolarisShortDramaEnabledrelayprovider: true
+  };
+
+  const body = new URLSearchParams();
+  if (av) body.set('av', av);
+  body.set('__d', 'www');
+  body.set('__user', '0');
+  body.set('__a', '1');
+  body.set('__req', Math.random().toString(36).slice(2, 4));
+  if (siteData.haste_session) body.set('__hs', String(siteData.haste_session));
+  body.set('dpr', String(Math.round(window.devicePixelRatio || 1)));
+  body.set('__ccg', 'EXCELLENT');
+  if (siteData.server_revision) body.set('__rev', String(siteData.server_revision));
+  if (siteData.hsi) body.set('__hsi', String(siteData.hsi));
+  body.set('__comet_req', String(siteData.comet_env || 7));
+  body.set('fb_dtsg', fbDtsg);
+  let jazoestSum = 0;
+  for (let i = 0; i < fbDtsg.length; i++) jazoestSum += fbDtsg.charCodeAt(i);
+  body.set('jazoest', '2' + jazoestSum);
+  body.set('lsd', lsd);
+  if (siteData.__spin_r) body.set('__spin_r', String(siteData.__spin_r));
+  if (siteData.__spin_b) body.set('__spin_b', String(siteData.__spin_b));
+  if (siteData.__spin_t) body.set('__spin_t', String(siteData.__spin_t));
+  body.set('fb_api_caller_class', 'RelayModern');
+  body.set('fb_api_req_friendly_name', payload.friendlyName);
+  body.set('server_timestamps', 'true');
+  body.set('variables', JSON.stringify(variables));
+  body.set('doc_id', payload.docId);
+
+  let response;
+  try {
+    response = await fetch(location.origin + '/api/graphql', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+        'x-csrftoken': csrfToken,
+        'x-fb-lsd': lsd,
+        'x-ig-app-id': payload.appId,
+        'x-asbd-id': payload.asbdId,
+        'x-fb-friendly-name': payload.friendlyName,
+        'x-ig-max-touch-points': '0'
+      },
+      body: body.toString()
+    });
+  } catch (e) {
+    return { ok: false, error: 'network_error', message: String((e && e.message) || e) };
+  }
+
+  const responseText = await response.text();
+  let responseJson = null;
+  try { responseJson = JSON.parse(responseText); } catch (e) {}
+
+  const hasGraphQLErrors = !!(responseJson && responseJson.errors &&
+    (!Array.isArray(responseJson.errors) || responseJson.errors.length > 0));
+
+  if (!response.ok || !responseJson || hasGraphQLErrors) {
+    return {
+      ok: false,
+      status: response.status,
+      error: hasGraphQLErrors ? 'graphql_error' : 'http_error',
+      message: hasGraphQLErrors
+        ? JSON.stringify(responseJson.errors).slice(0, 500)
+        : responseText.slice(0, 300)
+    };
+  }
+
+  return { ok: true, status: response.status, data: responseJson, profileId: profileId ? String(profileId) : null };
+}
+
+
+async function instagramPageFetch(payload) {
+  const method = (payload.method || 'GET').toUpperCase();
+  const headers = Object.assign({}, payload.headers || {});
+
+  function getModule(name) {
+    try {
+      if (typeof window.require === 'function') {
+        return window.require(name);
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  let csrfToken = payload.csrfToken ? String(payload.csrfToken) : '';
+  if (!csrfToken) {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.indexOf('csrftoken=') === 0) {
+        csrfToken = decodeURIComponent(cookie.slice('csrftoken='.length));
+        break;
+      }
+    }
+  }
+  if (csrfToken && !headers['x-csrftoken']) {
+    headers['x-csrftoken'] = csrfToken;
+  }
+
+
+  if (!headers['x-ig-www-claim']) {
+    let claim = '';
+    try {
+      const claimModule = getModule('PolarisWWWClaim');
+      if (claimModule && typeof claimModule.getWWWClaim === 'function') {
+        claim = claimModule.getWWWClaim() || '';
+      }
+    } catch (e) {}
+    if (!claim) {
+      try {
+        const storageModule = getModule('PolarisIGWebStorage');
+        const storage = storageModule && typeof storageModule.getStorageForUser === 'function'
+          ? storageModule.getStorageForUser()
+          : null;
+        if (storage && typeof storage.getItem === 'function') {
+          claim = storage.getItem('www-claim-v2') || '';
+        }
+      } catch (e) {}
+    }
+    if (!claim) {
+      try {
+        const meta = document.querySelector('meta[name="ig-www-claim"]');
+        if (meta && meta.content) claim = meta.content;
+      } catch (e) {}
+    }
+    if (claim) headers['x-ig-www-claim'] = String(claim);
+  }
+
+
+  if (!headers['x-web-session-id']) {
+    try {
+      const sessionModule = getModule('WebSession');
+      if (sessionModule && typeof sessionModule.getId === 'function') {
+        const sessionId = sessionModule.getId();
+        if (sessionId) headers['x-web-session-id'] = String(sessionId);
+      }
+    } catch (e) {}
+  }
+
+
+  let requestBody = payload.body || undefined;
+  if (payload.form && typeof payload.form === 'object') {
+    let fbDtsg = '';
+    const dtsgInitial = getModule('DTSGInitialData') || {};
+    const dtsgInit = getModule('DTSGInitData') || {};
+    fbDtsg = String(dtsgInitial.token || dtsgInit.token || dtsgInitial.async_get_token || dtsgInit.async_get_token || '');
+    if (!fbDtsg) {
+      const nodes = document.querySelectorAll('script[type="application/json"]');
+      for (let i = 0; i < nodes.length && !fbDtsg; i++) {
+        const m = (nodes[i].textContent || '').match(/"DTSGInitialData"\s*,\s*\[\s*\]\s*,\s*(\{[\s\S]*?\})\s*,\s*\d+\s*\]/);
+        if (m) {
+          try { fbDtsg = String(JSON.parse(m[1]).token || ''); } catch (e) {}
+        }
+      }
+    }
+    if (!fbDtsg) {
+      return { ok: false, error: 'tokens_not_found', message: 'fb_dtsg bulunamadi' };
+    }
+    const form = new URLSearchParams();
+    for (const key in payload.form) form.set(key, String(payload.form[key]));
+    let jazoestSum = 0;
+    for (let i = 0; i < fbDtsg.length; i++) jazoestSum += fbDtsg.charCodeAt(i);
+    form.set('jazoest', '2' + jazoestSum);
+    form.set('fb_dtsg', fbDtsg);
+    requestBody = form.toString();
+    headers['content-type'] = 'application/x-www-form-urlencoded';
+    const siteData = getModule('SiteData') || {};
+    if (siteData.server_revision && !headers['x-instagram-ajax']) {
+      headers['x-instagram-ajax'] = String(siteData.server_revision);
+    }
+  }
+
+  let response;
+  try {
+    response = await fetch(payload.url, {
+      method: method,
+      credentials: 'include',
+      headers: headers,
+      body: method === 'GET' || method === 'HEAD' ? undefined : requestBody
+    });
+  } catch (e) {
+    return { ok: false, error: 'network_error', message: String((e && e.message) || e) };
+  }
+
+  const responseText = await response.text();
+  let responseJson = null;
+  try { responseJson = JSON.parse(responseText); } catch (e) {}
+
+  if (!response.ok) {
+    return {
+      ok: false,
+      status: response.status,
+      error: 'http_error',
+      message: responseText.slice(0, 300),
+      data: responseJson
+    };
+  }
+
+  if (!responseJson) {
+    return {
+      ok: false,
+      status: response.status,
+      error: 'invalid_json',
+      message: responseText.slice(0, 300)
+    };
+  }
+
+  return { ok: true, status: response.status, data: responseJson };
+}
+
+async function resolveInstagramTabId(preferredTabId) {
+  if (preferredTabId) return preferredTabId;
+
+  const activeTabs = await chrome.tabs.query({ active: true, currentWindow: true });
+  const activeTab = activeTabs[0];
+  if (activeTab && activeTab.url && activeTab.url.includes('instagram.com')) {
+    return activeTab.id;
+  }
+
+  const instagramTabs = await chrome.tabs.query({ url: ['https://*.instagram.com/*', 'https://instagram.com/*'] });
+  if (instagramTabs.length > 0) {
+    return instagramTabs[0].id;
+  }
+
+  throw new Error(t('notInstagramPageError') || 'Instagram sayfası bulunamadı.');
+}
+
+async function runProfileQuery(tabId, payload) {
+  let results;
+  try {
+    results = await chrome.scripting.executeScript({
+      target: { tabId },
+      world: 'MAIN',
+      func: instagramProfileRequest,
+      args: [payload]
+    });
+  } catch (error) {
+    throw new Error(`Instagram sayfasına erişilemedi: ${error.message}`);
+  }
+
+  const result = results && results[0] ? results[0].result : null;
+  if (!result) {
+    throw new Error('Instagram sayfasından yanıt alınamadı.');
+  }
+  return result;
+}
+
+async function queryProfileUser(tabId, mode, identifier) {
+  const csrfToken = await getCookie('csrftoken');
+  const result = await runProfileQuery(tabId, {
+    mode,
+    username: mode === 'username' ? identifier : '',
+    profileId: mode === 'id' ? String(identifier) : '',
+    docId: PROFILE_QUERY_DOC_ID,
+    friendlyName: PROFILE_QUERY_FRIENDLY_NAME,
+    appId: IG_APP_ID,
+    asbdId: IG_ASBD_ID,
+    csrfToken: csrfToken || ''
+  });
+
+  if (!result.ok) {
+    const status = result.status ? ` (HTTP ${result.status})` : '';
+    const code = result.error ? ` [${result.error}]` : '';
+    const detail = result.message ? `: ${result.message}` : '';
+    const extra = result.detail ? ` ${JSON.stringify(result.detail)}` : '';
+    throw new Error(`Instagram profil sorgusu başarısız${status}${code}${detail}${extra}`);
+  }
+
+  const user = result.data && result.data.data && result.data.data.user;
+  if (!user) {
+    throw new Error("API yanıtında beklenen kullanıcı verisi bulunamadı.");
+  }
+  return user;
+}
+
+async function runPageFetch(tabId, payload) {
+  let results;
+  try {
+    results = await chrome.scripting.executeScript({
+      target: { tabId },
+      world: 'MAIN',
+      func: instagramPageFetch,
+      args: [payload]
+    });
+  } catch (error) {
+    throw new Error(`Instagram sayfasına erişilemedi: ${error.message}`);
+  }
+
+  const result = results && results[0] ? results[0].result : null;
+  if (!result) {
+    throw new Error('Instagram sayfasından yanıt alınamadı.');
+  }
+  return result;
+}
+
+
+async function fetchFollowingPage(tabId, userId, maxId) {
+  const csrfToken = await getCookie('csrftoken');
+  let url = `https://www.instagram.com/api/v1/friendships/${encodeURIComponent(userId)}/following/?count=${FOLLOWING_PAGE_SIZE}`;
+  if (maxId) {
+    url += `&max_id=${encodeURIComponent(maxId)}`;
+  }
+
+  return runPageFetch(tabId, {
+    url,
+    method: 'GET',
+    csrfToken: csrfToken || '',
     headers: {
-      'X-IG-App-ID': '936619743392459', 
-      'X-Requested-With': 'XMLHttpRequest'
+      'accept': '*/*',
+      'x-ig-app-id': IG_APP_ID,
+      'x-asbd-id': IG_ASBD_ID,
+      'x-requested-with': 'XMLHttpRequest'
+    }
+  });
+}
+
+
+async function queryUserFriendship(tabId, userId) {
+  const csrfToken = await getCookie('csrftoken');
+  const result = await runProfileQuery(tabId, {
+    mode: 'variables',
+    variables: { userID: String(userId) },
+    docId: HOVER_CARD_QUERY_DOC_ID,
+    friendlyName: HOVER_CARD_QUERY_FRIENDLY_NAME,
+    appId: IG_APP_ID,
+    asbdId: IG_ASBD_ID,
+    csrfToken: csrfToken || ''
+  });
+
+  if (!result.ok) {
+    const status = result.status ? ` (HTTP ${result.status})` : '';
+    const code = result.error ? ` [${result.error}]` : '';
+    const detail = result.message ? `: ${result.message}` : '';
+    const err = new Error(`Arkadaşlık durumu sorgusu başarısız${status}${code}${detail}`);
+    err.status = result.status || null;
+    throw err;
+  }
+
+  const userDict = result.data &&
+    result.data.data &&
+    result.data.data.xig_user_by_igid_v2 &&
+    result.data.data.xig_user_by_igid_v2.user_dict;
+  const friendshipStatus = userDict && userDict.friendship_status;
+
+  if (!friendshipStatus) {
+    throw new Error('API yanıtında friendship_status bulunamadı.');
+  }
+  return friendshipStatus;
+}
+
+
+async function unfollowUserViaPage(tabId, userId) {
+  const resolvedTabId = await resolveInstagramTabId(tabId);
+  const csrfToken = await getCookie('csrftoken');
+  const result = await runPageFetch(resolvedTabId, {
+    url: `https://www.instagram.com/api/v1/friendships/destroy/${encodeURIComponent(userId)}/`,
+    method: 'POST',
+    csrfToken: csrfToken || '',
+    form: { container_module: 'profile', user_id: String(userId) },
+    headers: {
+      'accept': '*/*',
+      'x-ig-app-id': IG_APP_ID,
+      'x-asbd-id': IG_ASBD_ID,
+      'x-requested-with': 'XMLHttpRequest'
     }
   });
 
-  if (!response.ok) {
-     throw new Error(`Instagram API yanıtı başarısız: ${response.status}`);
+  const data = result.data || null;
+  const apiMessage = data && (data.message || data.feedback_message || data.status);
+  if (!result.ok || (data && data.status && data.status !== 'ok')) {
+    const err = new Error(
+      `${result.status ? 'HTTP ' + result.status : (result.error || 'hata')}${apiMessage ? ': ' + String(apiMessage).slice(0, 120) : ''}`
+    );
+    err.status = result.status || null;
+    err.blocked = result.status === 429 || /feedback_required|spam|checkpoint|challenge/i.test(JSON.stringify(data || result.message || ''));
+    throw err;
   }
-  
-  const out = await response.json();
-  
-  if (out.data && out.data.user) {
-    const user = out.data.user;
-    const profilePicDataURL = await fetchImageAsDataURL(user.profile_pic_url);
-
-    let biography = user.biography || user.biography_with_entities?.raw_text || '';
-
-    
-    let hdProfilePicUrl = user.profile_pic_url_hd || user.profile_pic_url;
-    try {
-      const fetchedHdUrl = await getHdProfilePhotoUrl(user.id);
-      if (fetchedHdUrl) hdProfilePicUrl = fetchedHdUrl;
-    } catch (e) {
-      console.warn("Kullanıcı taranırken HD link çekilemedi, fallback kullanılıyor.");
-    }
-
-    let userData = {
-      id: user.id,
-      username: user.username,
-      fullName: user.full_name,
-      biography: biography,
-      biography_with_entities: user.biography_with_entities, 
-      followers: user.edge_followed_by?.count || 0,
-      following: user.edge_follow?.count || 0,
-      posts: user.edge_owner_to_timeline_media?.count || 0,
-      isPrivate: user.is_private,
-      isVerified: user.is_verified,
-      profilePicUrlForPreview: profilePicDataURL,
-      hdProfilePicUrl: hdProfilePicUrl
-    };
-    return await updateProfileHistoryAndGetDataWithChanges(userData);
-  } else {
-    throw new Error("API yanıtında beklenen kullanıcı verisi bulunamadı.");
-  }
+  return true;
 }
 
-async function fetchProfileData(url) {
+async function getProfileStatsForUser(tabId, userId) {
+  const user = await queryProfileUser(tabId, 'id', String(userId));
+  return {
+    id: String(user.id || user.pk || userId),
+    username: user.username,
+    followers: user.follower_count ?? null,
+    following: user.following_count ?? null,
+    posts: user.media_count ?? null
+  };
+}
+
+async function getInstagramUserInfo(username, tabId) {
+  const resolvedTabId = await resolveInstagramTabId(tabId);
+  const user = await queryProfileUser(resolvedTabId, 'username', username);
+
+  if (user.username && user.username.toLowerCase() !== username.toLowerCase()) {
+    throw new Error('Profil kimliği doğrulanamadı: yanıt farklı bir kullanıcıya ait.');
+  }
+
+  const profilePicDataURL = await fetchImageAsDataURL(user.profile_pic_url);
+  const biography = user.biography || (user.biography_with_entities && user.biography_with_entities.raw_text) || '';
+  const hdProfilePicUrl =
+    (user.hd_profile_pic_url_info && user.hd_profile_pic_url_info.url) ||
+    user.profile_pic_url_hd ||
+    user.profile_pic_url;
+
+  const userData = {
+    id: user.id || user.pk,
+    username: user.username,
+    fullName: user.full_name,
+    biography: biography,
+    biography_with_entities: user.biography_with_entities,
+    followers: user.follower_count ?? 0,
+    following: user.following_count ?? 0,
+    posts: user.media_count ?? 0,
+    isPrivate: user.is_private,
+    isVerified: user.is_verified,
+    profilePicUrlForPreview: profilePicDataURL,
+    hdProfilePicUrl: hdProfilePicUrl
+  };
+  return await updateProfileHistoryAndGetDataWithChanges(userData);
+}
+
+async function fetchProfileData(url, tabId) {
   const username = await getInstagramUsername(url);
-  return getInstagramUserInfo(username);
+  return getInstagramUserInfo(username, tabId);
 }
 
-async function getHdProfilePhotoUrl(instagramUserId) {
+async function getHdProfilePhotoUrl(instagramUserId, tabId) {
+  const userId = String(instagramUserId);
+
   try {
     const { cachedProfile } = await chrome.storage.local.get('cachedProfile');
-    if (cachedProfile && cachedProfile.id === instagramUserId && cachedProfile.hdProfilePicUrl && !cachedProfile.hdProfilePicUrl.includes("320x320")) {
+    if (cachedProfile && String(cachedProfile.id) === userId && cachedProfile.hdProfilePicUrl && !cachedProfile.hdProfilePicUrl.includes("320x320")) {
       return cachedProfile.hdProfilePicUrl; 
     }
   } catch (e) {
     console.error("Önbellek okunamadı:", e);
   }
 
-  
-  const url = `https://www.instagram.com/api/v1/users/${instagramUserId}/info/`;
   try {
-    const response = await fetch(url, {
-      headers: {
-        'X-IG-App-ID': '936619743392459', 
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    });
+    const resolvedTabId = await resolveInstagramTabId(tabId);
+    const user = await queryProfileUser(resolvedTabId, 'id', userId);
 
-    if (!response.ok) throw new Error(`HD API Hatası: ${response.status}`);
-    const out = await response.json();
-    const user = out.user || out.data?.user;
-    if (!user) throw new Error("Kullanıcı verisi yok");
-
-   
     let photoCandidates = [];
     if (user.hd_profile_pic_url_info) photoCandidates.push(user.hd_profile_pic_url_info);
     if (user.hd_profile_pic_versions) photoCandidates = photoCandidates.concat(user.hd_profile_pic_versions);
-    if (user.image_versions2?.candidates) photoCandidates = photoCandidates.concat(user.image_versions2.candidates);
-
-    
-    const bestHdUrl = extractLargestImage(photoCandidates);
-    if (bestHdUrl) {
-      return bestHdUrl; 
+    if (user.image_versions2 && user.image_versions2.candidates) {
+      photoCandidates = photoCandidates.concat(user.image_versions2.candidates);
     }
 
-    
-    return user.profile_pic_url_hd || user.hd_profile_pic_url_info?.url || user.profile_pic_url;
+    const bestHdUrl = extractLargestImage(photoCandidates) ||
+      user.profile_pic_url_hd ||
+      (user.hd_profile_pic_url_info && user.hd_profile_pic_url_info.url) ||
+      user.profile_pic_url;
+
+    if (!bestHdUrl) throw new Error("Kullanıcı verisinde fotoğraf URL'si yok");
+
+    try {
+      const { cachedProfile } = await chrome.storage.local.get('cachedProfile');
+      if (cachedProfile && String(cachedProfile.id) === userId) {
+        cachedProfile.hdProfilePicUrl = bestHdUrl;
+        await chrome.storage.local.set({ cachedProfile });
+      }
+    } catch (e) {}
+
+    return bestHdUrl;
   } catch (error) {
     console.error("WeXProfile Hata: HD fotoğraf URL'si alınamadı.", error);
     throw error;
@@ -475,7 +1035,18 @@ function sendNotification(titleKey, messageKey) {
   });
 }
 
-async function standaloneUnfollow(users, csrfToken) {
+
+async function keepAliveSleep(ms) {
+  let remaining = ms;
+  while (remaining > 0) {
+    const chunk = Math.min(remaining, 20000);
+    await new Promise(r => setTimeout(r, chunk));
+    remaining -= chunk;
+    try { await chrome.runtime.getPlatformInfo(); } catch (e) {}
+  }
+}
+
+async function standaloneUnfollow(users) {
   const syncData = await chrome.storage.sync.get(['scanTimings']);
   const timings = syncData.scanTimings || {};
   const delayBetween = timings.unfollowDelay || 4000;
@@ -492,38 +1063,33 @@ async function standaloneUnfollow(users, csrfToken) {
 
   for (let i = 0; i < users.length; i++) {
     const user = users[i];
+    let blocked = false;
     try {
-      const response = await fetch(`https://www.instagram.com/web/friendships/${user.id}/unfollow/`, {
-        method: 'POST',
-        headers: {
-          'x-csrftoken': csrfToken,
-          'x-instagram-ajax': '1',
-          'x-requested-with': 'XMLHttpRequest'
-        },
-        credentials: 'include'
-      });
-      const responseData = response.ok ? await response.json() : null;
-      const success = responseData?.status === 'ok';
+      await unfollowUserViaPage(null, user.id);
 
-      if (success) {
-        const { unfollowedIds = [] } = await chrome.storage.local.get('unfollowedIds');
-        if (!unfollowedIds.includes(user.id)) unfollowedIds.push(user.id);
-        await chrome.storage.local.set({ unfollowedIds });
-      }
+      const { unfollowedIds = [] } = await chrome.storage.local.get('unfollowedIds');
+      if (!unfollowedIds.includes(user.id)) unfollowedIds.push(user.id);
+      await chrome.storage.local.set({ unfollowedIds });
 
       chrome.runtime.sendMessage({
         action: 'unfollowProgress',
-        data: { success, user, progress: { current: i + 1, total: users.length } }
-      }).catch(() => {}); 
+        data: { success: true, user, progress: { current: i + 1, total: users.length } }
+      }).catch(() => {});
     } catch (error) {
+      blocked = !!error.blocked;
       chrome.runtime.sendMessage({
         action: 'unfollowProgress',
-        data: { success: false, user, message: error.message, progress: { current: i + 1, total: users.length } }
+        data: { success: false, user, message: error.message, blocked, progress: { current: i + 1, total: users.length } }
       }).catch(() => {});
     }
 
-    const base = ((i + 1) % 5 === 0) ? delayAfterFive : delayBetween;
-    await new Promise(r => setTimeout(r, getNaturalDelay(base)));
+
+    if (blocked) break;
+
+    if (i + 1 < users.length) {
+      const base = ((i + 1) % 5 === 0) ? delayAfterFive : delayBetween;
+      await keepAliveSleep(getNaturalDelay(base));
+    }
   }
 }
 
@@ -581,6 +1147,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           sendNotification("errorTitle", "LoginUnfollow");
           return;
         }
+
+        let scanTabId;
+        try {
+          scanTabId = await resolveInstagramTabId();
+        } catch (error) {
+          sendNotification("errorTitle", "notInstagramPageError");
+          chrome.runtime.sendMessage({ action: 'scanProgress', data: { type: 'error', message: error.message } }).catch(() => {});
+          return;
+        }
         
         let config;
         
@@ -600,6 +1175,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         }
         currentScanner = new UnfollowerScanner({
             userId, csrfToken,
+            fetchFollowingPage: (maxId) => fetchFollowingPage(scanTabId, userId, maxId),
+            verifyFollowedBy: (targetUserId) => queryUserFriendship(scanTabId, targetUserId),
+            getProfileStats: (targetUserId) => getProfileStatsForUser(scanTabId, targetUserId),
+            unfollowUser: (targetUserId) => unfollowUserViaPage(null, targetUserId),
             onProgress: (p) => chrome.runtime.sendMessage({ action: 'scanProgress', data: p }),
             onResult: async (users, incremental = false) => {
 
@@ -649,7 +1228,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           if (currentScanner && currentScanner.csrfToken) {
             currentScanner.unfollow(request.users);
           } else {
-            standaloneUnfollow(request.users, csrfForUnfollow);
+            standaloneUnfollow(request.users);
           }
         }
         break;

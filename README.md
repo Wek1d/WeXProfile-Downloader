@@ -49,7 +49,7 @@ It allows you to view and download HD profile photos, analyze user statistics, a
 | Category | Details |
 | :--- | :--- |
 | **Total Downloads** | ![GitHub All Releases](https://img.shields.io/github/downloads/Wek1d/WeXProfile-Downloader/total?style=flat-square&color=blue) |
-| **Current Version** | v3.4.0 |
+| **Current Version** | v3.4.1 |
 | **License** | MIT |
 | **Main Tech** | Vanilla JavaScript / Manifest V3 |
 
@@ -116,7 +116,15 @@ It allows you to view and download HD profile photos, analyze user statistics, a
 
 
 ## Changelog
-### Version 3.4.0 (Latest)
+### Version 3.4.1 (Latest)
+- **Fixed (unfollow):** Instagram removed the old `/web/friendships/{id}/unfollow/` endpoint (it returned 404). Unfollow now uses `POST /api/v1/friendships/destroy/{id}/`, sent from inside the Instagram tab with the same tokens the web app uses.
+- **Fixed (rate limits):** HTTP 429 during verification now triggers a long back-off (30 s, 60 s, ...) instead of a 2 s retry. After 5 consecutive failures the scan stops safely and keeps the results found so far.
+- **Safety:** Bulk unfollow stops immediately when Instagram answers with 429 / `feedback_required` instead of continuing.
+- **Reliability:** Long delays no longer let the Manifest V3 service worker go to sleep and silently end a scan or an unfollow run.
+- **Scan summary** now reports how many accounts could not be verified (skipped).
+- **Docs correction:** the 3.4.0 notes below described a batch `show_many` check. Instagram's `show_many` response does not contain `followed_by` (it only says whether *you* follow someone), so follow-back status is read from the user hover-card query instead.
+
+### Version 3.4.0
 - **Rate limit fix (issue #347):** Replaced the sequential per-user friendship check with Instagram's batch endpoint `POST /api/v1/friendships/show_many/`. Instead of one request per followed account (which got blocked after ~40 calls), the scanner now verifies 30 accounts per request — roughly 95% fewer network calls.
 - **Accurate detection:** Unfollower status is now read directly from Instagram's canonical `followed_by` field. This eliminates the false positives that appeared on large or private accounts, where the viewer wasn't guaranteed to appear in the top 12 of a user's following list.
 - **Faster scans:** 1,000 accounts verified in roughly 30 seconds. The full followers list is no longer paginated — follower count is fetched with a single lightweight request instead.

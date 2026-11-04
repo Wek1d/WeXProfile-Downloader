@@ -1,6 +1,10 @@
-/node_modules
-/dist
+node_modules/
+dist/
 *.zip
+*.har
+insta-har*
+*.log
+.env
 dist.7z
 build-info.json
 plan.txt
