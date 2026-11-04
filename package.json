@@ -38,6 +38,6 @@
     "zip-a-folder": "^7.0.1"
   },
   "allowScripts": {
-    "esbuild": true
+    "esbuild@0.28.2": true
   }
 }

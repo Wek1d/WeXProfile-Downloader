@@ -4,7 +4,7 @@ import { minify as minifyHtml } from "html-minifier-terser";
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
-import archiver from "archiver";
+import { zip } from "zip-a-folder";
 
 // === 1. Sürüm ve isim bilgilerini oku ===
 const packageJson = JSON.parse(fs.readFileSync("package.json", "utf8"));
@@ -62,7 +62,6 @@ for (const file of cssFiles) {
 }
 
 // === 6. _locales klasörünü minify ederek kopyala ===
-// Whitespace kaldırır, boyutu küçültür, JSON geçerliliğini de doğrular
 const walkAndMinifyJson = (srcDir, destDir) => {
   fs.mkdirSync(destDir, { recursive: true });
   for (const entry of fs.readdirSync(srcDir, { withFileTypes: true })) {
@@ -80,7 +79,7 @@ const walkAndMinifyJson = (srcDir, destDir) => {
 };
 walkAndMinifyJson("_locales", `${distDir}/_locales`);
 
-// === 6b. _locales key kontrolü — EN'deki her key diğer dillerde de var mı? ===
+// === 6b. _locales key kontrolü ===
 const baseLocale = JSON.parse(fs.readFileSync("_locales/en/messages.json", "utf8"));
 const baseKeys = Object.keys(baseLocale);
 const localeDirs = fs.readdirSync("_locales");
@@ -104,19 +103,19 @@ const minifiedHtml = await minifyHtml(htmlContent, {
   removeComments: true,
   removeRedundantAttributes: true,
   removeEmptyAttributes: true,
-  minifyCSS: false, // CSS ayrı dosyada zaten minify ediliyor
-  minifyJS: false,  // JS ayrı dosyada zaten minify ediliyor
+  minifyCSS: false,
+  minifyJS: false,
 });
 fs.writeFileSync(path.join(distDir, "popup.html"), minifiedHtml);
 
-// === 7b. manifest.json ve icon'u kopyala (manifest whitespace'siz) ===
+// === 7b. manifest.json ve icon'u kopyala ===
 fs.writeFileSync(
   path.join(distDir, "manifest.json"),
   JSON.stringify(manifestJson)
 );
 fs.copyFileSync("icon.png", path.join(distDir, "icon.png"));
 
-// === 8. Build-info.json oluştur (hata ayıklama için — ZIP'e GİRMEZ) ===
+// === 8. Build-info.json oluştur (dist içine yazılır) ===
 const buildInfo = {
   version: manifestVersion,
   packageVersion: version,
@@ -124,37 +123,28 @@ const buildInfo = {
   gitCommit: gitCommit,
   nodeVersion: process.version
 };
-fs.writeFileSync(
-  path.join(distDir, "build-info.json"),
-  JSON.stringify(buildInfo, null, 2)
-);
+const buildInfoPath = path.join(distDir, "build-info.json");
+fs.writeFileSync(buildInfoPath, JSON.stringify(buildInfo, null, 2));
 
-// === 9. ZIP oluştur (build-info.json hariç) ===
-const createZip = () => {
-  return new Promise((resolve, reject) => {
-    const output = fs.createWriteStream("WeXProfile-Downloader.zip");
-    const archive = archiver("zip", { zlib: { level: 9 } });
+// === 9. ZIP oluştur (build-info.json ZIP'e girmesin diye geçici olarak kaldırılır) ===
+const createZip = async () => {
+  // build-info.json sadece geliştirici analizi içindir, zip'e girmemesi için siliyoruz
+  if (fs.existsSync(buildInfoPath)) {
+    fs.unlinkSync(buildInfoPath);
+  }
 
-    output.on("close", () => {
-      const bytes = archive.pointer();
-      const kb = (bytes / 1024).toFixed(1);
-      const mb = (bytes / 1024 / 1024).toFixed(2);
-      console.log(`📦 ZIP oluşturuldu: ${kb} KB (${mb} MB)`);
-      console.log(`📦 İsim: WeXProfile-Downloader.zip`);
-      resolve();
-    });
+  const zipName = "WeXProfile-Downloader.zip";
+  if (fs.existsSync(zipName)) {
+    fs.unlinkSync(zipName);
+  }
 
-    archive.on("error", reject);
-    archive.pipe(output);
+  await zip(distDir, zipName);
 
-    // build-info.json ZIP'e girmesin — sadece geliştirici için
-    archive.glob("**/*", {
-      cwd: distDir,
-      ignore: ["build-info.json"],
-    });
-
-    archive.finalize();
-  });
+  const zipSize = fs.statSync(zipName).size;
+  const kb = (zipSize / 1024).toFixed(1);
+  const mb = (zipSize / 1024 / 1024).toFixed(2);
+  console.log(`📦 ZIP oluşturuldu: ${kb} KB (${mb} MB)`);
+  console.log(`📦 İsim: ${zipName}`);
 };
 
 await createZip();
