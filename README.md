@@ -12,6 +12,7 @@
 
 <p align="center">
   <a href="https://wek1d.github.io/WeXProfile-Downloader/">View Website</a> •
+  <a href="#installation">Installation</a> •
   <a href="https://github.com/Wek1d/WeXProfile-Downloader">GitHub</a> •
   <a href="https://github.com/Wek1d/WeXProfile-Downloader/issues">Issues</a>
 </p>
@@ -21,14 +22,14 @@
     <img src="https://img.shields.io/github/downloads/Wek1d/WeXProfile-Downloader/total?style=flat-square&logo=github&color=blue" alt="Total Downloads"/>
   </a>
   <a href="https://chromewebstore.google.com/detail/wexprofile-downloader/ohbajlehmgjdhhfaejpeobfipomhjfoh">
-    <img src="https://img.shields.io/chrome-web-store/users/ohbajlehmgjdhhfaejpeobfipomhjfoh?style=flat-square&color=blue&label=Chrome%20Users""/>
+    <img src="https://img.shields.io/chrome-web-store/users/ohbajlehmgjdhhfaejpeobfipomhjfoh?style=flat-square&color=blue&label=Chrome%20Users" alt="Chrome Users"/>
   </a>
   <a href="https://microsoftedge.microsoft.com/addons/detail/wexprofile-downloader/ijlpgfcingilmdaioiepclimhkccoaok">
     <img src="https://img.shields.io/badge/Edge-Available-0078D7?style=flat-square&logo=microsoft-edge" alt="Microsoft Edge"/>
   </a>
   <a href="https://chromewebstore.google.com/detail/wexprofile-downloader/ohbajlehmgjdhhfaejpeobfipomhjfoh">
-  <img src="https://img.shields.io/badge/Chrome-Available-4285F4?style=flat-square&logo=googlechrome&logoColor=white" alt="Chrome Web Store"/>
-</a>
+    <img src="https://img.shields.io/badge/Chrome-Available-4285F4?style=flat-square&logo=googlechrome&logoColor=white" alt="Chrome Web Store"/>
+  </a>
   <a href="https://addons.mozilla.org/addon/wexprofile-downloader/">
     <img src="https://img.shields.io/badge/Firefox-Available-FF7139?style=flat-square&logo=firefox" alt="Firefox"/>
   </a>
@@ -77,7 +78,6 @@ It allows you to view and download HD profile photos, analyze user statistics, a
 
 ---
 
-
 ## Installation
 
 <div align="center">
@@ -112,7 +112,6 @@ If you prefer not to use an extension store or want to load the source directly:
 4. Select users to remove and click **Unfollow Selected**.
 
 ---
-
 
 ## Changelog
 ### Version 3.4.1 (Latest)
