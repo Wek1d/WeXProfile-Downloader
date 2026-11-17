@@ -80,27 +80,26 @@ It allows you to view and download HD profile photos, analyze user statistics, a
 
 ## Installation
 
-### Microsoft Edge
-1. Visit the [Edge Add-ons Store](https://microsoftedge.microsoft.com/addons/detail/wexprofile-downloader/ijlpgfcingilmdaioiepclimhkccoaok)
-2. Click **Get**
-3. Install and navigate to Instagram
+<div align="center">
 
-### Google Chrome
-1. Visit the [Chrome Web Store](https://chromewebstore.google.com/detail/wexprofile-downloader/ohbajlehmgjdhhfaejpeobfipomhjfoh)
-2. Click **Add to Chrome**
-3. Install and navigate to Instagram
+| <a href="https://chromewebstore.google.com/detail/wexprofile-downloader/ohbajlehmgjdhhfaejpeobfipomhjfoh"><img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/chrome/chrome_48x48.png" width="48" height="48" alt="Chrome" /></a> | <a href="https://microsoftedge.microsoft.com/addons/detail/wexprofile-downloader/ijlpgfcingilmdaioiepclimhkccoaok"><img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/edge/edge_48x48.png" width="48" height="48" alt="Edge" /></a> | <a href="https://addons.mozilla.org/addon/wexprofile-downloader/"><img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/firefox/firefox_48x48.png" width="48" height="48" alt="Firefox" /></a> |
+| :---: | :---: | :---: |
+| **[Chrome Web Store](https://chromewebstore.google.com/detail/wexprofile-downloader/ohbajlehmgjdhhfaejpeobfipomhjfoh)**<br><sub>Chrome, Brave, Opera, Arc, Vivaldi</sub> | **[Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/wexprofile-downloader/ijlpgfcingilmdaioiepclimhkccoaok)**<br><sub>Microsoft Edge</sub> | **[Firefox Add-ons](https://addons.mozilla.org/addon/wexprofile-downloader/)**<br><sub>Mozilla Firefox & forks</sub> |
 
-### Firefox
-1. Visit [Mozilla Add-ons](https://addons.mozilla.org/addon/wexprofile-downloader/)
-2. Click **Add to Firefox**
-3. Install and navigate to Instagram
+*Recommended — Extensions installed from official stores update automatically.*
 
-### Manual Installation (Opera, Brave, Arc, or any Chromium browser)
+</div>
+
+<details>
+<summary><b>Manual Installation (Optional / For Developers)</b></summary>
+
+If you prefer not to use an extension store or want to load the source directly:
 1. Download the [latest release](https://github.com/Wek1d/WeXProfile-Downloader/releases/latest)
 2. Extract the ZIP file
 3. Open your browser's extensions page (`chrome://extensions`)
 4. Enable **Developer mode**
 5. Click **Load unpacked** and select the extracted folder
+</details>
 
 ---
 
